@@ -1,7 +1,9 @@
-import { useEffect, useState } from 'react'
+import { lazy, Suspense, useEffect, useState } from 'react'
 import { Link, NavLink, Route, Routes, useLocation, useParams } from 'react-router-dom'
 import { ArrowDown, ArrowDownRight, ArrowLeft, ArrowRight, ArrowUpRight, Check, Menu, Moon, Sun, X } from 'lucide-react'
 import { capabilities, profile, projects } from './data/profile.js'
+
+const LiquidGlassLogo = lazy(() => import('./components/liquid-glass-logo').then((module) => ({ default: module.LiquidGlassLogo })))
 
 const socials = [
   { label: 'Instagram', href: profile.socials.instagram },
@@ -37,19 +39,20 @@ function Marquee({ children, className = '' }) {
   return <div className={`marquee ${className}`} aria-label={children}><div className="marquee-track" aria-hidden="true">{Array.from({ length: 4 }, (_, i) => <span key={i}>{children}<b> ✳ </b></span>)}</div></div>
 }
 
-function HeroArtwork() {
-  return <div className="hero-artwork" aria-label="Abstract creative reel artwork">
-    <div className="artwork-grid" />
-    <div className="artwork-marker marker-one">K / 01<br /><small>EDIT IN MOTION</small></div>
-    <div className="artwork-red-column"><span>KS<br />2026</span></div>
-    <div className="artwork-disc disc-large"><div /><div /><div /></div>
-    <div className="artwork-disc disc-small"><div /></div>
-    <div className="artwork-type artwork-type-back">STORY<br />IN FRAME</div>
-    <div className="artwork-type artwork-type-front">MAKE<br /><i>IT</i><br />MOVE<span>.</span></div>
-    <div className="artwork-slice slice-top">CUT / COLOR / COMPOSE</div>
-    <div className="artwork-slice slice-bottom">VISUAL STUDY · NOT A CLIENT PROJECT</div>
-    <div className="artwork-orbit"><span>CREATIVE VIDEO · MOTION · FILM</span></div>
-    <div className="artwork-coordinate">26° 54′ N<br />75° 48′ E</div>
+function HeroVideoCarousel() {
+  const [active, setActive] = useState(0)
+  const count = 3
+  return <div className="hero-video-carousel" aria-label="Video carousel placeholders">
+    <div className="hero-video-empty" aria-live="polite">
+      <div className="video-empty-mark" aria-hidden="true"><span /><span /><span /></div>
+      <span className="eyebrow">VIDEO LINK {String(active + 1).padStart(2, '0')}</span>
+      <p>Placeholder for your video</p>
+      <small>Add an unlisted YouTube link when it’s ready.</small>
+    </div>
+    <div className="hero-video-controls">
+      <span>{String(active + 1).padStart(2, '0')} <i>/</i> {String(count).padStart(2, '0')}</span>
+      <div>{Array.from({ length: count }, (_, index) => <button key={index} className={index === active ? 'active' : ''} aria-label={`Show video placeholder ${index + 1}`} aria-current={index === active ? 'true' : undefined} onClick={() => setActive(index)} />)}</div>
+    </div>
   </div>
 }
 
@@ -64,7 +67,7 @@ function Hero() {
       <div className="hero-actions"><Link to="/work" className="button button-red">Explore the work <ArrowDownRight size={16} /></Link><Link to="/contact" className="under-link">Start a project <ArrowUpRight size={14} /></Link></div>
       <SocialLinks compact />
     </div>
-    <div className="hero-visual" data-reveal><div className="visual-index"><span>01 / 08</span><span>CREATIVE REEL</span></div><HeroArtwork /><span className="visual-side-label">AN EDITORIAL PLAYGROUND <b>✳</b></span></div>
+    <div className="hero-visual" data-reveal><div className="visual-index"><span>VIDEO / 01</span><span>YOUR REEL</span></div><HeroVideoCarousel /></div>
     <a className="scroll-cue" href="#about"><span className="scroll-line" /><span>SCROLL TO EXPLORE</span><ArrowDown size={14} /></a>
   </section>
 }
@@ -161,8 +164,30 @@ function Footer() {
   </footer>
 }
 
+function IntroLoader({ onFinish }) {
+  const [exiting, setExiting] = useState(false)
+  useEffect(() => {
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const exitTimer = window.setTimeout(() => setExiting(true), reducedMotion ? 250 : 2050)
+    const finishTimer = window.setTimeout(onFinish, reducedMotion ? 700 : 2600)
+    return () => { window.clearTimeout(exitTimer); window.clearTimeout(finishTimer) }
+  }, [onFinish])
+  return <div className={`intro-loader ${exiting ? 'is-exiting' : ''}`} aria-label="Krrish Sharma portfolio loading" aria-live="polite">
+    <Suspense fallback={<img className="intro-loader-fallback" src="/logo.svg" alt="Krrish Sharma" />}>
+      <LiquidGlassLogo logo="/logo.svg" ending="logo" depth={2.9} theme="dark" background="#000000" style={{ height: 480 }} aria-label="Krrish Sharma" />
+    </Suspense>
+  </div>
+}
+
 function Home() {
-  return <main id="top"><Hero /><AboutSection /><ExpertiseSection /><WorkSection /><ExperimentsSection /><JourneySection /><ContactSection /></main>
+  const [intro, setIntro] = useState(() => {
+    try { return !sessionStorage.getItem('krrish-intro-seen') } catch { return true }
+  })
+  const finishIntro = () => {
+    try { sessionStorage.setItem('krrish-intro-seen', '1') } catch { /* Storage can be disabled. */ }
+    setIntro(false)
+  }
+  return <><main id="top"><Hero /><AboutSection /><ExpertiseSection /><WorkSection /><ExperimentsSection /><JourneySection /><ContactSection /></main>{intro && <IntroLoader onFinish={finishIntro} />}</>
 }
 
 function PageIntro({ eyebrow, title, children }) {
