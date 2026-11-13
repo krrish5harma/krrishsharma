@@ -59,7 +59,7 @@ function HeroVideoCarousel() {
 function SiteBackground({ theme }) {
   const [failed, setFailed] = useState(false)
   return <div className={`site-background ${failed ? 'has-failed' : ''}`} aria-hidden="true">
-    {!failed && <Suspense fallback={null}><AeroShards shardColor={theme === 'light' ? '#b89b9d' : '#63232a'} accentColor={theme === 'light' ? '#c71f31' : '#e13547'} backgroundColor="transparent" lightMode={theme === 'light'} placement="full" material="glass" markers="plus" count={1300} depthOfField={0.75} vignette={0.3} mouseInteraction pulseOnClick holdToGather onError={() => setFailed(true)} /></Suspense>}
+    {!failed && <Suspense fallback={null}><AeroShards shardColor="#380000" accentColor="#ff0000" backgroundColor="transparent" lightMode={theme === 'light'} placement="full" material="glass" markers="plus" count={1300} depthOfField={0.48} vignette={0.3} mouseInteraction pulseOnClick holdToGather speed={1.21} scale={1.11} grain={0.12} parallax={0.76} onError={() => setFailed(true)} /></Suspense>}
     {failed && <div className="site-background-fallback" />}
   </div>
 }
