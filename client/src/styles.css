@@ -7,3 +7,29 @@
 /* Explicit transforms keep the carousel usable without newer CSS arithmetic. */
 .stage-card{transform:translateX(calc(-50% + var(--x))) rotateY(var(--rotation)) scale(var(--scale));opacity:var(--opacity);z-index:var(--z)}
 @media(prefers-reduced-motion:reduce){.stage-card{transform:translateX(calc(-50% + var(--x))) scale(var(--scale))}}
+
+/* Give the media stage a more cinematic, high-contrast art direction. */
+.work-stage{background:#171715;color:#f5f3ef;isolation:isolate}
+.stage-topline,.stage-disclaimer{color:rgba(245,243,239,.62)}
+.stage-controls button{color:#f5f3ef;border-color:rgba(245,243,239,.38)}
+.stage-count span,.placeholder-label{color:rgba(245,243,239,.68)}
+.stage-edit .card-art{background:radial-gradient(ellipse at 49% 52%,#74e8ff 0,#1771ff 10%,#11156c 19%,transparent 36%),radial-gradient(ellipse at 48% 52%,#28272e 0,#090a10 68%);color:#f5f3ef}
+.stage-motion .card-art{background:radial-gradient(ellipse at 48% 48%,#ffba77 0,#ed4b35 21%,#84221f 54%,#201412 100%);color:#fff5e7}
+.stage-film .card-art{background:linear-gradient(145deg,#d9d1bd 0 19%,#4b514d 19% 43%,#161a19 43% 73%,#c4c0b6 73%);color:#f5f3ef}
+.stage-card .card-art{box-shadow:0 24px 70px rgba(0,0,0,.4)}
+.art-grid{opacity:.22}
+.art-word{text-shadow:0 8px 32px rgba(0,0,0,.28)}
+.stage-edit .art-disc{width:62%;left:19%;bottom:2%;border-width:2px;box-shadow:0 0 35px rgba(59,158,255,.6);transform:rotateX(64deg)}
+.stage-edit .art-disc:before{inset:16%;border-color:#9feeff}
+.stage-edit .art-disc:after{inset:36%;background:radial-gradient(circle,#fff 0 7%,#ff5450 10% 18%,#2824cb 34%,transparent 68%)}
+.stage-motion .art-disc{width:88%;left:6%;bottom:8%;border-color:rgba(255,245,231,.72);transform:rotate(-22deg)}
+.stage-motion .art-disc:before{inset:18%;border-color:rgba(255,245,231,.6)}
+.stage-motion .art-disc:after{inset:34%;background:#171715;opacity:.72}
+.stage-film .art-disc{width:60%;left:22%;bottom:-2%;border-color:rgba(255,255,255,.75);transform:rotateX(58deg)}
+.stage-film .art-disc:after{background:var(--accent)}
+.stage-motion .art-band{background:#f1bd5e}
+.stage-film .art-band{background:#f5f3ef;mix-blend-mode:normal;opacity:.7}
+.work-stage:before{content:'KRRISH  /  SHARMA';position:absolute;right:20px;bottom:20px;color:rgba(245,243,239,.32);font:8px var(--mono);letter-spacing:.17em;writing-mode:vertical-rl}
+.work-stage:focus-within .stage-controls button:focus-visible{outline-color:#ff6958}
+@media(max-width:680px){.work-stage:before{right:12px;bottom:12px;font-size:7px}}
+@media(prefers-reduced-motion:reduce){.stage-card{transition:none!important}}

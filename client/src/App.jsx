@@ -41,8 +41,14 @@ function WorkStage() {
     { id: '03', label: 'FILM', style: 'stage-film' },
   ]
   const [active, setActive] = useState(0)
+  const [paused, setPaused] = useState(false)
   const rotate = (delta) => setActive((current) => (current + delta + cards.length) % cards.length)
-  return <div className="work-stage" aria-label="Portfolio showcase preview">
+  useEffect(() => {
+    if (paused || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined
+    const timer = window.setInterval(() => setActive((current) => (current + 1) % cards.length), 4200)
+    return () => window.clearInterval(timer)
+  }, [paused])
+  return <div className="work-stage" aria-label="Portfolio showcase preview" onPointerEnter={() => setPaused(true)} onPointerLeave={() => setPaused(false)} onFocus={() => setPaused(true)} onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setPaused(false) }}>
     <div className="stage-topline"><span>SELECTED WORK</span><span>MEDIA PREVIEW · 2026</span></div>
     <div className="stage-scene" aria-live="polite">
       {cards.map((card, index) => {
