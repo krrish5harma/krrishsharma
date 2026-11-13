@@ -7,6 +7,10 @@ settings:
 importers:
 
   .:
+    dependencies:
+      nodemailer:
+        specifier: ^6.9.16
+        version: 6.10.1
     devDependencies:
       concurrently:
         specifier: ^9.1.2

@@ -1,11 +1,13 @@
 {
   "name": "krrish-sharma-portfolio",
   "private": true,
+  "type": "module",
   "workspaces": ["client", "server"],
   "scripts": {
     "dev": "concurrently -k -n web,api -c cyan,magenta \"npm:dev --workspace client\" \"npm:dev --workspace server\"",
     "build": "npm run build --workspace client",
     "start": "npm run start --workspace server"
   },
+  "dependencies": { "nodemailer": "^6.9.16" },
   "devDependencies": { "concurrently": "^9.1.2" }
 }
