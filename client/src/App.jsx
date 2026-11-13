@@ -4,6 +4,8 @@ import { ArrowDown, ArrowDownRight, ArrowLeft, ArrowRight, ArrowUpRight, Check, 
 import { capabilities, profile, projects } from './data/profile.js'
 
 const LiquidGlassLogo = lazy(() => import('./components/liquid-glass-logo').then((module) => ({ default: module.LiquidGlassLogo })))
+const AeroShards = lazy(() => import('./components/AeroShards.jsx'))
+const CircularGallery = lazy(() => import('./components/CircularGallery.jsx'))
 
 const socials = [
   { label: 'Instagram', href: profile.socials.instagram },
@@ -40,19 +42,25 @@ function Marquee({ children, className = '' }) {
 }
 
 function HeroVideoCarousel() {
-  const [active, setActive] = useState(0)
-  const count = 3
-  return <div className="hero-video-carousel" aria-label="Video carousel placeholders">
-    <div className="hero-video-empty" aria-live="polite">
-      <div className="video-empty-mark" aria-hidden="true"><span /><span /><span /></div>
-      <span className="eyebrow">VIDEO LINK {String(active + 1).padStart(2, '0')}</span>
-      <p>Placeholder for your video</p>
-      <small>Add an unlisted YouTube link when it’s ready.</small>
-    </div>
-    <div className="hero-video-controls">
-      <span>{String(active + 1).padStart(2, '0')} <i>/</i> {String(count).padStart(2, '0')}</span>
-      <div>{Array.from({ length: count }, (_, index) => <button key={index} className={index === active ? 'active' : ''} aria-label={`Show video placeholder ${index + 1}`} aria-current={index === active ? 'true' : undefined} onClick={() => setActive(index)} />)}</div>
-    </div>
+  const items = [1, 2, 3].map((index) => ({
+    image: '/video-placeholder.svg',
+    text: `VIDEO LINK 0${index}`,
+    alt: `Placeholder for video ${index}`,
+    description: 'Your YouTube video will appear here when you share its link.',
+  }))
+  return <div className="hero-video-carousel">
+    <Suspense fallback={<div className="gallery-loading"><span className="eyebrow">VIDEO CAROUSEL</span><p>Waiting for your video links.</p></div>}>
+      <CircularGallery items={items} bend={2.2} textColor="#ffffff" borderRadius={0.05} scrollEase={0.07} itemSize={0.82} itemAspect={16 / 10} gap={0.24} wave={0.18} fadeEdges={0.11} shadow={0.3} grayscale={false} showTitles font="500 20px 'DM Mono'" scrollSpeed={1.4} snap openOnClick={false} intro />
+    </Suspense>
+    <span className="gallery-note">DRAG TO EXPLORE · VIDEO LINKS PENDING</span>
+  </div>
+}
+
+function SiteBackground({ theme }) {
+  const [failed, setFailed] = useState(false)
+  return <div className={`site-background ${failed ? 'has-failed' : ''}`} aria-hidden="true">
+    {!failed && <Suspense fallback={null}><AeroShards shardColor={theme === 'light' ? '#b89b9d' : '#63232a'} accentColor={theme === 'light' ? '#c71f31' : '#e13547'} backgroundColor="transparent" lightMode={theme === 'light'} placement="full" material="glass" markers="plus" count={1300} depthOfField={0.75} vignette={0.3} mouseInteraction pulseOnClick holdToGather onError={() => setFailed(true)} /></Suspense>}
+    {failed && <div className="site-background-fallback" />}
   </div>
 }
 
@@ -256,5 +264,5 @@ export default function App() {
     nodes.forEach((node) => observer.observe(node))
     return () => observer.disconnect()
   }, [location.pathname])
-  return <><a className="skip-link" href="#main-content">Skip to content</a><Header theme={theme} onToggle={() => setTheme((current) => current === 'dark' ? 'light' : 'dark')} /><div id="main-content"><Routes><Route path="/" element={<Home />} /><Route path="/work" element={<WorkPage />} /><Route path="/work/:slug" element={<ProjectPage />} /><Route path="/about" element={<AboutPage />} /><Route path="/contact" element={<ContactPage />} /><Route path="*" element={<NotFound />} /></Routes></div><Footer /></>
+  return <div className="app-shell"><SiteBackground theme={theme} /><a className="skip-link" href="#main-content">Skip to content</a><Header theme={theme} onToggle={() => setTheme((current) => current === 'dark' ? 'light' : 'dark')} /><div id="main-content"><Routes><Route path="/" element={<Home />} /><Route path="/work" element={<WorkPage />} /><Route path="/work/:slug" element={<ProjectPage />} /><Route path="/about" element={<AboutPage />} /><Route path="/contact" element={<ContactPage />} /><Route path="*" element={<NotFound />} /></Routes></div><Footer /></div>
 }

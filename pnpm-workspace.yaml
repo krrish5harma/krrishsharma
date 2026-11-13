@@ -2,4 +2,6 @@ packages:
   - client
   - server
 allowBuilds:
+  '@vgpu/adapter-node': false
   esbuild: true
+  webgpu: false

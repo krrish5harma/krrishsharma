@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 600" role="img" aria-labelledby="title">
+  <title id="title">Video placeholder waiting for Krrish’s link</title>
+  <defs>
+    <linearGradient id="surface" x2="1" y2="1"><stop stop-color="#191516"/><stop offset="1" stop-color="#090809"/></linearGradient>
+  </defs>
+  <rect width="960" height="600" fill="url(#surface)"/>
+  <path d="M0 470 960 150M0 520 960 200" stroke="#fff" stroke-opacity=".035" stroke-width="1"/>
+  <circle cx="480" cy="275" r="52" fill="#090809" fill-opacity=".65" stroke="#d62839" stroke-opacity=".85"/>
+  <path d="m468 250 38 25-38 25z" fill="#f5f3f0" fill-opacity=".86"/>
+  <path d="M390 376h180" stroke="#d62839" stroke-opacity=".55"/>
+  <text x="480" y="410" fill="#f5f3f0" fill-opacity=".7" font-family="monospace" font-size="15" letter-spacing="4" text-anchor="middle">VIDEO LINK PENDING</text>
+</svg>
