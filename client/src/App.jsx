@@ -3,199 +3,233 @@ import { Link, NavLink, Route, Routes, useLocation, useParams } from 'react-rout
 import { ArrowDown, ArrowDownRight, ArrowLeft, ArrowRight, ArrowUpRight, Check, Menu, Moon, Sun, X } from 'lucide-react'
 import { capabilities, profile, projects } from './data/profile.js'
 
-const socialLinks = [
+const socials = [
   { label: 'Instagram', href: profile.socials.instagram },
   { label: 'YouTube', href: profile.socials.youtube },
+  { label: 'GitHub', href: profile.socials.github },
 ]
 
-function ThemeToggle({ theme, onToggle }) {
-  return <button className="theme-toggle" type="button" onClick={onToggle} aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} theme`} title="Toggle theme">
-    {theme === 'light' ? <Moon size={17} /> : <Sun size={17} />}<span>{theme === 'light' ? 'Dark' : 'Light'}</span>
+function ThemeSwitch({ theme, onToggle }) {
+  return <button className="theme-switch" onClick={onToggle} aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}>
+    <span className="theme-switch-icon">{theme === 'dark' ? <Sun size={15} /> : <Moon size={15} />}</span><span>{theme === 'dark' ? 'Light mode' : 'Dark mode'}</span>
   </button>
 }
 
 function Header({ theme, onToggle }) {
-  const [menuOpen, setMenuOpen] = useState(false)
+  const [open, setOpen] = useState(false)
   const location = useLocation()
-  useEffect(() => setMenuOpen(false), [location.pathname])
+  useEffect(() => setOpen(false), [location.pathname])
   return <header className="site-header">
-    <Link className="wordmark" to="/" aria-label="Krrish Sharma home">K<span>.</span>SHARMA</Link>
-    <button className="menu-toggle" aria-label={menuOpen ? 'Close menu' : 'Open menu'} aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}>{menuOpen ? <X /> : <Menu />}</button>
-    <nav className={menuOpen ? 'main-nav is-open' : 'main-nav'} aria-label="Main navigation">
-      <NavLink to="/work">Work <span>({String(projects.length).padStart(2, '0')})</span></NavLink>
-      <NavLink to="/about">About</NavLink>
-      <NavLink to="/contact">Contact</NavLink>
-      <ThemeToggle theme={theme} onToggle={onToggle} />
+    <Link to="/" className="brand-lockup" aria-label="Krrish Sharma home"><span className="brand-glyph">K<span>.</span></span><span className="brand-name">KRRISH<br />SHARMA</span></Link>
+    <button className="mobile-menu" onClick={() => setOpen(!open)} aria-expanded={open} aria-label={open ? 'Close navigation' : 'Open navigation'}>{open ? <X /> : <Menu />}</button>
+    <nav className={`site-nav ${open ? 'is-open' : ''}`} aria-label="Main navigation">
+      <NavLink to="/work">Work <span>({String(projects.length).padStart(2, '0')})</span></NavLink><NavLink to="/about">About</NavLink><NavLink to="/contact">Contact</NavLink>
     </nav>
+    <ThemeSwitch theme={theme} onToggle={onToggle} />
   </header>
 }
 
-function Footer() {
-  return <footer className="site-footer"><Link className="wordmark" to="/">K<span>.</span>SHARMA</Link><span>Independent creative · Jaipur, India</span><span>© {new Date().getFullYear()} Krrish Sharma</span><a className="back-top" href="#top" aria-label="Back to top"><ArrowRight size={16} /></a></footer>
+function SocialLinks({ compact = false }) {
+  return <div className={`social-links ${compact ? 'compact' : ''}`}>{socials.map(({ label, href }) => <a key={label} href={href} target="_blank" rel="noreferrer">{label}<ArrowUpRight size={12} /></a>)}</div>
 }
 
-function WorkStage() {
-  const cards = [
-    { id: '01', label: 'EDIT', style: 'stage-edit' },
-    { id: '02', label: 'MOTION', style: 'stage-motion' },
-    { id: '03', label: 'FILM', style: 'stage-film' },
-  ]
-  const [active, setActive] = useState(0)
-  const [paused, setPaused] = useState(false)
-  const rotate = (delta) => setActive((current) => (current + delta + cards.length) % cards.length)
-  useEffect(() => {
-    if (paused || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined
-    const timer = window.setInterval(() => setActive((current) => (current + 1) % cards.length), 4200)
-    return () => window.clearInterval(timer)
-  }, [paused])
-  return <div className="work-stage" aria-label="Portfolio showcase preview" onPointerEnter={() => setPaused(true)} onPointerLeave={() => setPaused(false)} onFocus={() => setPaused(true)} onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setPaused(false) }}>
-    <div className="stage-topline"><span>SELECTED WORK</span><span>MEDIA PREVIEW · 2026</span></div>
-    <div className="stage-scene" aria-live="polite">
-      {cards.map((card, index) => {
-        const offset = (index - active + cards.length) % cards.length
-        const position = offset === 2 ? -1 : offset
-        const positions = { '-1': { x: '-52%', rotation: '28deg', scale: '.87', opacity: '.62', z: 1 }, 0: { x: '0%', rotation: '0deg', scale: '1', opacity: '1', z: 2 }, 1: { x: '52%', rotation: '-28deg', scale: '.87', opacity: '.62', z: 1 } }
-        const pose = positions[position]
-        return <div key={card.id} className={`stage-card ${card.style} ${position === 0 ? 'is-active' : ''}`} style={{ '--x': pose.x, '--rotation': pose.rotation, '--scale': pose.scale, '--opacity': pose.opacity, '--z': pose.z }} aria-hidden={position !== 0}>
-          <div className="card-art" aria-label={`${card.label} preview placeholder`} role="img">
-            <div className="art-grid" /><span className="art-index">K / {card.id}</span><span className="art-word">{card.label}<i>.</i></span><span className="art-note">PORTFOLIO<br />PREVIEW</span><div className="art-disc" /><div className="art-band" />
-          </div>
-          <span className="placeholder-label">Awaiting approved project media</span>
-        </div>
-      })}
-    </div>
-    <div className="stage-controls">
-      <button type="button" aria-label="Previous preview" onClick={() => rotate(-1)}><ArrowLeft size={18} /></button>
-      <span className="stage-count">0{active + 1}<span> / 0{cards.length}</span></span>
-      <button type="button" aria-label="Next preview" onClick={() => rotate(1)}><ArrowRight size={18} /></button>
-    </div>
-    <p className="stage-disclaimer">Visual placeholders · project work will appear here</p>
+function Marquee({ children, className = '' }) {
+  return <div className={`marquee ${className}`} aria-label={children}><div className="marquee-track" aria-hidden="true">{Array.from({ length: 4 }, (_, i) => <span key={i}>{children}<b> ✳ </b></span>)}</div></div>
+}
+
+function HeroArtwork() {
+  return <div className="hero-artwork" aria-label="Abstract creative reel artwork">
+    <div className="artwork-grid" />
+    <div className="artwork-marker marker-one">K / 01<br /><small>EDIT IN MOTION</small></div>
+    <div className="artwork-red-column"><span>KS<br />2026</span></div>
+    <div className="artwork-disc disc-large"><div /><div /><div /></div>
+    <div className="artwork-disc disc-small"><div /></div>
+    <div className="artwork-type artwork-type-back">STORY<br />IN FRAME</div>
+    <div className="artwork-type artwork-type-front">MAKE<br /><i>IT</i><br />MOVE<span>.</span></div>
+    <div className="artwork-slice slice-top">CUT / COLOR / COMPOSE</div>
+    <div className="artwork-slice slice-bottom">VISUAL STUDY · NOT A CLIENT PROJECT</div>
+    <div className="artwork-orbit"><span>CREATIVE VIDEO · MOTION · FILM</span></div>
+    <div className="artwork-coordinate">26° 54′ N<br />75° 48′ E</div>
   </div>
 }
 
-function Socials() {
-  return <div className="social-links">{socialLinks.map(({ label, href }) => <a key={label} href={href} target="_blank" rel="noreferrer">{label}<ArrowUpRight size={13} /></a>)}</div>
+function Hero() {
+  return <section className="hero-frame page-shell" id="top">
+    <div className="hero-grain" />
+    <div className="hero-copy" data-reveal>
+      <span className="eyebrow hero-kicker"><i /> INDEPENDENT CREATIVE <b>—</b> JAIPUR, INDIA</span>
+      <h1 className="hero-title"><span className="title-serif">Krrish</span><span className="title-sans">SHARMA<span className="red-period">.</span></span></h1>
+      <div className="hero-description"><span className="hero-role">Video editor<br />& motion artist.</span><p>I shape footage, movement and atmosphere into stories that stay with you.</p></div>
+      <div className="hero-education"><span>BASED IN INDIA</span><span>BCA · MANIPAL UNIVERSITY JAIPUR · CLASS OF 2027</span></div>
+      <div className="hero-actions"><Link to="/work" className="button button-red">Explore the work <ArrowDownRight size={16} /></Link><Link to="/contact" className="under-link">Start a project <ArrowUpRight size={14} /></Link></div>
+      <SocialLinks compact />
+    </div>
+    <div className="hero-visual" data-reveal><div className="visual-index"><span>01 / 08</span><span>CREATIVE REEL</span></div><HeroArtwork /><span className="visual-side-label">AN EDITORIAL PLAYGROUND <b>✳</b></span></div>
+    <a className="scroll-cue" href="#about"><span className="scroll-line" /><span>SCROLL TO EXPLORE</span><ArrowDown size={14} /></a>
+  </section>
 }
 
-function SectionHead({ eyebrow, title, children }) {
-  return <div className="section-head"><div><span className="eyebrow">{eyebrow}</span><h2>{title}</h2></div>{children && <p>{children}</p>}</div>
+function SectionLabel({ number, title }) {
+  return <div className="section-label"><span>{number} / 08</span><span>{title}</span><i /></div>
 }
 
-function ProjectCard({ project, index }) {
-  return <Link to={`/work/${project.slug}`} className="project-card">
-    <div className="project-image"><img src={project.thumbnail} alt={project.title} loading="lazy" /><span className="project-index">0{index + 1}</span><span className="project-arrow"><ArrowUpRight size={21} /></span></div>
-    <div className="project-meta"><div><h3>{project.title}</h3><span>{project.category}</span></div>{project.year && <span>{project.year}</span>}</div>
-  </Link>
+function SectionTitle({ eyebrow, children, className = '' }) {
+  return <div className={`section-title ${className}`} data-reveal><span className="eyebrow">{eyebrow}</span><h2>{children}</h2></div>
 }
 
-function WorkGrid({ items = projects }) {
-  return items.length ? <div className="project-grid">{items.map((project, index) => <ProjectCard key={project.slug} project={project} index={index} />)}</div> : <div className="empty-work"><div className="empty-mark">K<span>.</span></div><div><span className="eyebrow">THE NEXT FRAME IS YOURS</span><h3>Work is being prepared.</h3><p>Selected edits, motion pieces and films will be added here as approved project media is ready.</p></div><span className="empty-count">— 00 PROJECTS —</span></div>
+function AboutSection() {
+  return <section className="about-section page-shell" id="about">
+    <SectionLabel number="02" title="A LITTLE ABOUT ME" />
+    <div className="about-layout">
+      <div className="about-monogram" data-reveal><div className="mono-frame"><span>K</span><i>SHARMA</i><b>↗</b></div><span className="mono-caption">JAIPUR · INDIA<br />26° 54′ N / 75° 48′ E</span></div>
+      <div className="about-copy" data-reveal><span className="eyebrow">EDITOR BY INSTINCT · FILMMAKER BY CURIOSITY</span><h2>Every frame<br />has a <em>feeling.</em></h2><p>I’m Krrish, a freelance creative video editor and motion graphics artist. I move between the edit, the camera and the details that make an image feel alive.</p><p>Currently studying BCA at Manipal University Jaipur, graduating in 2027. I enjoy working where cinematic storytelling meets motion and visual polish.</p><Link to="/about" className="under-link">More about my approach <ArrowUpRight size={14} /></Link></div>
+    </div>
+    <Marquee className="skills-marquee">VIDEO EDITING · MOTION DESIGN · CINEMATOGRAPHY · FILMMAKING</Marquee>
+  </section>
+}
+
+function ExpertiseSection() {
+  return <section className="expertise-section page-shell" id="expertise">
+    <SectionLabel number="03" title="CRAFT & TOOLKIT" />
+    <div className="expertise-heading"><SectionTitle eyebrow="THE THINGS I BRING TO THE FRAME">Crafted in<br /><em>the edit.</em></SectionTitle><p data-reveal>From the first cut to the final grade, each part of the process should serve the story.</p></div>
+    <div className="expertise-grid">{capabilities.map((item, index) => <article className="expertise-card" data-reveal key={item.number}><span className="expertise-number">{item.number}</span><span className="expertise-symbol">{['✳', '◈', '⌁', '⊹'][index]}</span><h3>{item.title}</h3><p>{item.detail}</p><span className="expertise-line" /></article>)}</div>
+    <div className="tools-row" data-reveal><span className="eyebrow">TOOLS I USE</span><div>{profile.tools.map((tool) => <span className="tool-pill" key={tool}>{tool}</span>)}</div></div>
+  </section>
+}
+
+function WorkCard({ project, index, relative }) {
+  const distance = Math.abs(relative)
+  return <Link to={`/work/${project.slug}`} className={`work-card ${relative === 0 ? 'is-active' : ''}`} data-reveal aria-hidden={relative !== 0} tabIndex={relative === 0 ? 0 : -1} style={{ '--x': `${relative * 86}%`, '--rot': `${relative * -7}deg`, '--scale': distance ? '.84' : '1', '--card-opacity': distance > 1 ? '.3' : distance ? '.7' : '1', '--card-z': 10 - distance }}><div className="work-card-image"><img src={project.thumbnail} alt={project.title} loading="lazy" /><span className="work-card-count">0{index + 1}</span><span className="work-card-open"><ArrowUpRight /></span><span className="work-card-title">{project.title}</span></div><div className="work-card-meta"><span>{project.category}</span><span>{project.year || 'PROJECT'}</span></div></Link>
+}
+
+function WorkSection({ standalone = false }) {
+  const [active, setActive] = useState(0)
+  const [paused, setPaused] = useState(false)
+  useEffect(() => {
+    if (paused || window.matchMedia('(prefers-reduced-motion: reduce)').matches || projects.length < 2) return undefined
+    const timer = window.setInterval(() => setActive((index) => (index + 1) % projects.length), 5000)
+    return () => window.clearInterval(timer)
+  }, [paused])
+  const categories = ['All', ...new Set(projects.map((project) => project.category))]
+  const [filter, setFilter] = useState('All')
+  const visible = filter === 'All' ? projects : projects.filter((project) => project.category === filter)
+  useEffect(() => setActive(0), [filter])
+  return <section className={`work-section page-shell ${standalone ? 'work-page-section' : ''}`} id="work">
+    <SectionLabel number="04" title="SELECTED WORK" />
+    <div className="work-heading"><SectionTitle eyebrow="A FEW THINGS MADE WITH INTENTION">In good<br /><em>company.</em></SectionTitle>{!standalone && <Link to="/work" className="under-link">View the full reel <ArrowUpRight size={14} /></Link>}</div>
+    {standalone && <div className="work-filters" role="group" aria-label="Filter work by category">{categories.map((category) => <button className={filter === category ? 'active' : ''} onClick={() => setFilter(category)} key={category}>{category}</button>)}</div>}
+    {visible.length ? <div className="work-carousel-wrap" onPointerEnter={() => setPaused(true)} onPointerLeave={() => setPaused(false)} onFocus={() => setPaused(true)} onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setPaused(false) }}>
+      <div className="work-carousel">{visible.map((project, index) => { const wrapped = (index - active + visible.length) % visible.length; const relative = wrapped > visible.length / 2 ? wrapped - visible.length : wrapped; return <WorkCard project={project} index={index} relative={relative} key={project.slug} /> })}</div>
+      {visible.length > 1 && <div className="work-controls"><button aria-label="Previous project" onClick={() => setActive((active - 1 + visible.length) % visible.length)}><ArrowLeft size={16} /></button><span>{String(active + 1).padStart(2, '0')} <i>/</i> {String(visible.length).padStart(2, '0')}</span><button aria-label="Next project" onClick={() => setActive((active + 1) % visible.length)}><ArrowRight size={16} /></button></div>}
+    </div> : <div className="work-empty" data-reveal><div className="empty-number">K<span>/</span>00</div><div><span className="eyebrow">THE REEL IS OPEN</span><h3>Next frame: yours.</h3><p>Selected edits, motion pieces and films will appear here as approved project media is ready.</p><a href={profile.socials.youtube} target="_blank" rel="noreferrer" className="under-link">Watch on YouTube <ArrowUpRight size={14} /></a></div><span className="empty-stamp">NO PLACEHOLDERS<br />AS PORTFOLIO WORK</span></div>}
+    <Marquee className="work-marquee">CUT WITH PURPOSE · BUILT AROUND THE STORY · MAKE IT MOVE</Marquee>
+  </section>
+}
+
+function ExperimentsSection() {
+  const notes = [
+    { mark: 'A', label: 'PACE', title: 'Let it breathe.', text: 'A quiet beat can hit harder than another cut.' },
+    { mark: 'B', label: 'MOVEMENT', title: 'Earn the motion.', text: 'Movement works best when it carries the story forward.' },
+    { mark: 'C', label: 'TEXTURE', title: 'Finish with feeling.', text: 'Sound, tone and detail shape what stays in the frame.' },
+  ]
+  return <section className="experiments-section page-shell">
+    <SectionLabel number="05" title="NOTES FROM THE EDIT" />
+    <div className="experiments-heading"><SectionTitle eyebrow="QUESTIONS I KEEP COMING BACK TO">The detail<br />in <em>between.</em></SectionTitle><p data-reveal>Small creative questions shape the bigger feeling. These are a few that keep me curious.</p></div>
+    <div className="experiments-grid">{notes.map((note) => <article className="experiment-note" data-reveal key={note.mark}><span>{note.mark} / {note.label}</span><h3>{note.title}</h3><p>{note.text}</p><i>✳</i></article>)}</div>
+  </section>
+}
+
+function JourneySection() {
+  return <section className="journey-section page-shell">
+    <SectionLabel number="06" title="THE JOURNEY SO FAR" />
+    <div className="journey-layout"><SectionTitle eyebrow="STILL LEARNING · ALWAYS MAKING">In progress<br /><em>by design.</em></SectionTitle><div className="timeline"><div className="timeline-item" data-reveal><span>NOW</span><div><h3>Independent creative</h3><p>Video editing · Motion graphics · Filmmaking</p></div><i /></div><div className="timeline-item" data-reveal><span>2027</span><div><h3>BCA · Manipal University Jaipur</h3><p>Expected graduation</p></div><i /></div></div></div>
+  </section>
+}
+
+function ContactSection() {
+  return <section className="contact-section page-shell" id="contact">
+    <SectionLabel number="07" title="LET’S MAKE SOMETHING" />
+    <div className="contact-callout" data-reveal><span className="eyebrow">HAVE A STORY IN MIND?</span><h2>Let’s make<br /><em>it move.</em></h2><Link to="/contact" className="button button-cream">Tell me about it <ArrowUpRight size={16} /></Link><div className="contact-stamp">OPEN<br />FOR<br />PROJECTS<span>↗</span></div></div>
+  </section>
+}
+
+function Footer() {
+  return <footer className="site-footer">
+    <div className="footer-top page-shell"><span className="eyebrow">08 / 08 · INDEPENDENT CREATIVE · JAIPUR, INDIA</span><SocialLinks /></div>
+    <Marquee className="signature-marquee">KRRISH SHARMA</Marquee>
+    <div className="footer-bottom page-shell"><Link to="/" className="footer-mini-brand">K<span>.</span>SHARMA</Link><span>© {new Date().getFullYear()} · MADE WITH INTENTION</span><div><Link to="/work">WORK</Link><Link to="/about">ABOUT</Link><Link to="/contact">CONTACT</Link></div><a href="#top" className="back-top" aria-label="Back to top"><ArrowUpRight size={17} /></a></div>
+  </footer>
 }
 
 function Home() {
-  return <main id="top">
-    <section className="hero page-wrap">
-      <div className="hero-copy">
-        <span className="eyebrow"><span className="status-dot" />INDEPENDENT CREATIVE <span className="eyebrow-slash">/</span> JAIPUR, INDIA</span>
-        <h1>Krrish<br /><span>Sharma</span><b>.</b></h1>
-        <p className="hero-role">Creative video editor<br />& motion graphics artist.</p>
-        <p className="hero-intro">I create cinematic edits, motion-driven visuals and stories that stay with you.</p>
-        <div className="hero-education"><span>BASED IN INDIA</span><span>BCA · MANIPAL UNIVERSITY JAIPUR · CLASS OF {profile.graduation}</span></div>
-        <div className="hero-actions"><Link className="button button-dark" to="/work">View my work <ArrowDownRight size={17} /></Link><Link className="text-link" to="/contact">Let’s work together <ArrowUpRight size={15} /></Link></div>
-        <Socials />
-      </div>
-      <div className="hero-visual"><WorkStage /><span className="vertical-note">MOVING IMAGE · MADE WITH INTENTION</span></div>
-      <a className="scroll-cue" href="#selected-work"><span>SCROLL TO EXPLORE</span><ArrowDown size={15} /></a>
-    </section>
-
-    <section className="section page-wrap selected-section" id="selected-work">
-      <SectionHead eyebrow="A FEW THINGS I DO" title={<>Selected<br />work<span className="accent-dot">.</span></>}><Link className="text-link" to="/work">Explore all work <ArrowUpRight size={15} /></Link></SectionHead>
-      <WorkGrid />
-    </section>
-
-    <section className="capabilities-section"><div className="page-wrap section"><SectionHead eyebrow="FROM FIRST FRAME TO FINAL POLISH" title={<>What I<br />bring<span className="accent-dot">.</span></>}><p>Different tools, one intention: make the story feel something.</p></SectionHead><div className="capability-list">{capabilities.map((item) => <div className="capability-row" key={item.number}><span className="capability-number">{item.number}</span><h3>{item.title}</h3><p>{item.detail}</p><ArrowUpRight className="capability-arrow" size={18} /></div>)}</div></div></section>
-
-    <section className="about-teaser page-wrap"><div className="teaser-stamp">ABOUT<br />KRRISH<span>↘</span></div><div><span className="eyebrow">A LITTLE CONTEXT</span><h2>Curious about the<br />whole picture.</h2><p>Editing taught me how a moment moves. Filmmaking helps me find it in the first place. I like working across both.</p><Link className="text-link" to="/about">More about me <ArrowUpRight size={15} /></Link></div><div className="teaser-tools"><span className="eyebrow">IN THE TOOLKIT</span>{profile.tools.map((tool) => <span key={tool}>{tool}</span>)}</div></section>
-
-    <ContactBand />
-  </main>
+  return <main id="top"><Hero /><AboutSection /><ExpertiseSection /><WorkSection /><ExperimentsSection /><JourneySection /><ContactSection /></main>
 }
 
-function ContactBand() {
-  return <section className="contact-band"><div className="page-wrap contact-band-inner"><span className="eyebrow">HAVE A STORY IN MIND?</span><h2>Let’s make<br />something <em>move.</em></h2><Link className="button button-light" to="/contact">Start a conversation <ArrowUpRight size={17} /></Link></div></section>
-}
-
-function PageIntro({ eyebrow, title, copy }) {
-  return <section className="page-intro page-wrap"><span className="eyebrow">{eyebrow}</span><h1>{title}<b>.</b></h1>{copy && <p>{copy}</p>}</section>
+function PageIntro({ eyebrow, title, children }) {
+  return <div className="page-intro page-shell" data-reveal><span className="eyebrow">{eyebrow}</span><h1>{title}</h1>{children && <p>{children}</p>}</div>
 }
 
 function WorkPage() {
-  const categories = ['All', ...new Set(projects.map((project) => project.category))]
-  const [active, setActive] = useState('All')
-  const filtered = active === 'All' ? projects : projects.filter((project) => project.category === active)
-  return <main id="top" className="inner-page"><PageIntro eyebrow="THE PORTFOLIO" title="Selected work" copy="A collection of edits, motion studies and films." />
-    <section className="page-wrap work-listing"><div className="filter-row"><span className="eyebrow">BROWSE BY DISCIPLINE</span><div className="filter-buttons" role="group" aria-label="Filter projects by category">{categories.map((category) => <button key={category} className={active === category ? 'filter-button active' : 'filter-button'} onClick={() => setActive(category)}>{category}</button>)}</div></div><WorkGrid items={filtered} /></section>
-    <ContactBand />
-  </main>
+  return <main id="top" className="inner-page"><PageIntro eyebrow="THE PORTFOLIO / 04" title={<>Selected<br /><em>work.</em></>}>A collection of edits, motion pieces and films shaped around the story.</PageIntro><WorkSection standalone /><ContactSection /></main>
 }
 
 function ProjectPage() {
   const { slug } = useParams()
   const project = projects.find((item) => item.slug === slug)
-  if (!project) return <NotFound />
-  return <main id="top" className="inner-page"><section className="page-wrap project-detail"><Link className="text-link" to="/work"><ArrowLeft size={15} /> Back to work</Link><span className="eyebrow">{project.category}</span><h1>{project.title}<b>.</b></h1><div className="detail-media">{project.videoUrl ? <video controls playsInline preload="none" poster={project.thumbnail}><source src={project.videoUrl} /></video> : <img src={project.thumbnail} alt={project.title} />}</div><p className="detail-description">{project.description}</p><div className="detail-facts">{project.role && <p><span>ROLE</span>{project.role}</p>}{project.year && <p><span>YEAR</span>{project.year}</p>}{project.tools?.length > 0 && <p><span>TOOLS</span>{project.tools.join(' · ')}</p>}</div></section></main>
+  if (!project) return <main id="top" className="not-found page-shell"><span className="eyebrow">PROJECT / NOT FOUND</span><h1>That frame<br /><em>is missing.</em></h1><Link className="button button-red" to="/work">Back to work <ArrowLeft size={15} /></Link></main>
+  return <main id="top" className="project-detail page-shell"><Link className="under-link" to="/work"><ArrowLeft size={14} /> Back to work</Link><span className="eyebrow">{project.category}</span><h1>{project.title}<span>.</span></h1><div className="detail-media">{project.videoUrl ? <video controls playsInline preload="none" poster={project.thumbnail}><source src={project.videoUrl} /></video> : <img src={project.thumbnail} alt={project.title} />}</div><p>{project.description}</p><div className="detail-facts">{project.role && <span>ROLE / {project.role}</span>}{project.year && <span>YEAR / {project.year}</span>}{project.tools?.length && <span>TOOLS / {project.tools.join(' · ')}</span>}</div></main>
 }
 
 function AboutPage() {
-  return <main id="top" className="inner-page"><PageIntro eyebrow="A LITTLE ABOUT ME" title="Making stories move" copy="I’m Krrish — a creative video editor, motion graphics artist and filmmaker based in Jaipur, India." /><section className="page-wrap about-page-grid"><div className="about-big-letter">K<span>.</span></div><div className="about-copy"><span className="eyebrow">THE SHORT VERSION</span><h2>Drawn to the details<br />between the frames.</h2><p>I work across editing, motion and filmmaking, bringing each piece together around what the story needs. From a quick social cut to a more considered film, I care about pace, texture and the feeling that lingers after the screen goes dark.</p><p>Currently studying BCA at Manipal University Jaipur, graduating in {profile.graduation}.</p><Link className="text-link" to="/contact">Have a project in mind? <ArrowUpRight size={15} /></Link></div></section><section className="capabilities-section"><div className="page-wrap section"><SectionHead eyebrow="WHAT I WORK WITH" title="Tools & craft." /><div className="tool-grid">{profile.tools.map((tool, index) => <div key={tool}><span>0{index + 1}</span><h3>{tool}</h3></div>)}</div></div></section><ContactBand /></main>
+  return <main id="top" className="inner-page"><PageIntro eyebrow="ABOUT / 02" title={<>Krrish<br /><em>Sharma.</em></>}>Freelance creative video editor, motion graphics artist and filmmaker in Jaipur, India.</PageIntro><AboutSection /><ExpertiseSection /><JourneySection /><ContactSection /></main>
 }
 
 function ContactPage() {
   const [status, setStatus] = useState('idle')
-  const [message, setMessage] = useState('')
+  const [feedback, setFeedback] = useState('')
   async function submit(event) {
-    event.preventDefault()
-    setStatus('loading'); setMessage('')
+    event.preventDefault(); setStatus('loading'); setFeedback('')
     const form = event.currentTarget
-    const values = Object.fromEntries(new FormData(form).entries())
     try {
-      const response = await fetch('/api/contact', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(values) })
+      const response = await fetch('/api/contact', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(Object.fromEntries(new FormData(form).entries())) })
       const data = await response.json().catch(() => ({}))
-      if (!response.ok) throw new Error(data.error || 'The message could not be sent right now. Please try again.')
-      setStatus('success'); setMessage('Thanks — your message has been accepted. I’ll be in touch soon.'); form.reset()
-    } catch (error) { setStatus('error'); setMessage(error.message || 'Connection issue. Please try again.') }
+      if (!response.ok) throw new Error(data.error || 'Your message could not be sent. Please try again.')
+      setStatus('success'); setFeedback('Thanks — your message has been accepted.'); form.reset()
+    } catch (error) { setStatus('error'); setFeedback(error.message || 'Connection issue. Please try again.') }
   }
-  return <main id="top" className="inner-page"><PageIntro eyebrow="GET IN TOUCH" title="Let’s talk" copy="Have a film, edit or idea you’d like to bring to life? Tell me a little about it." /><section className="page-wrap contact-layout"><div className="contact-aside"><span className="eyebrow">GOOD THINGS START WITH A HELLO</span><p>Share what you’re working on, where you are in the process and what you’re imagining.</p><div className="contact-socials"><span className="eyebrow">OR FIND ME HERE</span><Socials /></div></div><form className="contact-form" onSubmit={submit}>
-    <label>Your name <span>*</span><input name="name" autoComplete="name" required maxLength="100" placeholder="Name" /></label>
-    <label>Email address <span>*</span><input name="email" type="email" autoComplete="email" required maxLength="254" placeholder="you@example.com" /></label>
-    <div className="form-pair"><label>Project type <small>OPTIONAL</small><select name="projectType" defaultValue=""><option value="">Choose a type</option><option>Video editing</option><option>Motion graphics</option><option>Filmmaking</option><option>Other</option></select></label><label>Budget range <small>OPTIONAL</small><select name="budget" defaultValue=""><option value="">Prefer not to say</option><option>Not sure yet</option><option>Let’s discuss</option></select></label></div>
-    <label>Tell me about the project <span>*</span><textarea name="message" required minLength="10" maxLength="5000" rows="5" placeholder="A few details about the story, timeline or idea…" /></label>
-    <div className="honey-field" aria-hidden="true"><label>Leave this field empty<input name="website" tabIndex="-1" autoComplete="off" /></label></div>
-    <button className="button button-dark submit-button" disabled={status === 'loading'}>{status === 'loading' ? 'Sending…' : status === 'success' ? <>Message accepted <Check size={17} /></> : <>Send message <ArrowUpRight size={17} /></>}</button>
-    <p className={`form-feedback ${status}`} role="status">{message}</p>
-    </form></section></main>
+  return <main id="top" className="inner-page"><PageIntro eyebrow="CONTACT / 07" title={<>Let’s make<br /><em>something.</em></>}>Have a film, edit or idea you want to bring to life? Tell me a little about it.</PageIntro><section className="contact-page page-shell"><div className="contact-page-intro"><span className="eyebrow">A GOOD PLACE TO START</span><p>Share what you’re working on, where you are in the process and what you’re imagining.</p><SocialLinks /></div><form className="contact-form" onSubmit={submit}><label>Your name <b>*</b><input name="name" autoComplete="name" required maxLength="100" placeholder="Name" /></label><label>Email address <b>*</b><input name="email" type="email" autoComplete="email" required maxLength="254" placeholder="you@example.com" /></label><div className="form-row"><label>Project type <small>OPTIONAL</small><select name="projectType" defaultValue=""><option value="">Choose a type</option><option>Video editing</option><option>Motion graphics</option><option>Filmmaking</option><option>Other</option></select></label><label>Budget range <small>OPTIONAL</small><select name="budget" defaultValue=""><option value="">Prefer not to say</option><option>Not sure yet</option><option>Let’s discuss</option></select></label></div><label>Project brief <b>*</b><textarea name="message" required minLength="10" maxLength="5000" rows="5" placeholder="A few details about the story, timing or idea…" /></label><div className="honeypot" aria-hidden="true"><label>Leave this empty<input name="website" tabIndex="-1" autoComplete="off" /></label></div><button className="button button-red" disabled={status === 'loading'}>{status === 'loading' ? 'Sending…' : status === 'success' ? <>Message accepted <Check size={16} /></> : <>Send the brief <ArrowUpRight size={16} /></>}</button><p className={`form-feedback ${status}`} role="status">{feedback}</p></form></section></main>
 }
 
-function NotFound() { return <main id="top" className="not-found page-wrap"><span className="eyebrow">404 · LOST FRAME</span><h1>This page<br />is out of focus<b>.</b></h1><Link className="button button-dark" to="/">Back to home <ArrowLeft size={17} /></Link></main> }
+function NotFound() { return <main id="top" className="not-found page-shell"><span className="eyebrow">404 / LOST FRAME</span><h1>This page<br /><em>is out of focus.</em></h1><Link className="button button-red" to="/">Back to home <ArrowLeft size={15} /></Link></main> }
 
 export default function App() {
   const [theme, setTheme] = useState(() => {
-    try { return localStorage.getItem('krrish-theme') || 'light' } catch { return 'light' }
+    try {
+      const saved = localStorage.getItem('krrish-theme-v2')
+      return saved || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark')
+    } catch { return 'dark' }
   })
+  const location = useLocation()
   useEffect(() => {
     document.documentElement.dataset.theme = theme
-    try { localStorage.setItem('krrish-theme', theme) } catch { /* Private browsing may disable storage. */ }
+    try { localStorage.setItem('krrish-theme-v2', theme) } catch { /* Storage may be unavailable in private browsing. */ }
   }, [theme])
-  const location = useLocation()
   useEffect(() => {
     const project = location.pathname.startsWith('/work/') ? projects.find((item) => item.slug === location.pathname.split('/')[2]) : null
     const titles = { '/': 'Krrish Sharma — Creative Editor & Filmmaker', '/work': 'Selected Work — Krrish Sharma', '/about': 'About — Krrish Sharma', '/contact': 'Contact — Krrish Sharma' }
     const title = project ? `${project.title} — Krrish Sharma` : titles[location.pathname] || 'Krrish Sharma — Creative Portfolio'
-    const description = project?.description || 'Krrish Sharma is a freelance video editor, motion graphics artist and filmmaker creating cinematic visual stories.'
     document.title = title
-    document.querySelector('meta[name="description"]')?.setAttribute('content', description)
+    document.querySelector('meta[name="description"]')?.setAttribute('content', project?.description || 'Krrish Sharma is a freelance video editor, motion graphics artist and filmmaker creating cinematic visual stories.')
     document.querySelector('meta[property="og:title"]')?.setAttribute('content', title)
-    document.querySelector('meta[property="og:description"]')?.setAttribute('content', description)
   }, [location.pathname])
-  return <><a className="skip-link" href="#main-content">Skip to content</a><Header theme={theme} onToggle={() => setTheme(theme === 'light' ? 'dark' : 'light')} /><div id="main-content"><Routes><Route path="/" element={<Home />} /><Route path="/work" element={<WorkPage />} /><Route path="/work/:slug" element={<ProjectPage />} /><Route path="/about" element={<AboutPage />} /><Route path="/contact" element={<ContactPage />} /><Route path="*" element={<NotFound />} /></Routes></div><Footer /></>
+  useEffect(() => {
+    const nodes = [...document.querySelectorAll('[data-reveal]')]
+    if (!('IntersectionObserver' in window)) { nodes.forEach((node) => node.classList.add('is-visible')); return undefined }
+    const observer = new IntersectionObserver((entries) => entries.forEach((entry) => {
+      if (entry.isIntersecting) { entry.target.classList.add('is-visible'); observer.unobserve(entry.target) }
+    }), { threshold: 0.14 })
+    nodes.forEach((node) => observer.observe(node))
+    return () => observer.disconnect()
+  }, [location.pathname])
+  return <><a className="skip-link" href="#main-content">Skip to content</a><Header theme={theme} onToggle={() => setTheme((current) => current === 'dark' ? 'light' : 'dark')} /><div id="main-content"><Routes><Route path="/" element={<Home />} /><Route path="/work" element={<WorkPage />} /><Route path="/work/:slug" element={<ProjectPage />} /><Route path="/about" element={<AboutPage />} /><Route path="/contact" element={<ContactPage />} /><Route path="*" element={<NotFound />} /></Routes></div><Footer /></>
 }

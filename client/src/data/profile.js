@@ -8,6 +8,7 @@ export const profile = {
   socials: {
     instagram: 'https://www.instagram.com/krrishsharma9835/',
     youtube: 'https://www.youtube.com/@krrishsharma98',
+    github: 'https://github.com/krrish5harma',
   },
 }
 

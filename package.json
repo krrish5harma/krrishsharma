@@ -2,6 +2,7 @@
   "name": "krrish-sharma-portfolio",
   "private": true,
   "type": "module",
+  "packageManager": "pnpm@10.28.0",
   "workspaces": ["client", "server"],
   "scripts": {
     "dev": "concurrently -k -n web,api -c cyan,magenta \"npm:dev --workspace client\" \"npm:dev --workspace server\"",

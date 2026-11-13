@@ -8,9 +8,18 @@
     <meta property="og:title" content="Krrish Sharma — Creative Editor & Filmmaker" />
     <meta property="og:description" content="Cinematic edits, motion-driven visuals and stories that stay with you." />
     <title>Krrish Sharma — Creative Editor & Filmmaker</title>
+    <script>
+      try {
+        const savedTheme = localStorage.getItem('krrish-theme-v2');
+        const systemTheme = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+        document.documentElement.dataset.theme = savedTheme || systemTheme;
+      } catch {
+        document.documentElement.dataset.theme = 'dark';
+      }
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   </head>
   <body>
     <div id="root"></div>

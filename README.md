@@ -1,14 +1,14 @@
 # Krrish Sharma — Creative Portfolio
 
-A responsive portfolio starter built with React, Vite and Express. The profile is editable in `client/src/data/profile.js`; add real, approved projects to the `projects` array in that file and put optimized media in `client/public/media/`.
+A responsive portfolio built with React, Vite and Express. The visual system uses an AMOLED black default, crimson accents, editorial serif/sans typography, CSS motion, scroll reveals, a perspective work rail and a large animated signature footer. The profile is editable in `client/src/data/profile.js`.
 
 ## Run locally
 
-Requires Node.js 20 or newer and npm.
+Requires Node.js 20 or newer and pnpm 10. The project pins its package manager in `package.json`.
 
 ```sh
-npm install
-npm run dev
+pnpm install
+pnpm dev
 ```
 
 The site runs at `http://localhost:5173`; the API runs at `http://localhost:3001`. The Vite dev server proxies `/api` requests to the API.
@@ -22,7 +22,8 @@ Copy `.env.example` to `.env` in the repository root, then set SMTP credentials,
 - Edit name, education, tools and social URLs in `client/src/data/profile.js`.
 - Add project objects to `projects` with `slug`, `title`, `category`, `thumbnail`, and `description`. Optional `videoUrl`, `year`, `role`, and `tools` are only shown when present.
 - Use site-relative media URLs such as `/media/project-poster.webp` and `/media/project-cut.mp4`.
-- The current hero artwork is generated CSS and marked as a preview placeholder. It is not represented as completed client work. The work list intentionally remains empty until real project assets and details are supplied.
+- The hero uses an abstract CSS art panel, not a portrait or client project. The about monogram can be replaced with an approved profile photograph when supplied.
+- The work list intentionally remains empty until real project media and details are supplied; no fictional portfolio work is shown.
 
 ## Deploy with Vercel
 
@@ -30,4 +31,4 @@ Import this repository into Vercel with the repository root as the project root.
 
 ## Other production hosting
 
-Build the frontend with `npm run build`. Deploy the generated `client/dist` as a static site and run `server/src/server.js` as a Node service. Configure the public frontend origin in `ALLOWED_ORIGIN` and provide SMTP settings through the hosting provider's secret environment variables. Add a canonical site URL and matching Open Graph image when the production domain and approved media are known.
+Build the frontend with `pnpm build`. Deploy the generated `client/dist` as a static site and run `server/src/server.js` as a Node service. Configure the public frontend origin in `ALLOWED_ORIGIN` and provide SMTP settings through the hosting provider's secret environment variables. Add a canonical site URL and matching Open Graph image when the production domain and approved media are known.
