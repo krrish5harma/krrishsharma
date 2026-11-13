@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, NavLink, Route, Routes, useLocation, useParams } from 'react-router-dom'
-import { ArrowDownRight, ArrowLeft, ArrowRight, ArrowUpRight, Check, Menu, Moon, Sun, X } from 'lucide-react'
+import { ArrowDown, ArrowDownRight, ArrowLeft, ArrowRight, ArrowUpRight, Check, Menu, Moon, Sun, X } from 'lucide-react'
 import { capabilities, profile, projects } from './data/profile.js'
 
 const socialLinks = [
