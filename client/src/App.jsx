@@ -2,6 +2,7 @@ import { lazy, Suspense, useEffect, useRef, useState } from 'react'
 import { Link, NavLink, Route, Routes, useLocation, useParams } from 'react-router-dom'
 import { ArrowDown, ArrowDownRight, ArrowLeft, ArrowRight, ArrowUpRight, Check, Menu, Moon, Sun, X } from 'lucide-react'
 import { capabilities, profile, projects } from './data/profile.js'
+import SpecularButton from './components/SpecularButton.jsx'
 
 const LiquidGlassLogo = lazy(() => import('./components/liquid-glass-logo').then((module) => ({ default: module.LiquidGlassLogo })))
 const AeroShards = lazy(() => import('./components/AeroShards.jsx'))
@@ -13,10 +14,29 @@ const socials = [
   { label: 'GitHub', href: profile.socials.github },
 ]
 
+function GlassButton({ children, className = '', radius = 14, style, ...props }) {
+  return <SpecularButton
+    className={className}
+    radius={radius}
+    tint="#ffffff"
+    tintOpacity={0.075}
+    blur={5}
+    textColor="var(--ink)"
+    lineColor="#ff5968"
+    baseColor="#711b25"
+    intensity={0.9}
+    idleIntensity={0.28}
+    thickness={1.2}
+    glow={1}
+    style={style}
+    {...props}
+  >{children}</SpecularButton>
+}
+
 function ThemeSwitch({ theme, onToggle }) {
-  return <button className="theme-switch" onClick={onToggle} aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}>
+  return <GlassButton className="theme-switch" size="sm" radius={999} style={{ padding: '9px 12px', fontSize: 9 }} onClick={onToggle} aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}>
     <span className="theme-switch-icon">{theme === 'dark' ? <Sun size={15} /> : <Moon size={15} />}</span><span>{theme === 'dark' ? 'Light mode' : 'Dark mode'}</span>
-  </button>
+  </GlassButton>
 }
 
 function Header({ theme, onToggle }) {
@@ -25,7 +45,7 @@ function Header({ theme, onToggle }) {
   useEffect(() => setOpen(false), [location.pathname])
   return <header className="site-header">
     <Link to="/" className="brand-lockup" aria-label="Krrish Sharma home"><span className="brand-glyph">K<span>.</span></span><span className="brand-name">KRRISH<br />SHARMA</span></Link>
-    <button className="mobile-menu" onClick={() => setOpen(!open)} aria-expanded={open} aria-label={open ? 'Close navigation' : 'Open navigation'}>{open ? <X /> : <Menu />}</button>
+    <GlassButton className="mobile-menu" size="sm" radius={999} style={{ padding: 8 }} onClick={() => setOpen(!open)} aria-expanded={open} aria-label={open ? 'Close navigation' : 'Open navigation'}>{open ? <X /> : <Menu />}</GlassButton>
     <nav className={`site-nav ${open ? 'is-open' : ''}`} aria-label="Main navigation">
       <NavLink to="/work">Work <span>({String(projects.length).padStart(2, '0')})</span></NavLink><NavLink to="/about">About</NavLink><NavLink to="/contact">Contact</NavLink>
     </nav>
@@ -166,7 +186,7 @@ function Hero() {
       <h1 className="hero-title"><span className="title-serif">Krrish</span><span className="title-sans">SHARMA<span className="red-period">.</span></span></h1>
       <div className="hero-description"><span className="hero-role">Video editor<br />& motion artist.</span><p>I shape footage, movement and atmosphere into stories that stay with you.</p></div>
       <div className="hero-education"><span>BASED IN INDIA</span><span>BCA · MANIPAL UNIVERSITY JAIPUR · CLASS OF 2027</span></div>
-      <div className="hero-actions"><Link to="/work" className="button button-red">Explore the work <ArrowDownRight size={16} /></Link><Link to="/contact" className="under-link">Start a project <ArrowUpRight size={14} /></Link></div>
+      <div className="hero-actions"><GlassButton as={Link} to="/work" className="button button-red" size="sm" radius={10} style={{ minHeight: 48, padding: '0 18px', fontSize: 10, fontWeight: 700 }}>Explore the work <ArrowDownRight size={16} /></GlassButton><Link to="/contact" className="under-link">Start a project <ArrowUpRight size={14} /></Link></div>
       <SocialLinks compact />
     </div>
     <div className="hero-visual" data-reveal><div className="visual-index"><span>VIDEO / 01</span><span>YOUR REEL</span></div><HeroVideoCarousel /></div>
@@ -222,10 +242,10 @@ function WorkSection({ standalone = false }) {
   return <section className={`work-section page-shell ${standalone ? 'work-page-section' : ''}`} id="work">
     <SectionLabel number="04" title="SELECTED WORK" />
     <div className="work-heading"><SectionTitle eyebrow="A FEW THINGS MADE WITH INTENTION">In good<br /><em>company.</em></SectionTitle>{!standalone && <Link to="/work" className="under-link">View the full reel <ArrowUpRight size={14} /></Link>}</div>
-    {standalone && <div className="work-filters" role="group" aria-label="Filter work by category">{categories.map((category) => <button className={filter === category ? 'active' : ''} onClick={() => setFilter(category)} key={category}>{category}</button>)}</div>}
+    {standalone && <div className="work-filters" role="group" aria-label="Filter work by category">{categories.map((category) => <GlassButton size="sm" radius={999} className={filter === category ? 'active' : ''} style={{ padding: '9px 14px', fontSize: 9 }} onClick={() => setFilter(category)} key={category}>{category}</GlassButton>)}</div>}
     {visible.length ? <div className="work-carousel-wrap" onPointerEnter={() => setPaused(true)} onPointerLeave={() => setPaused(false)} onFocus={() => setPaused(true)} onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setPaused(false) }}>
       <div className="work-carousel">{visible.map((project, index) => { const wrapped = (index - active + visible.length) % visible.length; const relative = wrapped > visible.length / 2 ? wrapped - visible.length : wrapped; return <WorkCard project={project} index={index} relative={relative} key={project.slug} /> })}</div>
-      {visible.length > 1 && <div className="work-controls"><button aria-label="Previous project" onClick={() => setActive((active - 1 + visible.length) % visible.length)}><ArrowLeft size={16} /></button><span>{String(active + 1).padStart(2, '0')} <i>/</i> {String(visible.length).padStart(2, '0')}</span><button aria-label="Next project" onClick={() => setActive((active + 1) % visible.length)}><ArrowRight size={16} /></button></div>}
+      {visible.length > 1 && <div className="work-controls"><GlassButton size="sm" radius={999} style={{ padding: 10 }} aria-label="Previous project" onClick={() => setActive((active - 1 + visible.length) % visible.length)}><ArrowLeft size={16} /></GlassButton><span>{String(active + 1).padStart(2, '0')} <i>/</i> {String(visible.length).padStart(2, '0')}</span><GlassButton size="sm" radius={999} style={{ padding: 10 }} aria-label="Next project" onClick={() => setActive((active + 1) % visible.length)}><ArrowRight size={16} /></GlassButton></div>}
     </div> : <div className="work-empty" data-reveal><div className="empty-number">K<span>/</span>00</div><div><span className="eyebrow">THE REEL IS OPEN</span><h3>Next frame: yours.</h3><p>Selected edits, motion pieces and films will appear here as approved project media is ready.</p><a href={profile.socials.youtube} target="_blank" rel="noreferrer" className="under-link">Watch on YouTube <ArrowUpRight size={14} /></a></div><span className="empty-stamp">NO PLACEHOLDERS<br />AS PORTFOLIO WORK</span></div>}
     <Marquee className="work-marquee">CUT WITH PURPOSE · BUILT AROUND THE STORY · MAKE IT MOVE</Marquee>
   </section>
@@ -254,7 +274,7 @@ function JourneySection() {
 function ContactSection() {
   return <section className="contact-section page-shell" id="contact">
     <SectionLabel number="07" title="LET’S MAKE SOMETHING" />
-    <div className="contact-callout" data-reveal><span className="eyebrow">HAVE A STORY IN MIND?</span><h2>Let’s make<br /><em>it move.</em></h2><Link to="/contact" className="button button-cream">Tell me about it <ArrowUpRight size={16} /></Link><div className="contact-stamp">OPEN<br />FOR<br />PROJECTS<span>↗</span></div></div>
+    <div className="contact-callout" data-reveal><span className="eyebrow">HAVE A STORY IN MIND?</span><h2>Let’s make<br /><em>it move.</em></h2><GlassButton as={Link} to="/contact" className="button button-cream" size="sm" radius={10} style={{ minHeight: 48, padding: '0 18px', fontSize: 10, fontWeight: 700 }}>Tell me about it <ArrowUpRight size={16} /></GlassButton><div className="contact-stamp">OPEN<br />FOR<br />PROJECTS<span>↗</span></div></div>
   </section>
 }
 
@@ -303,7 +323,7 @@ function WorkPage() {
 function ProjectPage() {
   const { slug } = useParams()
   const project = projects.find((item) => item.slug === slug)
-  if (!project) return <main id="top" className="not-found page-shell"><span className="eyebrow">PROJECT / NOT FOUND</span><h1>That frame<br /><em>is missing.</em></h1><Link className="button button-red" to="/work">Back to work <ArrowLeft size={15} /></Link></main>
+  if (!project) return <main id="top" className="not-found page-shell"><span className="eyebrow">PROJECT / NOT FOUND</span><h1>That frame<br /><em>is missing.</em></h1><GlassButton as={Link} className="button button-red" to="/work" size="sm" radius={10} style={{ minHeight: 48, padding: '0 18px', fontSize: 10, fontWeight: 700 }}>Back to work <ArrowLeft size={15} /></GlassButton></main>
   return <main id="top" className="project-detail page-shell"><Link className="under-link" to="/work"><ArrowLeft size={14} /> Back to work</Link><span className="eyebrow">{project.category}</span><h1>{project.title}<span>.</span></h1><div className="detail-media">{project.videoUrl ? <video controls playsInline preload="none" poster={project.thumbnail}><source src={project.videoUrl} /></video> : <img src={project.thumbnail} alt={project.title} />}</div><p>{project.description}</p><div className="detail-facts">{project.role && <span>ROLE / {project.role}</span>}{project.year && <span>YEAR / {project.year}</span>}{project.tools?.length && <span>TOOLS / {project.tools.join(' · ')}</span>}</div></main>
 }
 
@@ -324,10 +344,10 @@ function ContactPage() {
       setStatus('success'); setFeedback('Thanks — your message has been accepted.'); form.reset()
     } catch (error) { setStatus('error'); setFeedback(error.message || 'Connection issue. Please try again.') }
   }
-  return <main id="top" className="inner-page"><PageIntro eyebrow="CONTACT / 07" title={<>Let’s make<br /><em>something.</em></>}>Have a film, edit or idea you want to bring to life? Tell me a little about it.</PageIntro><section className="contact-page page-shell"><div className="contact-page-intro"><span className="eyebrow">A GOOD PLACE TO START</span><p>Share what you’re working on, where you are in the process and what you’re imagining.</p><SocialLinks /></div><form className="contact-form" onSubmit={submit}><label>Your name <b>*</b><input name="name" autoComplete="name" required maxLength="100" placeholder="Name" /></label><label>Email address <b>*</b><input name="email" type="email" autoComplete="email" required maxLength="254" placeholder="you@example.com" /></label><div className="form-row"><label>Project type <small>OPTIONAL</small><select name="projectType" defaultValue=""><option value="">Choose a type</option><option>Video editing</option><option>Motion graphics</option><option>Filmmaking</option><option>Other</option></select></label><label>Budget range <small>OPTIONAL</small><select name="budget" defaultValue=""><option value="">Prefer not to say</option><option>Not sure yet</option><option>Let’s discuss</option></select></label></div><label>Project brief <b>*</b><textarea name="message" required minLength="10" maxLength="5000" rows="5" placeholder="A few details about the story, timing or idea…" /></label><div className="honeypot" aria-hidden="true"><label>Leave this empty<input name="website" tabIndex="-1" autoComplete="off" /></label></div><button className="button button-red" disabled={status === 'loading'}>{status === 'loading' ? 'Sending…' : status === 'success' ? <>Message accepted <Check size={16} /></> : <>Send the brief <ArrowUpRight size={16} /></>}</button><p className={`form-feedback ${status}`} role="status">{feedback}</p></form></section></main>
+  return <main id="top" className="inner-page"><PageIntro eyebrow="CONTACT / 07" title={<>Let’s make<br /><em>something.</em></>}>Have a film, edit or idea you want to bring to life? Tell me a little about it.</PageIntro><section className="contact-page page-shell"><div className="contact-page-intro"><span className="eyebrow">A GOOD PLACE TO START</span><p>Share what you’re working on, where you are in the process and what you’re imagining.</p><SocialLinks /></div><form className="contact-form" onSubmit={submit}><label>Your name <b>*</b><input name="name" autoComplete="name" required maxLength="100" placeholder="Name" /></label><label>Email address <b>*</b><input name="email" type="email" autoComplete="email" required maxLength="254" placeholder="you@example.com" /></label><div className="form-row"><label>Project type <small>OPTIONAL</small><select name="projectType" defaultValue=""><option value="">Choose a type</option><option>Video editing</option><option>Motion graphics</option><option>Filmmaking</option><option>Other</option></select></label><label>Budget range <small>OPTIONAL</small><select name="budget" defaultValue=""><option value="">Prefer not to say</option><option>Not sure yet</option><option>Let’s discuss</option></select></label></div><label>Project brief <b>*</b><textarea name="message" required minLength="10" maxLength="5000" rows="5" placeholder="A few details about the story, timing or idea…" /></label><div className="honeypot" aria-hidden="true"><label>Leave this empty<input name="website" tabIndex="-1" autoComplete="off" /></label></div><GlassButton className="button button-red" type="submit" size="sm" radius={10} style={{ minHeight: 48, padding: '0 18px', fontSize: 10, fontWeight: 700 }} disabled={status === 'loading'}>{status === 'loading' ? 'Sending…' : status === 'success' ? <>Message accepted <Check size={16} /></> : <>Send the brief <ArrowUpRight size={16} /></>}</GlassButton><p className={`form-feedback ${status}`} role="status">{feedback}</p></form></section></main>
 }
 
-function NotFound() { return <main id="top" className="not-found page-shell"><span className="eyebrow">404 / LOST FRAME</span><h1>This page<br /><em>is out of focus.</em></h1><Link className="button button-red" to="/">Back to home <ArrowLeft size={15} /></Link></main> }
+function NotFound() { return <main id="top" className="not-found page-shell"><span className="eyebrow">404 / LOST FRAME</span><h1>This page<br /><em>is out of focus.</em></h1><GlassButton as={Link} className="button button-red" to="/" size="sm" radius={10} style={{ minHeight: 48, padding: '0 18px', fontSize: 10, fontWeight: 700 }}>Back to home <ArrowLeft size={15} /></GlassButton></main> }
 
 export default function App() {
   const [theme, setTheme] = useState(() => {
