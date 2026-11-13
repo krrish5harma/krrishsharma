@@ -2,7 +2,7 @@ import { lazy, Suspense, useEffect, useRef, useState } from 'react'
 import { Link, Route, Routes, useLocation, useParams } from 'react-router-dom'
 import { ArrowDown, ArrowDownRight, ArrowLeft, ArrowRight, ArrowUpRight, Check, Moon, Sun } from 'lucide-react'
 import { capabilities, profile, projects } from './data/profile.js'
-import SpecularButton from './components/SpecularButton.jsx'
+import GlassSurface from './components/GlassSurface.jsx'
 import PillNav from './components/PillNav.jsx'
 
 const LiquidGlassLogo = lazy(() => import('./components/liquid-glass-logo').then((module) => ({ default: module.LiquidGlassLogo })))
@@ -15,23 +15,17 @@ const socials = [
   { label: 'GitHub', href: profile.socials.github },
 ]
 
-function GlassButton({ children, className = '', radius = 14, style, ...props }) {
-  return <SpecularButton
-    className={className}
-    radius={radius}
-    tint="#ffffff"
-    tintOpacity={0.075}
-    blur={5}
-    textColor="var(--ink)"
-    lineColor="#ff5968"
-    baseColor="#711b25"
-    intensity={0.9}
-    idleIntensity={0.28}
-    thickness={1.2}
-    glow={1}
-    style={style}
+function GlassButton({ as: Element = 'button', children, className = '', radius = 14, size: _size, style, type = 'button', disabled, ...props }) {
+  return <Element
+    className={`glass-button${className ? ` ${className}` : ''}`}
+    style={{ '--glass-button-radius': `${radius}px`, ...style }}
+    type={Element === 'button' ? type : undefined}
+    disabled={Element === 'button' ? disabled : undefined}
     {...props}
-  >{children}</SpecularButton>
+  >
+    <GlassSurface className="glass-button-surface" width="100%" height="100%" borderRadius={radius} borderWidth={0.1} blur={3} opacity={0.92} displace={0.35} backgroundOpacity={0.12} />
+    <span className="glass-button-content">{children}</span>
+  </Element>
 }
 
 function ThemeSwitch({ theme, onToggle }) {
