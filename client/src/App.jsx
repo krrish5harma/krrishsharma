@@ -105,7 +105,7 @@ function AeroShardsFallback({ theme }) {
         const distance = Math.hypot(dx, dy)
         const near = Math.max(0, 1 - distance / 240)
         const size = shard.size * (1 + near * 0.26)
-        const alpha = shard.depth * (dark ? 0.82 : 0.42) + near * 0.22
+        const alpha = 0.22 + shard.depth * (dark ? 1.15 : 0.72) + near * 0.28
         context.save()
         context.translate(x + (pointer.x > -500 ? dx * near * 0.025 : 0), y + (pointer.y > -500 ? dy * near * 0.025 : 0))
         context.rotate(shard.angle + elapsed * shard.speed * 0.18)
@@ -117,11 +117,11 @@ function AeroShardsFallback({ theme }) {
           if (side === 0) context.moveTo(px, py); else context.lineTo(px, py)
         }
         context.closePath()
-        context.fillStyle = dark ? `rgba(56,0,0,${alpha * 0.42})` : `rgba(56,0,0,${alpha * 0.18})`
-        context.strokeStyle = `rgba(255,0,0,${Math.min(0.7, alpha * 0.74 + near * 0.28)})`
-        context.lineWidth = 0.65 + near * 0.75
+        context.fillStyle = dark ? `rgba(56,0,0,${alpha * 0.52})` : `rgba(56,0,0,${alpha * 0.28})`
+        context.strokeStyle = `rgba(255,0,0,${Math.min(0.88, alpha * 1.1 + near * 0.28)})`
+        context.lineWidth = 0.9 + near * 0.8
         context.shadowColor = 'rgba(255,0,0,.55)'
-        context.shadowBlur = near * 9
+        context.shadowBlur = 2 + near * 8
         context.fill(); context.stroke()
         context.restore()
       }
