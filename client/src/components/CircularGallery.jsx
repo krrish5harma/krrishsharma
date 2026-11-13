@@ -21,7 +21,7 @@ const CLASSES = {
 };
 const STEPS = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 };
 const DEFAULT_ITEMS = [
-  { image: '/video-placeholder.svg', text: 'VIDEO LINK PENDING', alt: 'Placeholder for a future video link' }
+  { image: '/krrish-silhouette.png', text: 'VIDEO LINK PENDING', alt: 'Placeholder for a future video link' }
 ];
 
 const VERTEX = `#version 300 es

@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useState } from 'react'
+import { lazy, Suspense, useEffect, useRef, useState } from 'react'
 import { Link, NavLink, Route, Routes, useLocation, useParams } from 'react-router-dom'
 import { ArrowDown, ArrowDownRight, ArrowLeft, ArrowRight, ArrowUpRight, Check, Menu, Moon, Sun, X } from 'lucide-react'
 import { capabilities, profile, projects } from './data/profile.js'
@@ -43,7 +43,7 @@ function Marquee({ children, className = '' }) {
 
 function HeroVideoCarousel() {
   const items = [1, 2, 3].map((index) => ({
-    image: '/video-placeholder.svg',
+    image: '/krrish-silhouette.png',
     text: `VIDEO LINK 0${index}`,
     alt: `Placeholder for video ${index}`,
     description: 'Your YouTube video will appear here when you share its link.',
@@ -59,9 +59,103 @@ function HeroVideoCarousel() {
 function SiteBackground({ theme }) {
   const [failed, setFailed] = useState(false)
   return <div className={`site-background ${failed ? 'has-failed' : ''}`} aria-hidden="true">
-    {!failed && <Suspense fallback={null}><AeroShards shardColor="#380000" accentColor="#ff0000" backgroundColor="transparent" lightMode={theme === 'light'} placement="full" material="glass" markers="plus" count={1300} depthOfField={0.48} vignette={0.3} mouseInteraction pulseOnClick holdToGather speed={1.21} scale={1.11} grain={0.12} parallax={0.76} onError={() => setFailed(true)} /></Suspense>}
-    {failed && <div className="site-background-fallback" />}
+    {!failed && <Suspense fallback={null}><AeroShards shardColor="#380000" accentColor="#ff0000" backgroundColor="transparent" lightMode={theme === 'light'} placement="full" material="glass" markers="plus" count={1300} depthOfField={0.48} vignette={0.3} mouseInteraction pulseOnClick holdToGather speed={1.21} scale={1.11} grain={0.12} parallax={0.76} onError={(error) => { console.error('AeroShards WebGPU fallback:', error); setFailed(true) }} /></Suspense>}
+    {failed && <AeroShardsFallback theme={theme} />}
   </div>
+}
+
+function AeroShardsFallback({ theme }) {
+  const canvasRef = useRef(null)
+  useEffect(() => {
+    const canvas = canvasRef.current
+    const context = canvas?.getContext('2d')
+    if (!canvas || !context) return undefined
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const random = (seed) => { const value = Math.sin(seed * 127.1 + 311.7) * 43758.5453; return value - Math.floor(value) }
+    const shards = Array.from({ length: 260 }, (_, index) => ({
+      x: random(index + 1), y: random(index + 301), size: 5 + random(index + 701) * 30,
+      angle: random(index + 1001) * Math.PI * 2, sides: 3 + Math.floor(random(index + 1401) * 3),
+      speed: 0.06 + random(index + 1701) * 0.22, depth: 0.12 + random(index + 2001) * 0.3,
+      phase: random(index + 2301) * Math.PI * 2,
+    }))
+    const pulses = []
+    const pointer = { x: -1000, y: -1000, down: false }
+    let frame = 0
+    let width = 1
+    let height = 1
+    let dpr = 1
+    let start = performance.now()
+    const resize = () => {
+      const rect = canvas.getBoundingClientRect()
+      width = Math.max(1, rect.width); height = Math.max(1, rect.height)
+      dpr = Math.min(window.devicePixelRatio || 1, 1.5)
+      canvas.width = Math.round(width * dpr); canvas.height = Math.round(height * dpr)
+      context.setTransform(dpr, 0, 0, dpr, 0, 0)
+      draw(performance.now())
+    }
+    const draw = (now) => {
+      const elapsed = reducedMotion ? 0 : (now - start) / 1000
+      context.clearRect(0, 0, width, height)
+      const dark = theme !== 'light'
+      for (const shard of shards) {
+        const drift = elapsed * shard.speed
+        const x = ((shard.x * width + drift * width * 0.12 + 30) % (width + 60)) - 30
+        const y = shard.y * height + Math.sin(elapsed * 0.42 + shard.phase) * shard.size * 0.42
+        const dx = x - pointer.x, dy = y - pointer.y
+        const distance = Math.hypot(dx, dy)
+        const near = Math.max(0, 1 - distance / 240)
+        const size = shard.size * (1 + near * 0.26)
+        const alpha = shard.depth * (dark ? 0.82 : 0.42) + near * 0.22
+        context.save()
+        context.translate(x + (pointer.x > -500 ? dx * near * 0.025 : 0), y + (pointer.y > -500 ? dy * near * 0.025 : 0))
+        context.rotate(shard.angle + elapsed * shard.speed * 0.18)
+        context.beginPath()
+        for (let side = 0; side < shard.sides; side++) {
+          const angle = side * Math.PI * 2 / shard.sides
+          const radius = size * (0.58 + random(side + Math.round(shard.phase * 100)) * 0.5)
+          const px = Math.cos(angle) * radius, py = Math.sin(angle) * radius
+          if (side === 0) context.moveTo(px, py); else context.lineTo(px, py)
+        }
+        context.closePath()
+        context.fillStyle = dark ? `rgba(56,0,0,${alpha * 0.42})` : `rgba(56,0,0,${alpha * 0.18})`
+        context.strokeStyle = `rgba(255,0,0,${Math.min(0.7, alpha * 0.74 + near * 0.28)})`
+        context.lineWidth = 0.65 + near * 0.75
+        context.shadowColor = 'rgba(255,0,0,.55)'
+        context.shadowBlur = near * 9
+        context.fill(); context.stroke()
+        context.restore()
+      }
+      for (const pulse of pulses) {
+        const age = elapsed - pulse.time
+        const radius = age * 260
+        context.beginPath(); context.arc(pulse.x, pulse.y, radius, 0, Math.PI * 2)
+        context.strokeStyle = `rgba(255,0,0,${Math.max(0, 0.52 * (1 - age / 1.25))})`
+        context.lineWidth = 2; context.stroke()
+      }
+      while (pulses.length && elapsed - pulses[0].time > 1.25) pulses.shift()
+      if (!reducedMotion || pulses.length) frame = requestAnimationFrame(draw)
+    }
+    const onMove = (event) => { pointer.x = event.clientX; pointer.y = event.clientY }
+    const onDown = (event) => {
+      if (reducedMotion) return
+      if (event.target.closest?.('a,button,input,textarea,select,[role="button"]')) return
+      pointer.down = true
+      pulses.push({ x: event.clientX, y: event.clientY, time: (performance.now() - start) / 1000 })
+      if (!frame) frame = requestAnimationFrame(draw)
+    }
+    const onUp = () => { pointer.down = false }
+    const observer = new ResizeObserver(resize)
+    observer.observe(canvas)
+    window.addEventListener('pointermove', onMove, { passive: true })
+    window.addEventListener('pointerdown', onDown)
+    window.addEventListener('pointerup', onUp)
+    resize()
+    return () => {
+      cancelAnimationFrame(frame); observer.disconnect()
+      window.removeEventListener('pointermove', onMove); window.removeEventListener('pointerdown', onDown); window.removeEventListener('pointerup', onUp)
+    }
+  }, [theme])
+  return <canvas ref={canvasRef} className="aero-shards-fallback" />
 }
 
 function Hero() {
