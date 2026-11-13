@@ -43,6 +43,8 @@
 @media(max-width:1000px){.hero-video-carousel{height:460px;}}
 @media(max-width:700px){.hero-video-carousel{height:clamp(360px,105vw,500px);}}
 .site-header .theme-switch.specular-button{border:1px solid var(--line);background:rgba(255,255,255,.045);backdrop-filter:blur(8px);color:var(--ink);}
+.site-header-nav{flex:1;min-width:0;display:flex;justify-content:center;}
+.site-header .portfolio-pill-nav{max-width:100%;}
 .site-header .mobile-menu.specular-button{display:none;place-items:center;margin-left:auto;margin-right:8px;border:1px solid var(--line);background:rgba(255,255,255,.045);color:var(--ink);}
 .work-filters .specular-button{border:1px solid var(--line);background:rgba(255,255,255,.045);color:var(--muted);}
 .work-filters .specular-button.active{border-color:rgba(255,89,104,.72);background:rgba(181,18,36,.48);color:#fff;}

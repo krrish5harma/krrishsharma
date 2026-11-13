@@ -1,8 +1,9 @@
 import { lazy, Suspense, useEffect, useRef, useState } from 'react'
-import { Link, NavLink, Route, Routes, useLocation, useParams } from 'react-router-dom'
-import { ArrowDown, ArrowDownRight, ArrowLeft, ArrowRight, ArrowUpRight, Check, Menu, Moon, Sun, X } from 'lucide-react'
+import { Link, Route, Routes, useLocation, useParams } from 'react-router-dom'
+import { ArrowDown, ArrowDownRight, ArrowLeft, ArrowRight, ArrowUpRight, Check, Moon, Sun } from 'lucide-react'
 import { capabilities, profile, projects } from './data/profile.js'
 import SpecularButton from './components/SpecularButton.jsx'
+import PillNav from './components/PillNav.jsx'
 
 const LiquidGlassLogo = lazy(() => import('./components/liquid-glass-logo').then((module) => ({ default: module.LiquidGlassLogo })))
 const AeroShards = lazy(() => import('./components/AeroShards.jsx'))
@@ -39,16 +40,21 @@ function ThemeSwitch({ theme, onToggle }) {
   </GlassButton>
 }
 
+function RouterPillLink({ href, ...props }) {
+  return <Link to={href} {...props} />
+}
+
+const navigationItems = [
+  { label: 'Work', href: '/work' },
+  { label: 'About', href: '/about' },
+  { label: 'Contact', href: '/contact' },
+]
+
 function Header({ theme, onToggle }) {
-  const [open, setOpen] = useState(false)
   const location = useLocation()
-  useEffect(() => setOpen(false), [location.pathname])
+  const activeHref = location.pathname.startsWith('/work') ? '/work' : ['/about', '/contact'].includes(location.pathname) ? location.pathname : undefined
   return <header className="site-header">
-    <Link to="/" className="brand-lockup" aria-label="Krrish Sharma home"><span className="brand-glyph">K<span>.</span></span><span className="brand-name">KRRISH<br />SHARMA</span></Link>
-    <GlassButton className="mobile-menu" size="sm" radius={999} style={{ padding: 8 }} onClick={() => setOpen(!open)} aria-expanded={open} aria-label={open ? 'Close navigation' : 'Open navigation'}>{open ? <X /> : <Menu />}</GlassButton>
-    <nav className={`site-nav ${open ? 'is-open' : ''}`} aria-label="Main navigation">
-      <NavLink to="/work">Work <span>({String(projects.length).padStart(2, '0')})</span></NavLink><NavLink to="/about">About</NavLink><NavLink to="/contact">Contact</NavLink>
-    </nav>
+    <div className="site-header-nav"><PillNav logo="/krrish-silhouette.png" logoAlt="Krrish Sharma home" logoHref="/" items={navigationItems} activeHref={activeHref} defaultActiveIndex={-1} linkComponent={RouterPillLink} theme={theme} layout="split" itemStyle="pill" hoverEffect="fill" indicator="dot" surface="glass" size="sm" highlightColor="#d62839" highlightTextColor="#ffffff" collapse="auto" intro ariaLabel="Main navigation" className="portfolio-pill-nav" /></div>
     <ThemeSwitch theme={theme} onToggle={onToggle} />
   </header>
 }
