@@ -173,8 +173,8 @@ function IntroLoader({ onFinish }) {
     return () => { window.clearTimeout(exitTimer); window.clearTimeout(finishTimer) }
   }, [onFinish])
   return <div className={`intro-loader ${exiting ? 'is-exiting' : ''}`} aria-label="Krrish Sharma portfolio loading" aria-live="polite">
-    <Suspense fallback={<img className="intro-loader-fallback" src="/logo.svg" alt="Krrish Sharma" />}>
-      <LiquidGlassLogo logo="/logo.svg" ending="logo" depth={2.9} theme="dark" background="#000000" style={{ height: 480 }} aria-label="Krrish Sharma" />
+    <Suspense fallback={<img className="intro-loader-fallback" src="/krrish-silhouette.png" alt="Krrish Sharma" />}>
+      <LiquidGlassLogo logo="/krrish-silhouette.png" ending="logo" depth={2.9} theme="dark" background="#000000" style={{ height: 480 }} aria-label="Krrish Sharma" />
     </Suspense>
   </div>
 }
