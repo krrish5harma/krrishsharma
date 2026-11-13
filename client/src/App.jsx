@@ -1,6 +1,7 @@
 import { lazy, Suspense, useEffect, useRef, useState } from 'react'
 import { Link, Route, Routes, useLocation, useParams } from 'react-router-dom'
 import { ArrowDown, ArrowDownRight, ArrowLeft, ArrowRight, ArrowUpRight, Check, Moon, Sun } from 'lucide-react'
+import { getCalApi } from '@calcom/embed-react'
 import { capabilities, profile, projects } from './data/profile.js'
 import GlassSurface from './components/GlassSurface.jsx'
 import PillNav from './components/PillNav.jsx'
@@ -35,6 +36,19 @@ function ThemeSwitch({ theme, onToggle }) {
   </GlassButton>
 }
 
+function BookCallButton({ className = '', children = 'Book a call', size = 'sm', style }) {
+  return <GlassButton
+    className={`book-call-button${className ? ` ${className}` : ''}`}
+    size={size}
+    radius={999}
+    style={{ padding: '10px 13px', fontSize: 9, fontWeight: 700, ...style }}
+    data-cal-namespace="15min"
+    data-cal-link="krrish-sharma-pnmlzm/15min"
+    data-cal-config='{"layout":"month_view","useSlotsViewOnSmallScreen":"true"}'
+    aria-label="Book a 15-minute call with Krrish Sharma"
+  >{children}<ArrowUpRight size={14} /></GlassButton>
+}
+
 function RouterPillLink({ href, ...props }) {
   return <Link to={href} {...props} />
 }
@@ -50,6 +64,7 @@ function Header({ theme, onToggle }) {
   const activeHref = location.pathname.startsWith('/work') ? '/work' : ['/about', '/contact'].includes(location.pathname) ? location.pathname : undefined
   return <header className="site-header">
     <div className="site-header-nav"><PillNav logo="/krrish-silhouette.png" logoAlt="Krrish Sharma home" logoHref="/" items={navigationItems} activeHref={activeHref} defaultActiveIndex={-1} linkComponent={RouterPillLink} theme={theme} layout="split" itemStyle="pill" hoverEffect="fill" indicator="dot" surface="glass" size="sm" highlightColor="#d62839" highlightTextColor="#ffffff" collapse="auto" intro ariaLabel="Main navigation" className="portfolio-pill-nav" /></div>
+    <BookCallButton className="header-book-call" />
     <ThemeSwitch theme={theme} onToggle={onToggle} />
   </header>
 }
@@ -187,7 +202,7 @@ function Hero() {
       <h1 className="hero-title"><span className="title-serif">Krrish</span><span className="title-sans">SHARMA<span className="red-period">.</span></span></h1>
       <div className="hero-description"><span className="hero-role">Video editor<br />& motion artist.</span><p>I shape footage, movement and atmosphere into stories that stay with you.</p></div>
       <div className="hero-education"><span>BASED IN INDIA</span><span>BCA · MANIPAL UNIVERSITY JAIPUR · CLASS OF 2027</span></div>
-      <div className="hero-actions"><GlassButton as={Link} to="/work" className="button button-red" size="sm" radius={10} style={{ minHeight: 48, padding: '0 18px', fontSize: 10, fontWeight: 700 }}>Explore the work <ArrowDownRight size={16} /></GlassButton><Link to="/contact" className="under-link">Start a project <ArrowUpRight size={14} /></Link></div>
+      <div className="hero-actions"><BookCallButton className="hero-book-call" style={{ minHeight: 48, padding: '0 18px', fontSize: 10, fontWeight: 700 }}>Book a call <ArrowUpRight size={16} /></BookCallButton><Link to="/work" className="under-link">Explore the work <ArrowDownRight size={14} /></Link></div>
       <SocialLinks compact />
     </div>
     <div className="hero-visual" data-reveal><div className="visual-index"><span>VIDEO / 01</span><span>YOUR REEL</span></div><HeroVideoCarousel /></div>
@@ -281,7 +296,7 @@ function ContactSection() {
 
 function Footer() {
   return <footer className="site-footer">
-    <div className="footer-top page-shell"><span className="eyebrow">08 / 08 · INDEPENDENT CREATIVE · JAIPUR, INDIA</span><SocialLinks /></div>
+    <div className="footer-top page-shell"><span className="eyebrow">08 / 08 · INDEPENDENT CREATIVE · JAIPUR, INDIA</span><div className="footer-actions"><BookCallButton className="footer-book-call">Book a 15-minute call</BookCallButton><SocialLinks /></div></div>
     <Marquee className="signature-marquee">KRRISH SHARMA</Marquee>
     <div className="footer-bottom page-shell"><Link to="/" className="footer-mini-brand">K<span>.</span>SHARMA</Link><span>© {new Date().getFullYear()} · MADE WITH INTENTION</span><div><Link to="/work">WORK</Link><Link to="/about">ABOUT</Link><Link to="/contact">CONTACT</Link></div><a href="#top" className="back-top" aria-label="Back to top"><ArrowUpRight size={17} /></a></div>
   </footer>
@@ -358,6 +373,18 @@ export default function App() {
     } catch { return 'dark' }
   })
   const location = useLocation()
+  useEffect(() => {
+    let mounted = true
+    void (async () => {
+      try {
+        const cal = await getCalApi({ namespace: '15min' })
+        if (mounted) cal('ui', { hideEventTypeDetails: false, layout: 'month_view' })
+      } catch {
+        // The booking buttons retain their direct Cal.com links if the embed cannot initialize.
+      }
+    })()
+    return () => { mounted = false }
+  }, [])
   useEffect(() => {
     document.documentElement.dataset.theme = theme
     try { localStorage.setItem('krrish-theme-v2', theme) } catch { /* Storage may be unavailable in private browsing. */ }
