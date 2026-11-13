@@ -4,6 +4,7 @@ import { ArrowDown, ArrowDownRight, ArrowLeft, ArrowRight, ArrowUpRight, Check, 
 import { capabilities, profile, projects } from './data/profile.js'
 import GlassSurface from './components/GlassSurface.jsx'
 import PillNav from './components/PillNav.jsx'
+import CurvedLoop from './components/CurvedLoop.jsx'
 
 const LiquidGlassLogo = lazy(() => import('./components/liquid-glass-logo').then((module) => ({ default: module.LiquidGlassLogo })))
 const AeroShards = lazy(() => import('./components/AeroShards.jsx'))
@@ -218,7 +219,7 @@ function ExpertiseSection() {
     <SectionLabel number="03" title="CRAFT & TOOLKIT" />
     <div className="expertise-heading"><SectionTitle eyebrow="THE THINGS I BRING TO THE FRAME">Crafted in<br /><em>the edit.</em></SectionTitle><p data-reveal>From the first cut to the final grade, each part of the process should serve the story.</p></div>
     <div className="expertise-grid">{capabilities.map((item, index) => <article className="expertise-card" data-reveal key={item.number}><span className="expertise-number">{item.number}</span><span className="expertise-symbol">{['✳', '◈', '⌁', '⊹'][index]}</span><h3>{item.title}</h3><p>{item.detail}</p><span className="expertise-line" /></article>)}</div>
-    <div className="tools-row" data-reveal><span className="eyebrow">TOOLS I USE</span><div>{profile.tools.map((tool) => <span className="tool-pill" key={tool}>{tool}</span>)}</div></div>
+    <div className="tools-loop" data-reveal><span className="eyebrow">SKILLS &amp; TOOLS</span><CurvedLoop className="skills-loop-text" marqueeText={profile.tools.join('     ')} shape="wave" speed={0.7} curveAmount={54} direction="left" fontSize={44} fontWeight={500} letterSpacing={1.4} separator="✦" separatorColor="var(--red-hot)" color="var(--ink)" scrollBoost={0.25} edgeFade={0.12} interactive pauseOnHover /></div>
   </section>
 }
 
