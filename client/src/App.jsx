@@ -100,7 +100,7 @@ function Hero() {
     <div className="hero-grain" />
     <div className="hero-copy" data-reveal>
       <span className="eyebrow hero-kicker"><i /> INDEPENDENT CREATIVE <b>—</b> JAIPUR, INDIA</span>
-      <h1 className="hero-title"><ShinyText text="Krrish" className="title-serif" color="var(--ink)" shineColor="#5f00ff" speed={2} shineWidth={40} softness={0.8} trigger="loop" glow={0.9} pauseOnHover /><span className="title-sans"><ShinyText text="SHARMA" color="var(--ink)" shineColor="#5f00ff" speed={2} shineWidth={40} softness={0.8} trigger="loop" glow={0.9} pauseOnHover /><span className="red-period">.</span></span></h1>
+      <h1 className="hero-title"><ShinyText text="Krrish" className="title-serif" color="#ffffff" shineColor="#5f00ff" speed={2} shineWidth={40} softness={0.8} trigger="loop" glow={0.9} pauseOnHover /><span className="title-sans"><ShinyText text="SHARMA" color="#ffffff" shineColor="#5f00ff" speed={2} shineWidth={40} softness={0.8} trigger="loop" glow={0.9} pauseOnHover /><span className="red-period">.</span></span></h1>
       <div className="hero-description"><span className="hero-role">Video editor<br />& motion artist.</span><p>I shape footage, movement and atmosphere into stories that stay with you.</p></div>
       <div className="hero-education"><span>BASED IN INDIA</span><span>BCA · MANIPAL UNIVERSITY JAIPUR · CLASS OF 2027</span></div>
       <div className="hero-actions"><BookCallButton className="hero-book-call" style={{ minHeight: 48, padding: '0 18px', fontSize: 10, fontWeight: 700 }}>Book a call <ArrowUpRight size={16} /></BookCallButton><Link to="/work" className="under-link">Explore the work <ArrowDownRight size={14} /></Link></div>
