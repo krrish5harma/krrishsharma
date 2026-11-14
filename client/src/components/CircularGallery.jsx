@@ -233,6 +233,7 @@ const CircularGallery = ({
   showTitles = true,
   snap = true,
   autoScroll = 0,
+  autoAdvanceMs = 0,
   openOnClick = true,
   intro = true,
   onItemClick,
@@ -269,6 +270,7 @@ const CircularGallery = ({
     showTitles,
     snap,
     autoScroll,
+    autoAdvanceMs: Math.max(0, autoAdvanceMs),
     openOnClick,
     intro,
     onItemClick,
@@ -376,7 +378,8 @@ const CircularGallery = ({
       drag: null,
       lastInput: 0,
       active: 0,
-      spacing: 1
+      spacing: 1,
+      autoAdvanceElapsed: 0
     };
     let cards = [];
     let pool = [];
@@ -421,8 +424,12 @@ const CircularGallery = ({
       if (item.video) {
         const video = document.createElement('video');
         video.muted = true;
+        video.defaultMuted = true;
+        video.autoplay = true;
         video.loop = true;
         video.playsInline = true;
+        video.setAttribute('muted', '');
+        video.setAttribute('autoplay', '');
         video.preload = 'metadata';
         video.addEventListener('loadeddata', () => {
           entry.lastVideoTime = -1;
@@ -720,6 +727,16 @@ const CircularGallery = ({
         !state.keyboard &&
         idle;
       if (auto) state.target += s.autoScroll * state.spacing * 0.25 * dt;
+      const advanceReady = s.autoAdvanceMs > 0 && !reduce && !state.drag && state.open < 0.01 && state.hovered === null && !state.keyboard && idle;
+      if (advanceReady) {
+        state.autoAdvanceElapsed += dt * 1000;
+        if (state.autoAdvanceElapsed >= s.autoAdvanceMs) {
+          state.autoAdvanceElapsed %= s.autoAdvanceMs;
+          state.target = (nearest() + 1) * state.spacing;
+        }
+      } else {
+        state.autoAdvanceElapsed = 0;
+      }
       const follow = reduce ? 1 : 1 - Math.pow(1 - s.scrollEase, dt * 60);
       const before = state.scroll;
       state.scroll += (state.target - state.scroll) * follow;
@@ -786,7 +803,7 @@ const CircularGallery = ({
       draw(metrics);
       placeLabels(metrics);
       const moving =
-        (s.autoScroll && !reduce) ||
+        ((s.autoScroll || s.autoAdvanceMs) && !reduce) ||
         state.scroll !== state.target ||
         state.velocity !== 0 ||
         state.open !== state.openTarget ||
@@ -929,6 +946,7 @@ const CircularGallery = ({
         return;
       }
       s.onItemClick?.(card.item, card.index);
+      if (card.entry.video) card.entry.video.play().catch(() => {});
       if (!s.openOnClick) {
         setSlot(card.slot);
         return;

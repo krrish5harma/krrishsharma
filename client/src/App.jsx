@@ -83,9 +83,9 @@ function HeroVideoCarousel() {
   }))
   return <div className="hero-video-carousel">
     <Suspense fallback={<div className="gallery-loading"><span className="eyebrow">VIDEO CAROUSEL</span><p>Waiting for your video links.</p></div>}>
-      <CircularGallery items={items} bend={2.2} textColor="#ffffff" borderRadius={0.05} scrollEase={0.07} itemSize={0.82} itemAspect={16 / 10} gap={0.24} wave={0.18} fadeEdges={0.11} shadow={0.3} grayscale={false} showTitles font="500 20px 'DM Mono'" scrollSpeed={1.4} snap openOnClick={false} intro />
+      <CircularGallery items={items} bend={2.2} textColor="#ffffff" borderRadius={0.05} scrollEase={0.07} itemSize={0.82} itemAspect={16 / 10} gap={0.24} wave={0.18} fadeEdges={0.11} shadow={0.3} grayscale={false} showTitles font="500 20px 'DM Mono'" scrollSpeed={1.4} autoAdvanceMs={2000} snap openOnClick intro />
     </Suspense>
-    <span className="gallery-note">DRAG TO EXPLORE · FIVE FILMS</span>
+    <span className="gallery-note">MUTED PREVIEWS · TAP TO FOCUS · 02 SEC AUTO-ADVANCE</span>
   </div>
 }
 
