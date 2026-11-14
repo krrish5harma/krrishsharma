@@ -3,13 +3,11 @@ import { Link, Route, Routes, useLocation, useParams } from 'react-router-dom'
 import { ArrowDown, ArrowDownRight, ArrowLeft, ArrowRight, ArrowUpRight, Check, Moon, Sun } from 'lucide-react'
 import { getCalApi } from '@calcom/embed-react'
 import { capabilities, profile, projects } from './data/profile.js'
-import GlassSurface from './components/GlassSurface.jsx'
 import PillNav from './components/PillNav.jsx'
 import CurvedLoop from './components/CurvedLoop.jsx'
 import TechText from './components/TechText.jsx'
 
-const LiquidGlassLogo = lazy(() => import('./components/liquid-glass-logo').then((module) => ({ default: module.LiquidGlassLogo })))
-const AeroShards = lazy(() => import('./components/AeroShards.jsx'))
+const SideRays = lazy(() => import('./components/SideRays.jsx'))
 const CircularGallery = lazy(() => import('./components/CircularGallery.jsx'))
 
 const socials = [
@@ -18,27 +16,24 @@ const socials = [
   { label: 'GitHub', href: profile.socials.github },
 ]
 
-function GlassButton({ as: Element = 'button', children, className = '', radius = 14, size: _size, style, type = 'button', disabled, ...props }) {
+function ActionButton({ as: Element = 'button', children, className = '', radius: _radius, size: _size, style, type = 'button', disabled, ...props }) {
   return <Element
-    className={`glass-button${className ? ` ${className}` : ''}`}
-    style={{ '--glass-button-radius': `${radius}px`, ...style }}
+    className={`site-button${className ? ` ${className}` : ''}`}
+    style={style}
     type={Element === 'button' ? type : undefined}
     disabled={Element === 'button' ? disabled : undefined}
     {...props}
-  >
-    <GlassSurface className="glass-button-surface" width="100%" height="100%" borderRadius={radius} borderWidth={0.1} blur={3} opacity={0.92} displace={0.35} backgroundOpacity={0.12} />
-    <span className="glass-button-content">{children}</span>
-  </Element>
+  >{children}</Element>
 }
 
 function ThemeSwitch({ theme, onToggle }) {
-  return <GlassButton className="theme-switch" size="sm" radius={999} style={{ padding: '9px 12px', fontSize: 9 }} onClick={onToggle} aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}>
+  return <ActionButton className="theme-switch" size="sm" radius={999} style={{ padding: '9px 12px', fontSize: 9 }} onClick={onToggle} aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}>
     <span className="theme-switch-icon">{theme === 'dark' ? <Sun size={15} /> : <Moon size={15} />}</span><span>{theme === 'dark' ? 'Light mode' : 'Dark mode'}</span>
-  </GlassButton>
+  </ActionButton>
 }
 
 function BookCallButton({ className = '', children = 'Book a call', size = 'sm', style }) {
-  return <GlassButton
+  return <ActionButton
     className={`book-call-button${className ? ` ${className}` : ''}`}
     size={size}
     radius={999}
@@ -47,7 +42,7 @@ function BookCallButton({ className = '', children = 'Book a call', size = 'sm',
     data-cal-link="krrish-sharma-pnmlzm/15min"
     data-cal-config='{"layout":"month_view","useSlotsViewOnSmallScreen":"true"}'
     aria-label="Book a 15-minute call with Krrish Sharma"
-  >{children}<ArrowUpRight size={14} /></GlassButton>
+  >{children}<ArrowUpRight size={14} /></ActionButton>
 }
 
 function RouterPillLink({ href, ...props }) {
@@ -64,7 +59,7 @@ function Header({ theme, onToggle }) {
   const location = useLocation()
   const activeHref = location.pathname.startsWith('/work') ? '/work' : ['/about', '/contact'].includes(location.pathname) ? location.pathname : undefined
   return <header className="site-header">
-    <div className="site-header-nav"><PillNav logo="/krrish-silhouette.png" logoAlt="Krrish Sharma home" logoHref="/" items={navigationItems} activeHref={activeHref} defaultActiveIndex={-1} linkComponent={RouterPillLink} theme={theme} layout="split" itemStyle="pill" hoverEffect="fill" indicator="dot" surface="glass" size="sm" highlightColor="#d62839" highlightTextColor="#ffffff" collapse="auto" intro ariaLabel="Main navigation" className="portfolio-pill-nav" /></div>
+    <div className="site-header-nav"><PillNav logo="/krrish-silhouette.png" logoAlt="Krrish Sharma home" logoHref="/" items={navigationItems} activeHref={activeHref} defaultActiveIndex={-1} linkComponent={RouterPillLink} theme={theme} layout="split" itemStyle="pill" hoverEffect="fill" indicator="dot" surface="none" size="sm" highlightColor="#d62839" highlightTextColor="#ffffff" collapse="auto" intro ariaLabel="Main navigation" className="portfolio-pill-nav" /></div>
     <BookCallButton className="header-book-call" />
     <ThemeSwitch theme={theme} onToggle={onToggle} />
   </header>
@@ -94,105 +89,9 @@ function HeroVideoCarousel() {
 }
 
 function SiteBackground({ theme }) {
-  const [failed, setFailed] = useState(false)
-  return <div className={`site-background ${failed ? 'has-failed' : ''}`} aria-hidden="true">
-    {!failed && <Suspense fallback={null}><AeroShards shardColor="#380000" accentColor="#ff0000" backgroundColor="transparent" lightMode={theme === 'light'} placement="full" material="glass" markers="plus" count={1300} depthOfField={0.48} vignette={0.3} mouseInteraction pulseOnClick holdToGather speed={1.21} scale={1.11} grain={0.12} parallax={0.76} onError={(error) => { console.error('AeroShards WebGPU fallback:', error); setFailed(true) }} /></Suspense>}
-    {failed && <AeroShardsFallback theme={theme} />}
+  return <div className="site-background" aria-hidden="true">
+    <Suspense fallback={null}><SideRays rayColor1="#6366f1" rayColor2="#ff0000" origin="top-right" speed={2.5} intensity={2.6} spread={1.9} density={5} followMouse lightMode={theme === 'light'} /></Suspense>
   </div>
-}
-
-function AeroShardsFallback({ theme }) {
-  const canvasRef = useRef(null)
-  useEffect(() => {
-    const canvas = canvasRef.current
-    const context = canvas?.getContext('2d')
-    if (!canvas || !context) return undefined
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    const random = (seed) => { const value = Math.sin(seed * 127.1 + 311.7) * 43758.5453; return value - Math.floor(value) }
-    const shards = Array.from({ length: 260 }, (_, index) => ({
-      x: random(index + 1), y: random(index + 301), size: 5 + random(index + 701) * 30,
-      angle: random(index + 1001) * Math.PI * 2, sides: 3 + Math.floor(random(index + 1401) * 3),
-      speed: 0.06 + random(index + 1701) * 0.22, depth: 0.12 + random(index + 2001) * 0.3,
-      phase: random(index + 2301) * Math.PI * 2,
-    }))
-    const pulses = []
-    const pointer = { x: -1000, y: -1000, down: false }
-    let frame = 0
-    let width = 1
-    let height = 1
-    let dpr = 1
-    let start = performance.now()
-    const resize = () => {
-      const rect = canvas.getBoundingClientRect()
-      width = Math.max(1, rect.width); height = Math.max(1, rect.height)
-      dpr = Math.min(window.devicePixelRatio || 1, 1.5)
-      canvas.width = Math.round(width * dpr); canvas.height = Math.round(height * dpr)
-      context.setTransform(dpr, 0, 0, dpr, 0, 0)
-      draw(performance.now())
-    }
-    const draw = (now) => {
-      const elapsed = reducedMotion ? 0 : (now - start) / 1000
-      context.clearRect(0, 0, width, height)
-      const dark = theme !== 'light'
-      for (const shard of shards) {
-        const drift = elapsed * shard.speed
-        const x = ((shard.x * width + drift * width * 0.12 + 30) % (width + 60)) - 30
-        const y = shard.y * height + Math.sin(elapsed * 0.42 + shard.phase) * shard.size * 0.42
-        const dx = x - pointer.x, dy = y - pointer.y
-        const distance = Math.hypot(dx, dy)
-        const near = Math.max(0, 1 - distance / 240)
-        const size = shard.size * (1 + near * 0.26)
-        const alpha = 0.22 + shard.depth * (dark ? 1.15 : 0.72) + near * 0.28
-        context.save()
-        context.translate(x + (pointer.x > -500 ? dx * near * 0.025 : 0), y + (pointer.y > -500 ? dy * near * 0.025 : 0))
-        context.rotate(shard.angle + elapsed * shard.speed * 0.18)
-        context.beginPath()
-        for (let side = 0; side < shard.sides; side++) {
-          const angle = side * Math.PI * 2 / shard.sides
-          const radius = size * (0.58 + random(side + Math.round(shard.phase * 100)) * 0.5)
-          const px = Math.cos(angle) * radius, py = Math.sin(angle) * radius
-          if (side === 0) context.moveTo(px, py); else context.lineTo(px, py)
-        }
-        context.closePath()
-        context.fillStyle = dark ? `rgba(56,0,0,${alpha * 0.52})` : `rgba(56,0,0,${alpha * 0.28})`
-        context.strokeStyle = `rgba(255,0,0,${Math.min(0.88, alpha * 1.1 + near * 0.28)})`
-        context.lineWidth = 0.9 + near * 0.8
-        context.shadowColor = 'rgba(255,0,0,.55)'
-        context.shadowBlur = 2 + near * 8
-        context.fill(); context.stroke()
-        context.restore()
-      }
-      for (const pulse of pulses) {
-        const age = elapsed - pulse.time
-        const radius = age * 260
-        context.beginPath(); context.arc(pulse.x, pulse.y, radius, 0, Math.PI * 2)
-        context.strokeStyle = `rgba(255,0,0,${Math.max(0, 0.52 * (1 - age / 1.25))})`
-        context.lineWidth = 2; context.stroke()
-      }
-      while (pulses.length && elapsed - pulses[0].time > 1.25) pulses.shift()
-      if (!reducedMotion || pulses.length) frame = requestAnimationFrame(draw)
-    }
-    const onMove = (event) => { pointer.x = event.clientX; pointer.y = event.clientY }
-    const onDown = (event) => {
-      if (reducedMotion) return
-      if (event.target.closest?.('a,button,input,textarea,select,[role="button"]')) return
-      pointer.down = true
-      pulses.push({ x: event.clientX, y: event.clientY, time: (performance.now() - start) / 1000 })
-      if (!frame) frame = requestAnimationFrame(draw)
-    }
-    const onUp = () => { pointer.down = false }
-    const observer = new ResizeObserver(resize)
-    observer.observe(canvas)
-    window.addEventListener('pointermove', onMove, { passive: true })
-    window.addEventListener('pointerdown', onDown)
-    window.addEventListener('pointerup', onUp)
-    resize()
-    return () => {
-      cancelAnimationFrame(frame); observer.disconnect()
-      window.removeEventListener('pointermove', onMove); window.removeEventListener('pointerdown', onDown); window.removeEventListener('pointerup', onUp)
-    }
-  }, [theme])
-  return <canvas ref={canvasRef} className="aero-shards-fallback" />
 }
 
 function Hero() {
@@ -259,10 +158,10 @@ function WorkSection({ standalone = false }) {
   return <section className={`work-section page-shell ${standalone ? 'work-page-section' : ''}`} id="work">
     <SectionLabel number="04" title="SELECTED WORK" />
     <div className="work-heading"><SectionTitle eyebrow="A FEW THINGS MADE WITH INTENTION">In good<br /><em>company.</em></SectionTitle>{!standalone && <Link to="/work" className="under-link">View the full reel <ArrowUpRight size={14} /></Link>}</div>
-    {standalone && <div className="work-filters" role="group" aria-label="Filter work by category">{categories.map((category) => <GlassButton size="sm" radius={999} className={filter === category ? 'active' : ''} style={{ padding: '9px 14px', fontSize: 9 }} onClick={() => setFilter(category)} key={category}>{category}</GlassButton>)}</div>}
+    {standalone && <div className="work-filters" role="group" aria-label="Filter work by category">{categories.map((category) => <ActionButton size="sm" radius={999} className={filter === category ? 'active' : ''} style={{ padding: '9px 14px', fontSize: 9 }} onClick={() => setFilter(category)} key={category}>{category}</ActionButton>)}</div>}
     {visible.length ? <div className="work-carousel-wrap" onPointerEnter={() => setPaused(true)} onPointerLeave={() => setPaused(false)} onFocus={() => setPaused(true)} onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setPaused(false) }}>
       <div className="work-carousel">{visible.map((project, index) => { const wrapped = (index - active + visible.length) % visible.length; const relative = wrapped > visible.length / 2 ? wrapped - visible.length : wrapped; return <WorkCard project={project} index={index} relative={relative} key={project.slug} /> })}</div>
-      {visible.length > 1 && <div className="work-controls"><GlassButton size="sm" radius={999} style={{ padding: 10 }} aria-label="Previous project" onClick={() => setActive((active - 1 + visible.length) % visible.length)}><ArrowLeft size={16} /></GlassButton><span>{String(active + 1).padStart(2, '0')} <i>/</i> {String(visible.length).padStart(2, '0')}</span><GlassButton size="sm" radius={999} style={{ padding: 10 }} aria-label="Next project" onClick={() => setActive((active + 1) % visible.length)}><ArrowRight size={16} /></GlassButton></div>}
+      {visible.length > 1 && <div className="work-controls"><ActionButton size="sm" radius={999} style={{ padding: 10 }} aria-label="Previous project" onClick={() => setActive((active - 1 + visible.length) % visible.length)}><ArrowLeft size={16} /></ActionButton><span>{String(active + 1).padStart(2, '0')} <i>/</i> {String(visible.length).padStart(2, '0')}</span><ActionButton size="sm" radius={999} style={{ padding: 10 }} aria-label="Next project" onClick={() => setActive((active + 1) % visible.length)}><ArrowRight size={16} /></ActionButton></div>}
     </div> : <div className="work-empty" data-reveal><div className="empty-number">K<span>/</span>00</div><div><span className="eyebrow">THE REEL IS OPEN</span><h3>Next frame: yours.</h3><p>Selected edits, motion pieces and films will appear here as approved project media is ready.</p><a href={profile.socials.youtube} target="_blank" rel="noreferrer" className="under-link">Watch on YouTube <ArrowUpRight size={14} /></a></div><span className="empty-stamp">NO PLACEHOLDERS<br />AS PORTFOLIO WORK</span></div>}
     <Marquee className="work-marquee">CUT WITH PURPOSE · BUILT AROUND THE STORY · MAKE IT MOVE</Marquee>
   </section>
@@ -291,7 +190,7 @@ function JourneySection() {
 function ContactSection() {
   return <section className="contact-section page-shell" id="contact">
     <SectionLabel number="07" title="LET’S MAKE SOMETHING" />
-    <div className="contact-callout" data-reveal><span className="eyebrow">HAVE A STORY IN MIND?</span><h2>Let’s make<br /><em>it move.</em></h2><GlassButton as={Link} to="/contact" className="button button-cream" size="sm" radius={10} style={{ minHeight: 48, padding: '0 18px', fontSize: 10, fontWeight: 700 }}>Tell me about it <ArrowUpRight size={16} /></GlassButton><div className="contact-stamp">OPEN<br />FOR<br />PROJECTS<span>↗</span></div></div>
+    <div className="contact-callout" data-reveal><span className="eyebrow">HAVE A STORY IN MIND?</span><h2>Let’s make<br /><em>it move.</em></h2><ActionButton as={Link} to="/contact" className="button button-cream" size="sm" radius={10} style={{ minHeight: 48, padding: '0 18px', fontSize: 10, fontWeight: 700 }}>Tell me about it <ArrowUpRight size={16} /></ActionButton><div className="contact-stamp">OPEN<br />FOR<br />PROJECTS<span>↗</span></div></div>
   </section>
 }
 
@@ -312,9 +211,7 @@ function IntroLoader({ onFinish }) {
     return () => { window.clearTimeout(exitTimer); window.clearTimeout(finishTimer) }
   }, [onFinish])
   return <div className={`intro-loader ${exiting ? 'is-exiting' : ''}`} aria-label="Krrish Sharma portfolio loading" aria-live="polite">
-    <Suspense fallback={<img className="intro-loader-fallback" src="/krrish-silhouette.png" alt="Krrish Sharma" />}>
-      <LiquidGlassLogo logo="/krrish-silhouette.png" ending="logo" depth={2.9} theme="dark" background="#000000" style={{ height: 480 }} aria-label="Krrish Sharma" />
-    </Suspense>
+    <img className="intro-loader-fallback" src="/krrish-silhouette.png" alt="Krrish Sharma" />
   </div>
 }
 
@@ -340,7 +237,7 @@ function WorkPage() {
 function ProjectPage() {
   const { slug } = useParams()
   const project = projects.find((item) => item.slug === slug)
-  if (!project) return <main id="top" className="not-found page-shell"><span className="eyebrow">PROJECT / NOT FOUND</span><h1>That frame<br /><em>is missing.</em></h1><GlassButton as={Link} className="button button-red" to="/work" size="sm" radius={10} style={{ minHeight: 48, padding: '0 18px', fontSize: 10, fontWeight: 700 }}>Back to work <ArrowLeft size={15} /></GlassButton></main>
+  if (!project) return <main id="top" className="not-found page-shell"><span className="eyebrow">PROJECT / NOT FOUND</span><h1>That frame<br /><em>is missing.</em></h1><ActionButton as={Link} className="button button-red" to="/work" size="sm" radius={10} style={{ minHeight: 48, padding: '0 18px', fontSize: 10, fontWeight: 700 }}>Back to work <ArrowLeft size={15} /></ActionButton></main>
   return <main id="top" className="project-detail page-shell"><Link className="under-link" to="/work"><ArrowLeft size={14} /> Back to work</Link><span className="eyebrow">{project.category}</span><h1>{project.title}<span>.</span></h1><div className="detail-media">{project.videoUrl ? <video controls playsInline preload="none" poster={project.thumbnail}><source src={project.videoUrl} /></video> : <img src={project.thumbnail} alt={project.title} />}</div><p>{project.description}</p><div className="detail-facts">{project.role && <span>ROLE / {project.role}</span>}{project.year && <span>YEAR / {project.year}</span>}{project.tools?.length && <span>TOOLS / {project.tools.join(' · ')}</span>}</div></main>
 }
 
@@ -361,10 +258,10 @@ function ContactPage() {
       setStatus('success'); setFeedback('Thanks — your message has been accepted.'); form.reset()
     } catch (error) { setStatus('error'); setFeedback(error.message || 'Connection issue. Please try again.') }
   }
-  return <main id="top" className="inner-page"><PageIntro eyebrow="CONTACT / 07" title={<>Let’s make<br /><em>something.</em></>}>Have a film, edit or idea you want to bring to life? Tell me a little about it.</PageIntro><section className="contact-page page-shell"><div className="contact-page-intro"><span className="eyebrow">A GOOD PLACE TO START</span><p>Share what you’re working on, where you are in the process and what you’re imagining.</p><SocialLinks /></div><form className="contact-form" onSubmit={submit}><label>Your name <b>*</b><input name="name" autoComplete="name" required maxLength="100" placeholder="Name" /></label><label>Email address <b>*</b><input name="email" type="email" autoComplete="email" required maxLength="254" placeholder="you@example.com" /></label><div className="form-row"><label>Project type <small>OPTIONAL</small><select name="projectType" defaultValue=""><option value="">Choose a type</option><option>Video editing</option><option>Motion graphics</option><option>Filmmaking</option><option>Other</option></select></label><label>Budget range <small>OPTIONAL</small><select name="budget" defaultValue=""><option value="">Prefer not to say</option><option>Not sure yet</option><option>Let’s discuss</option></select></label></div><label>Project brief <b>*</b><textarea name="message" required minLength="10" maxLength="5000" rows="5" placeholder="A few details about the story, timing or idea…" /></label><div className="honeypot" aria-hidden="true"><label>Leave this empty<input name="website" tabIndex="-1" autoComplete="off" /></label></div><GlassButton className="button button-red" type="submit" size="sm" radius={10} style={{ minHeight: 48, padding: '0 18px', fontSize: 10, fontWeight: 700 }} disabled={status === 'loading'}>{status === 'loading' ? 'Sending…' : status === 'success' ? <>Message accepted <Check size={16} /></> : <>Send the brief <ArrowUpRight size={16} /></>}</GlassButton><p className={`form-feedback ${status}`} role="status">{feedback}</p></form></section></main>
+  return <main id="top" className="inner-page"><PageIntro eyebrow="CONTACT / 07" title={<>Let’s make<br /><em>something.</em></>}>Have a film, edit or idea you want to bring to life? Tell me a little about it.</PageIntro><section className="contact-page page-shell"><div className="contact-page-intro"><span className="eyebrow">A GOOD PLACE TO START</span><p>Share what you’re working on, where you are in the process and what you’re imagining.</p><SocialLinks /></div><form className="contact-form" onSubmit={submit}><label>Your name <b>*</b><input name="name" autoComplete="name" required maxLength="100" placeholder="Name" /></label><label>Email address <b>*</b><input name="email" type="email" autoComplete="email" required maxLength="254" placeholder="you@example.com" /></label><div className="form-row"><label>Project type <small>OPTIONAL</small><select name="projectType" defaultValue=""><option value="">Choose a type</option><option>Video editing</option><option>Motion graphics</option><option>Filmmaking</option><option>Other</option></select></label><label>Budget range <small>OPTIONAL</small><select name="budget" defaultValue=""><option value="">Prefer not to say</option><option>Not sure yet</option><option>Let’s discuss</option></select></label></div><label>Project brief <b>*</b><textarea name="message" required minLength="10" maxLength="5000" rows="5" placeholder="A few details about the story, timing or idea…" /></label><div className="honeypot" aria-hidden="true"><label>Leave this empty<input name="website" tabIndex="-1" autoComplete="off" /></label></div><ActionButton className="button button-red" type="submit" size="sm" radius={10} style={{ minHeight: 48, padding: '0 18px', fontSize: 10, fontWeight: 700 }} disabled={status === 'loading'}>{status === 'loading' ? 'Sending…' : status === 'success' ? <>Message accepted <Check size={16} /></> : <>Send the brief <ArrowUpRight size={16} /></>}</ActionButton><p className={`form-feedback ${status}`} role="status">{feedback}</p></form></section></main>
 }
 
-function NotFound() { return <main id="top" className="not-found page-shell"><span className="eyebrow">404 / LOST FRAME</span><h1>This page<br /><em>is out of focus.</em></h1><GlassButton as={Link} className="button button-red" to="/" size="sm" radius={10} style={{ minHeight: 48, padding: '0 18px', fontSize: 10, fontWeight: 700 }}>Back to home <ArrowLeft size={15} /></GlassButton></main> }
+function NotFound() { return <main id="top" className="not-found page-shell"><span className="eyebrow">404 / LOST FRAME</span><h1>This page<br /><em>is out of focus.</em></h1><ActionButton as={Link} className="button button-red" to="/" size="sm" radius={10} style={{ minHeight: 48, padding: '0 18px', fontSize: 10, fontWeight: 700 }}>Back to home <ArrowLeft size={15} /></ActionButton></main> }
 
 export default function App() {
   const [theme, setTheme] = useState(() => {
