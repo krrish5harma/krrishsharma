@@ -7,6 +7,8 @@ import PillNav from './components/PillNav.jsx'
 import CurvedLoop from './components/CurvedLoop.jsx'
 import ShinyText from './components/ShinyText.jsx'
 
+const HERO_CAROUSEL_INTERVAL_MS = 2000
+
 const SideRays = lazy(() => import('./components/SideRays.jsx'))
 const CircularGallery = lazy(() => import('./components/CircularGallery.jsx'))
 
@@ -83,7 +85,7 @@ function HeroVideoCarousel() {
   }))
   return <div className="hero-video-carousel">
     <Suspense fallback={<div className="gallery-loading"><span className="eyebrow">VIDEO CAROUSEL</span><p>Waiting for your video links.</p></div>}>
-      <CircularGallery items={items} bend={2.2} textColor="#ffffff" borderRadius={0.05} scrollEase={0.07} itemSize={0.82} itemAspect={16 / 10} gap={0.24} wave={0.18} fadeEdges={0.11} shadow={0.3} grayscale={false} showTitles font="500 20px 'DM Mono'" scrollSpeed={1.4} autoAdvanceMs={2000} snap openOnClick intro />
+      <CircularGallery items={items} bend={2.2} textColor="#ffffff" borderRadius={0.05} scrollEase={0.07} itemSize={0.82} itemAspect={16 / 10} gap={0.24} wave={0.18} fadeEdges={0.11} shadow={0.3} grayscale={false} showTitles font="500 20px 'DM Mono'" scrollSpeed={1.4} autoAdvanceMs={HERO_CAROUSEL_INTERVAL_MS} snap openOnClick intro />
     </Suspense>
     <span className="gallery-note">MUTED PREVIEWS · TAP TO FOCUS · 02 SEC AUTO-ADVANCE</span>
   </div>
@@ -100,7 +102,7 @@ function Hero() {
     <div className="hero-grain" />
     <div className="hero-copy" data-reveal>
       <span className="eyebrow hero-kicker"><i /> INDEPENDENT CREATIVE <b>—</b> JAIPUR, INDIA</span>
-      <h1 className="hero-title"><ShinyText text="Krrish" className="title-serif" color="#ffffff" shineColor="#5f00ff" speed={2} shineWidth={40} softness={0.8} trigger="loop" glow={0.9} pauseOnHover /><span className="title-sans"><ShinyText text="SHARMA" color="#ffffff" shineColor="#5f00ff" speed={2} shineWidth={40} softness={0.8} trigger="loop" glow={0.9} pauseOnHover /><span className="red-period">.</span></span></h1>
+      <h1 className="hero-title"><ShinyText text="Krrish" className="title-serif" color="#ffffff" shineColor="#5f00ff" speed={HERO_CAROUSEL_INTERVAL_MS / 1000} shineWidth={40} softness={0.8} trigger="loop" glow={0.9} pauseOnHover /><span className="title-sans"><ShinyText text="SHARMA" color="#ffffff" shineColor="#5f00ff" speed={HERO_CAROUSEL_INTERVAL_MS / 1000} shineWidth={40} softness={0.8} trigger="loop" glow={0.9} pauseOnHover /><span className="red-period">.</span></span></h1>
       <div className="hero-description"><span className="hero-role">Video editor<br />& motion artist.</span><p>I shape footage, movement and atmosphere into stories that stay with you.</p></div>
       <div className="hero-education"><span>BASED IN INDIA</span><span>BCA · MANIPAL UNIVERSITY JAIPUR · CLASS OF 2027</span></div>
       <div className="hero-actions"><BookCallButton className="hero-book-call" style={{ minHeight: 48, padding: '0 18px', fontSize: 10, fontWeight: 700 }}>Book a call <ArrowUpRight size={16} /></BookCallButton><Link to="/work" className="under-link">Explore the work <ArrowDownRight size={14} /></Link></div>
