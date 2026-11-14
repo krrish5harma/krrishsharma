@@ -5,7 +5,6 @@ import { getCalApi } from '@calcom/embed-react'
 import { capabilities, profile, projects } from './data/profile.js'
 import PillNav from './components/PillNav.jsx'
 import CurvedLoop from './components/CurvedLoop.jsx'
-import TechText from './components/TechText.jsx'
 
 const SideRays = lazy(() => import('./components/SideRays.jsx'))
 const CircularGallery = lazy(() => import('./components/CircularGallery.jsx'))
@@ -100,7 +99,7 @@ function Hero() {
     <div className="hero-grain" />
     <div className="hero-copy" data-reveal>
       <span className="eyebrow hero-kicker"><i /> INDEPENDENT CREATIVE <b>—</b> JAIPUR, INDIA</span>
-      <h1 className="hero-title tech-hero-title" aria-label="Krrish Sharma"><span className="sr-only">Krrish Sharma</span><TechText className="tech-hero-line tech-hero-serif" text="Krrish" fontFamily="'Instrument Serif', Georgia, serif" fontWeight={400} fontSize={150} letterSpacing={-0.04} align="left" color="currentColor" accentColor="#d62839" reveal="letter" dashLength={4} dashGap={2} specks={15} intro="none" clickKick guides={false} /><span className="tech-hero-line tech-hero-sans"><TechText text="SHARMA" fontFamily="Manrope, Arial, sans-serif" fontWeight={800} fontSize={120} letterSpacing={-0.08} align="left" color="currentColor" accentColor="#d62839" reveal="letter" dashLength={4} dashGap={2} specks={15} intro="none" clickKick guides={false} /></span><span className="red-period tech-hero-period">.</span></h1>
+      <h1 className="hero-title"><span className="title-serif">Krrish</span><span className="title-sans">SHARMA<span className="red-period">.</span></span></h1>
       <div className="hero-description"><span className="hero-role">Video editor<br />& motion artist.</span><p>I shape footage, movement and atmosphere into stories that stay with you.</p></div>
       <div className="hero-education"><span>BASED IN INDIA</span><span>BCA · MANIPAL UNIVERSITY JAIPUR · CLASS OF 2027</span></div>
       <div className="hero-actions"><BookCallButton className="hero-book-call" style={{ minHeight: 48, padding: '0 18px', fontSize: 10, fontWeight: 700 }}>Book a call <ArrowUpRight size={16} /></BookCallButton><Link to="/work" className="under-link">Explore the work <ArrowDownRight size={14} /></Link></div>
