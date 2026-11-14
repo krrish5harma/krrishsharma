@@ -87,7 +87,7 @@ function HeroVideoCarousel() {
     <Suspense fallback={<div className="gallery-loading"><span className="eyebrow">VIDEO CAROUSEL</span><p>Waiting for your video links.</p></div>}>
       <CircularGallery items={items} bend={2.2} textColor="#ffffff" borderRadius={0.05} scrollEase={0.07} itemSize={0.82} itemAspect={16 / 10} gap={0.24} wave={0.18} fadeEdges={0.11} shadow={0.3} grayscale={false} showTitles font="500 20px 'DM Mono'" scrollSpeed={1.4} autoAdvanceMs={HERO_CAROUSEL_INTERVAL_MS} snap openOnClick intro />
     </Suspense>
-    <span className="gallery-note">MUTED PREVIEWS · TAP TO FOCUS · 02 SEC AUTO-ADVANCE</span>
+    <span className="gallery-note">MUTED PREVIEWS · TAP TO FOCUS · 3.5 SEC AUTO-ADVANCE</span>
   </div>
 }
 
@@ -114,7 +114,7 @@ function Hero() {
 }
 
 function SectionLabel({ number, title }) {
-  return <div className="section-label"><span>{number} / 08</span><span>{title}</span><i /></div>
+  return <div className="section-label"><span>{number} / 09</span><span>{title}</span><i /></div>
 }
 
 function SectionTitle({ eyebrow, children, className = '' }) {
@@ -170,6 +170,34 @@ function WorkSection({ standalone = false }) {
   </section>
 }
 
+const featuredReels = [
+  { code: 'Dd9XWwXTwPa', label: '01' },
+  { code: 'DWEPrx7kwCK', label: '02' },
+  { code: 'DcoCA0LTpXS', label: '03' },
+]
+
+function FeaturedReelsSection() {
+  return <section className="featured-reels-section page-shell" id="instagram-reels">
+    <SectionLabel number="05" title="THE REELS THAT TRAVELED" />
+    <div className="featured-reels-heading">
+      <SectionTitle eyebrow="SELECTED FROM INSTAGRAM">Made to<br /><em>move people.</em></SectionTitle>
+      <p data-reveal>Three of my most watched edits, straight from Instagram. Open a reel to watch, like or share it there.</p>
+    </div>
+    <div className="featured-reels-grid">
+      {featuredReels.map(({ code, label }) => {
+        const reelUrl = `https://www.instagram.com/reel/${code}/`
+        return <article className="featured-reel-card" data-reveal key={code}>
+          <div className="featured-reel-topline"><span>FEATURED REEL</span><span>{label} / 03</span></div>
+          <div className="featured-reel-frame">
+            <iframe src={`${reelUrl}embed/`} title={`Krrish Sharma featured Instagram reel ${label}`} loading="lazy" allow="encrypted-media; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" />
+          </div>
+          <a className="featured-reel-link" href={reelUrl} target="_blank" rel="noreferrer"><span>WATCH ON INSTAGRAM</span><ArrowUpRight size={15} /></a>
+        </article>
+      })}
+    </div>
+  </section>
+}
+
 function ExperimentsSection() {
   const notes = [
     { mark: 'A', label: 'PACE', title: 'Let it breathe.', text: 'A quiet beat can hit harder than another cut.' },
@@ -177,7 +205,7 @@ function ExperimentsSection() {
     { mark: 'C', label: 'TEXTURE', title: 'Finish with feeling.', text: 'Sound, tone and detail shape what stays in the frame.' },
   ]
   return <section className="experiments-section page-shell">
-    <SectionLabel number="05" title="NOTES FROM THE EDIT" />
+    <SectionLabel number="06" title="NOTES FROM THE EDIT" />
     <div className="experiments-heading"><SectionTitle eyebrow="QUESTIONS I KEEP COMING BACK TO">The detail<br />in <em>between.</em></SectionTitle><p data-reveal>Small creative questions shape the bigger feeling. These are a few that keep me curious.</p></div>
     <div className="experiments-grid">{notes.map((note) => <article className="experiment-note" data-reveal key={note.mark}><span>{note.mark} / {note.label}</span><h3>{note.title}</h3><p>{note.text}</p><i>✳</i></article>)}</div>
   </section>
@@ -185,14 +213,14 @@ function ExperimentsSection() {
 
 function JourneySection() {
   return <section className="journey-section page-shell">
-    <SectionLabel number="06" title="THE JOURNEY SO FAR" />
+    <SectionLabel number="07" title="THE JOURNEY SO FAR" />
     <div className="journey-layout"><SectionTitle eyebrow="STILL LEARNING · ALWAYS MAKING">In progress<br /><em>by design.</em></SectionTitle><div className="timeline"><div className="timeline-item" data-reveal><span>NOW</span><div><h3>Independent creative</h3><p>Video editing · Motion graphics · Filmmaking</p></div><i /></div><div className="timeline-item" data-reveal><span>2027</span><div><h3>BCA · Manipal University Jaipur</h3><p>Expected graduation</p></div><i /></div></div></div>
   </section>
 }
 
 function ContactSection() {
   return <section className="contact-section page-shell" id="contact">
-    <SectionLabel number="07" title="LET’S MAKE SOMETHING" />
+    <SectionLabel number="08" title="LET’S MAKE SOMETHING" />
     <div className="contact-callout" data-reveal><span className="eyebrow">HAVE A STORY IN MIND?</span><h2>Let’s make<br /><em>it move.</em></h2><ActionButton as={Link} to="/contact" className="button button-cream" size="sm" radius={10} style={{ minHeight: 48, padding: '0 18px', fontSize: 10, fontWeight: 700 }}>Tell me about it <ArrowUpRight size={16} /></ActionButton><div className="contact-stamp">OPEN<br />FOR<br />PROJECTS<span>↗</span></div></div>
   </section>
 }
@@ -226,7 +254,7 @@ function Home() {
     try { sessionStorage.setItem('krrish-intro-seen', '1') } catch { /* Storage can be disabled. */ }
     setIntro(false)
   }
-  return <><main id="top"><Hero /><AboutSection /><ExpertiseSection /><WorkSection /><ExperimentsSection /><JourneySection /><ContactSection /></main>{intro && <IntroLoader onFinish={finishIntro} />}</>
+  return <><main id="top"><Hero /><AboutSection /><ExpertiseSection /><WorkSection /><FeaturedReelsSection /><ExperimentsSection /><JourneySection /><ContactSection /></main>{intro && <IntroLoader onFinish={finishIntro} />}</>
 }
 
 function PageIntro({ eyebrow, title, children }) {
@@ -261,7 +289,7 @@ function ContactPage() {
       setStatus('success'); setFeedback('Thanks — your message has been accepted.'); form.reset()
     } catch (error) { setStatus('error'); setFeedback(error.message || 'Connection issue. Please try again.') }
   }
-  return <main id="top" className="inner-page"><PageIntro eyebrow="CONTACT / 07" title={<>Let’s make<br /><em>something.</em></>}>Have a film, edit or idea you want to bring to life? Tell me a little about it.</PageIntro><section className="contact-page page-shell"><div className="contact-page-intro"><span className="eyebrow">A GOOD PLACE TO START</span><p>Share what you’re working on, where you are in the process and what you’re imagining.</p><SocialLinks /></div><form className="contact-form" onSubmit={submit}><label>Your name <b>*</b><input name="name" autoComplete="name" required maxLength="100" placeholder="Name" /></label><label>Email address <b>*</b><input name="email" type="email" autoComplete="email" required maxLength="254" placeholder="you@example.com" /></label><div className="form-row"><label>Project type <small>OPTIONAL</small><select name="projectType" defaultValue=""><option value="">Choose a type</option><option>Video editing</option><option>Motion graphics</option><option>Filmmaking</option><option>Other</option></select></label><label>Budget range <small>OPTIONAL</small><select name="budget" defaultValue=""><option value="">Prefer not to say</option><option>Not sure yet</option><option>Let’s discuss</option></select></label></div><label>Project brief <b>*</b><textarea name="message" required minLength="10" maxLength="5000" rows="5" placeholder="A few details about the story, timing or idea…" /></label><div className="honeypot" aria-hidden="true"><label>Leave this empty<input name="website" tabIndex="-1" autoComplete="off" /></label></div><ActionButton className="button button-red" type="submit" size="sm" radius={10} style={{ minHeight: 48, padding: '0 18px', fontSize: 10, fontWeight: 700 }} disabled={status === 'loading'}>{status === 'loading' ? 'Sending…' : status === 'success' ? <>Message accepted <Check size={16} /></> : <>Send the brief <ArrowUpRight size={16} /></>}</ActionButton><p className={`form-feedback ${status}`} role="status">{feedback}</p></form></section></main>
+  return <main id="top" className="inner-page"><PageIntro eyebrow="CONTACT / 08" title={<>Let’s make<br /><em>something.</em></>}>Have a film, edit or idea you want to bring to life? Tell me a little about it.</PageIntro><section className="contact-page page-shell"><div className="contact-page-intro"><span className="eyebrow">A GOOD PLACE TO START</span><p>Share what you’re working on, where you are in the process and what you’re imagining.</p><SocialLinks /></div><form className="contact-form" onSubmit={submit}><label>Your name <b>*</b><input name="name" autoComplete="name" required maxLength="100" placeholder="Name" /></label><label>Email address <b>*</b><input name="email" type="email" autoComplete="email" required maxLength="254" placeholder="you@example.com" /></label><div className="form-row"><label>Project type <small>OPTIONAL</small><select name="projectType" defaultValue=""><option value="">Choose a type</option><option>Video editing</option><option>Motion graphics</option><option>Filmmaking</option><option>Other</option></select></label><label>Budget range <small>OPTIONAL</small><select name="budget" defaultValue=""><option value="">Prefer not to say</option><option>Not sure yet</option><option>Let’s discuss</option></select></label></div><label>Project brief <b>*</b><textarea name="message" required minLength="10" maxLength="5000" rows="5" placeholder="A few details about the story, timing or idea…" /></label><div className="honeypot" aria-hidden="true"><label>Leave this empty<input name="website" tabIndex="-1" autoComplete="off" /></label></div><ActionButton className="button button-red" type="submit" size="sm" radius={10} style={{ minHeight: 48, padding: '0 18px', fontSize: 10, fontWeight: 700 }} disabled={status === 'loading'}>{status === 'loading' ? 'Sending…' : status === 'success' ? <>Message accepted <Check size={16} /></> : <>Send the brief <ArrowUpRight size={16} /></>}</ActionButton><p className={`form-feedback ${status}`} role="status">{feedback}</p></form></section></main>
 }
 
 function NotFound() { return <main id="top" className="not-found page-shell"><span className="eyebrow">404 / LOST FRAME</span><h1>This page<br /><em>is out of focus.</em></h1><ActionButton as={Link} className="button button-red" to="/" size="sm" radius={10} style={{ minHeight: 48, padding: '0 18px', fontSize: 10, fontWeight: 700 }}>Back to home <ArrowLeft size={15} /></ActionButton></main> }

@@ -73,5 +73,24 @@
 @media(max-width:1000px){.hero-video-carousel{height:460px;}}
 @media(max-width:700px){.hero-video-carousel{height:clamp(360px,105vw,500px);}}
 .site-header-nav{flex:1;min-width:0;display:flex;justify-content:center;}
+
+.featured-reels-section{padding-top:100px}
+.featured-reels-heading{display:flex;align-items:flex-end;justify-content:space-between;gap:30px;padding:48px 0 35px}
+.featured-reels-heading>p{max-width:300px;margin:0 0 7px;color:var(--muted);font-size:11px;line-height:1.8}
+.featured-reels-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;align-items:start}
+.featured-reel-card{min-width:0;padding:12px;background:var(--panel);border:1px solid var(--line);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.75,.2,1),border-color .3s}
+.featured-reel-card:hover{border-color:rgba(214,40,57,.55);transform:translateY(-5px)}
+.featured-reel-card[data-reveal]{transform:translateY(22px)}
+.featured-reel-card[data-reveal].is-visible{transform:translateY(0)}
+.featured-reel-card:hover[data-reveal].is-visible{transform:translateY(-5px)}
+.featured-reel-topline{display:flex;justify-content:space-between;align-items:center;padding:1px 1px 11px;color:var(--muted);font:8px var(--mono);letter-spacing:.12em}
+.featured-reel-topline span:first-child{color:var(--red-hot)}
+.featured-reel-frame{position:relative;overflow:hidden;aspect-ratio:9/16;background:linear-gradient(145deg,rgba(181,18,36,.16),transparent 45%),var(--bg);border:1px solid var(--line)}
+.featured-reel-frame:after{content:"";position:absolute;inset:0;pointer-events:none;border:1px solid rgba(255,255,255,.025)}
+.featured-reel-frame iframe{display:block;width:100%;height:100%;border:0;background:var(--bg)}
+.featured-reel-link{display:flex;justify-content:space-between;align-items:center;margin-top:11px;padding:4px 1px 1px;color:var(--ink);font:8px var(--mono);letter-spacing:.1em;transition:color .2s}
+.featured-reel-link:hover{color:var(--red-hot)}
+@media(max-width:900px){.featured-reels-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.featured-reel-card:last-child{grid-column:1/-1;width:calc(50% - 9px);justify-self:center}}
+@media(max-width:700px){.featured-reels-section{padding-top:77px}.featured-reels-heading{align-items:flex-start;flex-direction:column;gap:20px;padding:36px 0 26px}.featured-reels-heading>p{font-size:10px}.featured-reels-grid{grid-template-columns:1fr;gap:16px}.featured-reel-card:last-child{grid-column:auto;width:100%}.featured-reel-card{padding:9px}}
 .site-header .portfolio-pill-nav{max-width:100%;}
 .site-header{background:transparent;backdrop-filter:none;border-bottom:0;}
