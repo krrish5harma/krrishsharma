@@ -177,24 +177,47 @@ const featuredReels = [
 ]
 
 function FeaturedReelsSection() {
+  const [activeReel, setActiveReel] = useState(null)
+  useEffect(() => {
+    if (!activeReel) return undefined
+    const onKeyDown = (event) => { if (event.key === 'Escape') setActiveReel(null) }
+    const previousOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    window.addEventListener('keydown', onKeyDown)
+    return () => {
+      document.body.style.overflow = previousOverflow
+      window.removeEventListener('keydown', onKeyDown)
+    }
+  }, [activeReel])
+
   return <section className="featured-reels-section page-shell" id="instagram-reels">
     <SectionLabel number="05" title="THE REELS THAT TRAVELED" />
     <div className="featured-reels-heading">
       <SectionTitle eyebrow="SELECTED FROM INSTAGRAM">Made to<br /><em>move people.</em></SectionTitle>
-      <p data-reveal>Three of my most watched edits, straight from Instagram. Open a reel to watch, like or share it there.</p>
+      <p data-reveal>Three standout edits. Pick a frame to watch the full reel.</p>
     </div>
     <div className="featured-reels-grid">
       {featuredReels.map(({ code, label }) => {
         const reelUrl = `https://www.instagram.com/reel/${code}/`
         return <article className="featured-reel-card" data-reveal key={code}>
-          <div className="featured-reel-topline"><span>FEATURED REEL</span><span>{label} / 03</span></div>
-          <div className="featured-reel-frame">
-            <iframe src={`${reelUrl}embed/`} title={`Krrish Sharma featured Instagram reel ${label}`} loading="lazy" allow="encrypted-media; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" />
-          </div>
-          <a className="featured-reel-link" href={reelUrl} target="_blank" rel="noreferrer"><span>WATCH ON INSTAGRAM</span><ArrowUpRight size={15} /></a>
+          <button type="button" className="featured-reel-poster" onClick={() => setActiveReel({ code, label, reelUrl })} aria-label={`Play featured Instagram reel ${label}`}>
+            <span className="reel-poster-index">{label}<i> / 03</i></span>
+            <span className="reel-poster-mark" aria-hidden="true">K<span>.</span></span>
+            <span className="reel-poster-meta"><i>INSTAGRAM</i><b>FEATURED REEL</b></span>
+            <span className="reel-play-mark" aria-hidden="true"><i /></span>
+            <span className="reel-poster-bottom"><span>VIEW THE CUT</span><ArrowUpRight size={15} /></span>
+          </button>
+          <a className="featured-reel-link" href={reelUrl} target="_blank" rel="noreferrer"><span>OPEN ON INSTAGRAM</span><ArrowUpRight size={13} /></a>
         </article>
       })}
     </div>
+    {activeReel && <div className="reel-modal-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setActiveReel(null) }}>
+      <section className="reel-modal" role="dialog" aria-modal="true" aria-label={`Featured Instagram reel ${activeReel.label}`}>
+        <div className="reel-modal-heading"><span>INSTAGRAM REEL <i>/ {activeReel.label}</i></span><button type="button" onClick={() => setActiveReel(null)} aria-label="Close reel"><span aria-hidden="true">×</span></button></div>
+        <div className="reel-modal-frame"><iframe src={`${activeReel.reelUrl}embed/?theme=dark`} title={`Krrish Sharma Instagram reel ${activeReel.label}`} allow="encrypted-media; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" /></div>
+        <a href={activeReel.reelUrl} target="_blank" rel="noreferrer">OPEN IN INSTAGRAM <ArrowUpRight size={13} /></a>
+      </section>
+    </div>}
   </section>
 }
 
