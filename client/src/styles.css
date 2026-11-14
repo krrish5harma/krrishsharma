@@ -46,7 +46,6 @@
 @media(max-width:700px){.work-carousel{height:clamp(320px,98vw,430px)}.work-card{width:86%}}
 @media(prefers-reduced-motion:reduce){.work-card,.work-card[data-reveal]{transition:none!important}}
 
-.experiments-section{padding-top:100px}.experiments-heading{display:flex;align-items:flex-end;justify-content:space-between;gap:30px;padding:48px 0 35px}.experiments-heading>p{max-width:280px;margin:0 0 7px;color:var(--muted);font-size:11px;line-height:1.8}.experiments-grid{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}.experiment-note{min-height:220px;position:relative;padding:18px 20px;border-right:1px solid var(--line);overflow:hidden;transition:background .25s}.experiment-note:first-child{padding-left:0}.experiment-note:last-child{border:0}.experiment-note:hover{background:var(--panel)}.experiment-note>span{font:8px var(--mono);letter-spacing:.13em;color:var(--red-hot)}.experiment-note h3{position:relative;z-index:1;margin:48px 0 10px;font:clamp(27px,3.2vw,40px)/.9 var(--serif)}.experiment-note p{position:relative;z-index:1;max-width:245px;margin:0;color:var(--muted);font-size:10px;line-height:1.7}.experiment-note>i{position:absolute;right:14px;top:25px;color:var(--red-hot);font:54px var(--serif);font-style:normal;opacity:.5;transition:transform .45s}.experiment-note:hover>i{transform:rotate(55deg) scale(1.2)}@media(max-width:700px){.experiments-section{padding-top:77px}.experiments-heading{align-items:flex-start;flex-direction:column;gap:20px;padding:36px 0 26px}.experiments-heading>p{font-size:10px}.experiments-grid{grid-template-columns:1fr}.experiment-note,.experiment-note:first-child{min-height:175px;padding:17px 14px;border-right:0;border-bottom:1px solid var(--line)}.experiment-note:last-child{border-bottom:0}.experiment-note h3{margin-top:35px;font-size:31px}}
 
 /* The editorial artwork keeps its own contrast in both site themes. */
 .artwork-type-front{color:#f5f3f0}
@@ -108,3 +107,8 @@
 @media(max-width:700px){.featured-reels-section{padding-top:58px}.featured-reels-heading{align-items:flex-start;flex-direction:column;gap:12px;padding:25px 0 19px}.featured-reels-heading>p{font-size:9px}.featured-reels-grid{grid-template-columns:1fr;gap:10px}.featured-reel-poster{height:190px;padding:13px 15px}.reel-poster-mark{width:76px;height:76px}.reel-poster-meta{left:15px;right:15px}.reel-modal{width:min(390px,100%);padding:10px}.reel-modal-frame{height:min(68svh,600px)}}
 .site-header .portfolio-pill-nav{max-width:100%;}
 .site-header{background:transparent;backdrop-filter:none;border-bottom:0;}
+
+#about,#work,#instagram-reels,#journey,#contact{scroll-margin-top:104px}
+.contact-page-inline{padding-top:38px;padding-bottom:0;margin-inline:0}
+.contact-section{padding-bottom:112px}
+@media(max-width:700px){#about,#work,#instagram-reels,#journey,#contact{scroll-margin-top:82px}.contact-page-inline{padding-top:27px;padding-bottom:0}.contact-section{padding-bottom:78px}}

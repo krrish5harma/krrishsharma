@@ -1,5 +1,4 @@
 import { lazy, Suspense, useEffect, useRef, useState } from 'react'
-import { Link, Route, Routes, useLocation, useParams } from 'react-router-dom'
 import { ArrowDown, ArrowDownRight, ArrowLeft, ArrowRight, ArrowUpRight, Check, Eye, Moon, Sun } from 'lucide-react'
 import { getCalApi } from '@calcom/embed-react'
 import { capabilities, profile, projects } from './data/profile.js'
@@ -47,21 +46,19 @@ function BookCallButton({ className = '', children = 'Book a call', size = 'sm',
   >{children}<ArrowUpRight size={14} /></ActionButton>
 }
 
-function RouterPillLink({ href, ...props }) {
-  return <Link to={href} {...props} />
+function PillAnchor({ href, ...props }) {
+  return <a href={href} {...props} />
 }
 
 const navigationItems = [
-  { label: 'Work', href: '/work' },
-  { label: 'About', href: '/about' },
-  { label: 'Contact', href: '/contact' },
+  { label: 'Work', href: '#work' },
+  { label: 'About', href: '#about' },
+  { label: 'Contact', href: '#contact' },
 ]
 
 function Header({ theme, onToggle }) {
-  const location = useLocation()
-  const activeHref = location.pathname.startsWith('/work') ? '/work' : ['/about', '/contact'].includes(location.pathname) ? location.pathname : undefined
   return <header className="site-header">
-    <div className="site-header-nav"><PillNav logo="/krrish-silhouette.png" logoAlt="Krrish Sharma home" logoHref="/" items={navigationItems} activeHref={activeHref} defaultActiveIndex={-1} linkComponent={RouterPillLink} theme={theme} layout="split" itemStyle="pill" hoverEffect="fill" indicator="dot" surface="none" size="sm" highlightColor="#d62839" highlightTextColor="#ffffff" collapse="auto" intro ariaLabel="Main navigation" className="portfolio-pill-nav" /></div>
+    <div className="site-header-nav"><PillNav logo="/krrish-silhouette.png" logoAlt="Krrish Sharma home" logoHref="#top" items={navigationItems} defaultActiveIndex={-1} linkComponent={PillAnchor} theme={theme} layout="split" itemStyle="pill" hoverEffect="fill" indicator="dot" surface="none" size="sm" highlightColor="#d62839" highlightTextColor="#ffffff" collapse="auto" intro ariaLabel="Main navigation" className="portfolio-pill-nav" /></div>
     <BookCallButton className="header-book-call" />
     <ThemeSwitch theme={theme} onToggle={onToggle} />
   </header>
@@ -105,7 +102,7 @@ function Hero() {
       <h1 className="hero-title"><ShinyText text="Krrish" className="title-serif" color="#ffffff" shineColor="#5f00ff" speed={HERO_CAROUSEL_INTERVAL_MS / 1000} shineWidth={100} softness={0.8} trigger="loop" glow={0.9} easing="snappy" pauseOnHover /><span className="title-sans"><ShinyText text="SHARMA" color="#ffffff" shineColor="#5f00ff" speed={HERO_CAROUSEL_INTERVAL_MS / 1000} shineWidth={100} softness={0.8} trigger="loop" glow={0.9} easing="snappy" pauseOnHover /><span className="red-period">.</span></span></h1>
       <div className="hero-description"><span className="hero-role">Video editor<br />& motion artist.</span><p>I shape footage, movement and atmosphere into stories that stay with you.</p></div>
       <div className="hero-education"><span>BASED IN INDIA</span><span>BCA · MANIPAL UNIVERSITY JAIPUR · CLASS OF 2027</span></div>
-      <div className="hero-actions"><BookCallButton className="hero-book-call" style={{ minHeight: 48, padding: '0 18px', fontSize: 10, fontWeight: 700 }}>Book a call <ArrowUpRight size={16} /></BookCallButton><Link to="/work" className="under-link">Explore the work <ArrowDownRight size={14} /></Link></div>
+      <div className="hero-actions"><BookCallButton className="hero-book-call" style={{ minHeight: 48, padding: '0 18px', fontSize: 10, fontWeight: 700 }}>Book a call <ArrowUpRight size={16} /></BookCallButton><a href="#work" className="under-link">Explore the work <ArrowDownRight size={14} /></a></div>
       <SocialLinks compact />
     </div>
     <div className="hero-visual" data-reveal><div className="visual-index"><span>VIDEO / 01</span><span>YOUR REEL</span></div><HeroVideoCarousel /></div>
@@ -114,7 +111,7 @@ function Hero() {
 }
 
 function SectionLabel({ number, title }) {
-  return <div className="section-label"><span>{number} / 09</span><span>{title}</span><i /></div>
+  return <div className="section-label"><span>{number} / 08</span><span>{title}</span><i /></div>
 }
 
 function SectionTitle({ eyebrow, children, className = '' }) {
@@ -126,7 +123,7 @@ function AboutSection() {
     <SectionLabel number="02" title="A LITTLE ABOUT ME" />
     <div className="about-layout">
       <div className="about-monogram" data-reveal><div className="mono-frame about-portrait-frame"><img src="/krrish-about.jpg" alt="Krrish Sharma standing beside a car" /><i>SHARMA</i><b>↗</b></div><span className="mono-caption">JAIPUR · INDIA<br />26° 54′ N / 75° 48′ E</span></div>
-      <div className="about-copy" data-reveal><span className="eyebrow">EDITOR BY INSTINCT · FILMMAKER BY CURIOSITY</span><h2>Every frame<br />has a <em>feeling.</em></h2><p>I’m Krrish, a freelance creative video editor and motion graphics artist. I move between the edit, the camera and the details that make an image feel alive.</p><p>Currently studying BCA at Manipal University Jaipur, graduating in 2027. I enjoy working where cinematic storytelling meets motion and visual polish.</p><Link to="/about" className="under-link">More about my approach <ArrowUpRight size={14} /></Link></div>
+      <div className="about-copy" data-reveal><span className="eyebrow">EDITOR BY INSTINCT · FILMMAKER BY CURIOSITY</span><h2>Every frame<br />has a <em>feeling.</em></h2><p>I’m Krrish, a freelance creative video editor and motion graphics artist. I move between the edit, the camera and the details that make an image feel alive.</p><p>Currently studying BCA at Manipal University Jaipur, graduating in 2027. I enjoy working where cinematic storytelling meets motion and visual polish.</p><a href="#journey" className="under-link">More about my approach <ArrowUpRight size={14} /></a></div>
     </div>
     <Marquee className="skills-marquee">VIDEO EDITING · MOTION DESIGN · CINEMATOGRAPHY · FILMMAKING</Marquee>
   </section>
@@ -143,10 +140,10 @@ function ExpertiseSection() {
 
 function WorkCard({ project, index, relative }) {
   const distance = Math.abs(relative)
-  return <Link to={`/work/${project.slug}`} className={`work-card ${relative === 0 ? 'is-active' : ''}`} data-reveal aria-hidden={relative !== 0} tabIndex={relative === 0 ? 0 : -1} style={{ '--x': `${relative * 86}%`, '--rot': `${relative * -7}deg`, '--scale': distance ? '.84' : '1', '--card-opacity': distance > 1 ? '.3' : distance ? '.7' : '1', '--card-z': 10 - distance }}><div className="work-card-image"><img src={project.thumbnail} alt={project.title} loading="lazy" /><span className="work-card-count">0{index + 1}</span><span className="work-card-open"><ArrowUpRight /></span><span className="work-card-title">{project.title}</span></div><div className="work-card-meta"><span>{project.category}</span><span>{project.year || 'PROJECT'}</span></div></Link>
+  return <a href={project.videoUrl || project.thumbnail} target="_blank" rel="noreferrer" className={`work-card ${relative === 0 ? 'is-active' : ''}`} data-reveal aria-hidden={relative !== 0} tabIndex={relative === 0 ? 0 : -1} style={{ '--x': `${relative * 86}%`, '--rot': `${relative * -7}deg`, '--scale': distance ? '.84' : '1', '--card-opacity': distance > 1 ? '.3' : distance ? '.7' : '1', '--card-z': 10 - distance }}><div className="work-card-image"><img src={project.thumbnail} alt={project.title} loading="lazy" /><span className="work-card-count">0{index + 1}</span><span className="work-card-open"><ArrowUpRight /></span><span className="work-card-title">{project.title}</span></div><div className="work-card-meta"><span>{project.category}</span><span>{project.year || 'PROJECT'}</span></div></a>
 }
 
-function WorkSection({ standalone = false }) {
+function WorkSection() {
   const [active, setActive] = useState(0)
   const [paused, setPaused] = useState(false)
   useEffect(() => {
@@ -154,14 +151,10 @@ function WorkSection({ standalone = false }) {
     const timer = window.setInterval(() => setActive((index) => (index + 1) % projects.length), 5000)
     return () => window.clearInterval(timer)
   }, [paused])
-  const categories = ['All', ...new Set(projects.map((project) => project.category))]
-  const [filter, setFilter] = useState('All')
-  const visible = filter === 'All' ? projects : projects.filter((project) => project.category === filter)
-  useEffect(() => setActive(0), [filter])
-  return <section className={`work-section page-shell ${standalone ? 'work-page-section' : ''}`} id="work">
+  const visible = projects
+  return <section className="work-section page-shell" id="work">
     <SectionLabel number="04" title="SELECTED WORK" />
-    <div className="work-heading"><SectionTitle eyebrow="A FEW THINGS MADE WITH INTENTION">In good<br /><em>company.</em></SectionTitle>{!standalone && <Link to="/work" className="under-link">View the full reel <ArrowUpRight size={14} /></Link>}</div>
-    {standalone && <div className="work-filters" role="group" aria-label="Filter work by category">{categories.map((category) => <ActionButton size="sm" radius={999} className={filter === category ? 'active' : ''} style={{ padding: '9px 14px', fontSize: 9 }} onClick={() => setFilter(category)} key={category}>{category}</ActionButton>)}</div>}
+    <div className="work-heading"><SectionTitle eyebrow="A FEW THINGS MADE WITH INTENTION">In good<br /><em>company.</em></SectionTitle><a href="#instagram-reels" className="under-link">See featured reels <ArrowUpRight size={14} /></a></div>
     {visible.length ? <div className="work-carousel-wrap" onPointerEnter={() => setPaused(true)} onPointerLeave={() => setPaused(false)} onFocus={() => setPaused(true)} onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setPaused(false) }}>
       <div className="work-carousel">{visible.map((project, index) => { const wrapped = (index - active + visible.length) % visible.length; const relative = wrapped > visible.length / 2 ? wrapped - visible.length : wrapped; return <WorkCard project={project} index={index} relative={relative} key={project.slug} /> })}</div>
       {visible.length > 1 && <div className="work-controls"><ActionButton size="sm" radius={999} style={{ padding: 10 }} aria-label="Previous project" onClick={() => setActive((active - 1 + visible.length) % visible.length)}><ArrowLeft size={16} /></ActionButton><span>{String(active + 1).padStart(2, '0')} <i>/</i> {String(visible.length).padStart(2, '0')}</span><ActionButton size="sm" radius={999} style={{ padding: 10 }} aria-label="Next project" onClick={() => setActive((active + 1) % visible.length)}><ArrowRight size={16} /></ActionButton></div>}
@@ -222,38 +215,50 @@ function FeaturedReelsSection() {
   </section>
 }
 
-function ExperimentsSection() {
-  const notes = [
-    { mark: 'A', label: 'PACE', title: 'Let it breathe.', text: 'A quiet beat can hit harder than another cut.' },
-    { mark: 'B', label: 'MOVEMENT', title: 'Earn the motion.', text: 'Movement works best when it carries the story forward.' },
-    { mark: 'C', label: 'TEXTURE', title: 'Finish with feeling.', text: 'Sound, tone and detail shape what stays in the frame.' },
-  ]
-  return <section className="experiments-section page-shell">
-    <SectionLabel number="06" title="NOTES FROM THE EDIT" />
-    <div className="experiments-heading"><SectionTitle eyebrow="QUESTIONS I KEEP COMING BACK TO">The detail<br />in <em>between.</em></SectionTitle><p data-reveal>Small creative questions shape the bigger feeling. These are a few that keep me curious.</p></div>
-    <div className="experiments-grid">{notes.map((note) => <article className="experiment-note" data-reveal key={note.mark}><span>{note.mark} / {note.label}</span><h3>{note.title}</h3><p>{note.text}</p><i>✳</i></article>)}</div>
-  </section>
-}
-
 function JourneySection() {
-  return <section className="journey-section page-shell">
-    <SectionLabel number="07" title="THE JOURNEY SO FAR" />
+  return <section className="journey-section page-shell" id="journey">
+    <SectionLabel number="06" title="THE JOURNEY SO FAR" />
     <div className="journey-layout"><SectionTitle eyebrow="STILL LEARNING · ALWAYS MAKING">In progress<br /><em>by design.</em></SectionTitle><div className="timeline"><div className="timeline-item" data-reveal><span>NOW</span><div><h3>Independent creative</h3><p>Video editing · Motion graphics · Filmmaking</p></div><i /></div><div className="timeline-item" data-reveal><span>2027</span><div><h3>BCA · Manipal University Jaipur</h3><p>Expected graduation</p></div><i /></div></div></div>
   </section>
 }
 
 function ContactSection() {
   return <section className="contact-section page-shell" id="contact">
-    <SectionLabel number="08" title="LET’S MAKE SOMETHING" />
-    <div className="contact-callout" data-reveal><span className="eyebrow">HAVE A STORY IN MIND?</span><h2>Let’s make<br /><em>it move.</em></h2><ActionButton as={Link} to="/contact" className="button button-cream" size="sm" radius={10} style={{ minHeight: 48, padding: '0 18px', fontSize: 10, fontWeight: 700 }}>Tell me about it <ArrowUpRight size={16} /></ActionButton><div className="contact-stamp">OPEN<br />FOR<br />PROJECTS<span>↗</span></div></div>
+    <SectionLabel number="07" title="LET’S MAKE SOMETHING" />
+    <div className="contact-callout" data-reveal><span className="eyebrow">HAVE A STORY IN MIND?</span><h2>Let’s make<br /><em>it move.</em></h2><a href="#contact-form" className="button button-cream">Tell me about it <ArrowUpRight size={16} /></a><div className="contact-stamp">OPEN<br />FOR<br />PROJECTS<span>↗</span></div></div>
+    <div className="contact-page contact-page-inline" id="contact-form"><div className="contact-page-intro"><span className="eyebrow">A GOOD PLACE TO START</span><p>Share what you’re working on, where you are in the process and what you’re imagining.</p><SocialLinks /></div><ContactForm /></div>
   </section>
+}
+
+function ContactForm() {
+  const [status, setStatus] = useState('idle')
+  const [feedback, setFeedback] = useState('')
+  async function submit(event) {
+    event.preventDefault(); setStatus('loading'); setFeedback('')
+    const form = event.currentTarget
+    try {
+      const response = await fetch('/api/contact', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(Object.fromEntries(new FormData(form).entries())) })
+      const data = await response.json().catch(() => ({}))
+      if (!response.ok) throw new Error(data.error || 'Your message could not be sent. Please try again.')
+      setStatus('success'); setFeedback('Thanks — your message has been accepted.'); form.reset()
+    } catch (error) { setStatus('error'); setFeedback(error.message || 'Connection issue. Please try again.') }
+  }
+  return <form className="contact-form" onSubmit={submit}>
+    <label>Your name <b>*</b><input name="name" autoComplete="name" required maxLength="100" placeholder="Name" /></label>
+    <label>Email address <b>*</b><input name="email" type="email" autoComplete="email" required maxLength="254" placeholder="you@example.com" /></label>
+    <div className="form-row"><label>Project type <small>OPTIONAL</small><select name="projectType" defaultValue=""><option value="">Choose a type</option><option>Video editing</option><option>Motion graphics</option><option>Filmmaking</option><option>Other</option></select></label><label>Budget range <small>OPTIONAL</small><select name="budget" defaultValue=""><option value="">Prefer not to say</option><option>Not sure yet</option><option>Let’s discuss</option></select></label></div>
+    <label>Project brief <b>*</b><textarea name="message" required minLength="10" maxLength="5000" rows="5" placeholder="A few details about the story, timing or idea…" /></label>
+    <div className="honeypot" aria-hidden="true"><label>Leave this empty<input name="website" tabIndex="-1" autoComplete="off" /></label></div>
+    <ActionButton className="button button-red" type="submit" size="sm" radius={10} style={{ minHeight: 48, padding: '0 18px', fontSize: 10, fontWeight: 700 }} disabled={status === 'loading'}>{status === 'loading' ? 'Sending…' : status === 'success' ? <>Message accepted <Check size={16} /></> : <>Send the brief <ArrowUpRight size={16} /></>}</ActionButton>
+    <p className={`form-feedback ${status}`} role="status">{feedback}</p>
+  </form>
 }
 
 function Footer() {
   return <footer className="site-footer">
     <div className="footer-top page-shell"><span className="eyebrow">08 / 08 · INDEPENDENT CREATIVE · JAIPUR, INDIA</span><div className="footer-actions"><BookCallButton className="footer-book-call">Book a 15-minute call</BookCallButton><SocialLinks /></div></div>
     <Marquee className="signature-marquee">KRRISH SHARMA</Marquee>
-    <div className="footer-bottom page-shell"><Link to="/" className="footer-mini-brand">K<span>.</span>SHARMA</Link><span>© {new Date().getFullYear()} · MADE WITH INTENTION</span><div><Link to="/work">WORK</Link><Link to="/about">ABOUT</Link><Link to="/contact">CONTACT</Link></div><a href="#top" className="back-top" aria-label="Back to top"><ArrowUpRight size={17} /></a></div>
+    <div className="footer-bottom page-shell"><a href="#top" className="footer-mini-brand">K<span>.</span>SHARMA</a><span>© {new Date().getFullYear()} · MADE WITH INTENTION</span><div><a href="#work">WORK</a><a href="#about">ABOUT</a><a href="#contact">CONTACT</a></div><a href="#top" className="back-top" aria-label="Back to top"><ArrowUpRight size={17} /></a></div>
   </footer>
 }
 
@@ -278,45 +283,8 @@ function Home() {
     try { sessionStorage.setItem('krrish-intro-seen', '1') } catch { /* Storage can be disabled. */ }
     setIntro(false)
   }
-  return <><main id="top"><Hero /><AboutSection /><ExpertiseSection /><WorkSection /><FeaturedReelsSection /><ExperimentsSection /><JourneySection /><ContactSection /></main>{intro && <IntroLoader onFinish={finishIntro} />}</>
+  return <><main id="top"><Hero /><AboutSection /><ExpertiseSection /><WorkSection /><FeaturedReelsSection /><JourneySection /><ContactSection /></main>{intro && <IntroLoader onFinish={finishIntro} />}</>
 }
-
-function PageIntro({ eyebrow, title, children }) {
-  return <div className="page-intro page-shell" data-reveal><span className="eyebrow">{eyebrow}</span><h1>{title}</h1>{children && <p>{children}</p>}</div>
-}
-
-function WorkPage() {
-  return <main id="top" className="inner-page"><PageIntro eyebrow="THE PORTFOLIO / 04" title={<>Selected<br /><em>work.</em></>}>A collection of edits, motion pieces and films shaped around the story.</PageIntro><WorkSection standalone /><ContactSection /></main>
-}
-
-function ProjectPage() {
-  const { slug } = useParams()
-  const project = projects.find((item) => item.slug === slug)
-  if (!project) return <main id="top" className="not-found page-shell"><span className="eyebrow">PROJECT / NOT FOUND</span><h1>That frame<br /><em>is missing.</em></h1><ActionButton as={Link} className="button button-red" to="/work" size="sm" radius={10} style={{ minHeight: 48, padding: '0 18px', fontSize: 10, fontWeight: 700 }}>Back to work <ArrowLeft size={15} /></ActionButton></main>
-  return <main id="top" className="project-detail page-shell"><Link className="under-link" to="/work"><ArrowLeft size={14} /> Back to work</Link><span className="eyebrow">{project.category}</span><h1>{project.title}<span>.</span></h1><div className="detail-media">{project.videoUrl ? <video controls playsInline preload="none" poster={project.thumbnail}><source src={project.videoUrl} /></video> : <img src={project.thumbnail} alt={project.title} />}</div><p>{project.description}</p><div className="detail-facts">{project.role && <span>ROLE / {project.role}</span>}{project.year && <span>YEAR / {project.year}</span>}{project.tools?.length && <span>TOOLS / {project.tools.join(' · ')}</span>}</div></main>
-}
-
-function AboutPage() {
-  return <main id="top" className="inner-page"><PageIntro eyebrow="ABOUT / 02" title={<>Krrish<br /><em>Sharma.</em></>}>Freelance creative video editor, motion graphics artist and filmmaker in Jaipur, India.</PageIntro><AboutSection /><ExpertiseSection /><JourneySection /><ContactSection /></main>
-}
-
-function ContactPage() {
-  const [status, setStatus] = useState('idle')
-  const [feedback, setFeedback] = useState('')
-  async function submit(event) {
-    event.preventDefault(); setStatus('loading'); setFeedback('')
-    const form = event.currentTarget
-    try {
-      const response = await fetch('/api/contact', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(Object.fromEntries(new FormData(form).entries())) })
-      const data = await response.json().catch(() => ({}))
-      if (!response.ok) throw new Error(data.error || 'Your message could not be sent. Please try again.')
-      setStatus('success'); setFeedback('Thanks — your message has been accepted.'); form.reset()
-    } catch (error) { setStatus('error'); setFeedback(error.message || 'Connection issue. Please try again.') }
-  }
-  return <main id="top" className="inner-page"><PageIntro eyebrow="CONTACT / 08" title={<>Let’s make<br /><em>something.</em></>}>Have a film, edit or idea you want to bring to life? Tell me a little about it.</PageIntro><section className="contact-page page-shell"><div className="contact-page-intro"><span className="eyebrow">A GOOD PLACE TO START</span><p>Share what you’re working on, where you are in the process and what you’re imagining.</p><SocialLinks /></div><form className="contact-form" onSubmit={submit}><label>Your name <b>*</b><input name="name" autoComplete="name" required maxLength="100" placeholder="Name" /></label><label>Email address <b>*</b><input name="email" type="email" autoComplete="email" required maxLength="254" placeholder="you@example.com" /></label><div className="form-row"><label>Project type <small>OPTIONAL</small><select name="projectType" defaultValue=""><option value="">Choose a type</option><option>Video editing</option><option>Motion graphics</option><option>Filmmaking</option><option>Other</option></select></label><label>Budget range <small>OPTIONAL</small><select name="budget" defaultValue=""><option value="">Prefer not to say</option><option>Not sure yet</option><option>Let’s discuss</option></select></label></div><label>Project brief <b>*</b><textarea name="message" required minLength="10" maxLength="5000" rows="5" placeholder="A few details about the story, timing or idea…" /></label><div className="honeypot" aria-hidden="true"><label>Leave this empty<input name="website" tabIndex="-1" autoComplete="off" /></label></div><ActionButton className="button button-red" type="submit" size="sm" radius={10} style={{ minHeight: 48, padding: '0 18px', fontSize: 10, fontWeight: 700 }} disabled={status === 'loading'}>{status === 'loading' ? 'Sending…' : status === 'success' ? <>Message accepted <Check size={16} /></> : <>Send the brief <ArrowUpRight size={16} /></>}</ActionButton><p className={`form-feedback ${status}`} role="status">{feedback}</p></form></section></main>
-}
-
-function NotFound() { return <main id="top" className="not-found page-shell"><span className="eyebrow">404 / LOST FRAME</span><h1>This page<br /><em>is out of focus.</em></h1><ActionButton as={Link} className="button button-red" to="/" size="sm" radius={10} style={{ minHeight: 48, padding: '0 18px', fontSize: 10, fontWeight: 700 }}>Back to home <ArrowLeft size={15} /></ActionButton></main> }
 
 export default function App() {
   const [theme, setTheme] = useState(() => {
@@ -325,7 +293,6 @@ export default function App() {
       return saved || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark')
     } catch { return 'dark' }
   })
-  const location = useLocation()
   useEffect(() => {
     let mounted = true
     void (async () => {
@@ -343,13 +310,11 @@ export default function App() {
     try { localStorage.setItem('krrish-theme-v2', theme) } catch { /* Storage may be unavailable in private browsing. */ }
   }, [theme])
   useEffect(() => {
-    const project = location.pathname.startsWith('/work/') ? projects.find((item) => item.slug === location.pathname.split('/')[2]) : null
-    const titles = { '/': 'Krrish Sharma — Creative Editor & Filmmaker', '/work': 'Selected Work — Krrish Sharma', '/about': 'About — Krrish Sharma', '/contact': 'Contact — Krrish Sharma' }
-    const title = project ? `${project.title} — Krrish Sharma` : titles[location.pathname] || 'Krrish Sharma — Creative Portfolio'
+    const title = 'Krrish Sharma — Creative Editor & Filmmaker'
     document.title = title
-    document.querySelector('meta[name="description"]')?.setAttribute('content', project?.description || 'Krrish Sharma is a freelance video editor, motion graphics artist and filmmaker creating cinematic visual stories.')
+    document.querySelector('meta[name="description"]')?.setAttribute('content', 'Krrish Sharma is a freelance video editor, motion graphics artist and filmmaker creating cinematic visual stories.')
     document.querySelector('meta[property="og:title"]')?.setAttribute('content', title)
-  }, [location.pathname])
+  }, [])
   useEffect(() => {
     const nodes = [...document.querySelectorAll('[data-reveal]')]
     if (!('IntersectionObserver' in window)) { nodes.forEach((node) => node.classList.add('is-visible')); return undefined }
@@ -358,6 +323,6 @@ export default function App() {
     }), { threshold: 0.14 })
     nodes.forEach((node) => observer.observe(node))
     return () => observer.disconnect()
-  }, [location.pathname])
-  return <div className="app-shell"><SiteBackground theme={theme} /><a className="skip-link" href="#main-content">Skip to content</a><Header theme={theme} onToggle={() => setTheme((current) => current === 'dark' ? 'light' : 'dark')} /><div id="main-content"><Routes><Route path="/" element={<Home />} /><Route path="/work" element={<WorkPage />} /><Route path="/work/:slug" element={<ProjectPage />} /><Route path="/about" element={<AboutPage />} /><Route path="/contact" element={<ContactPage />} /><Route path="*" element={<NotFound />} /></Routes></div><Footer /></div>
+  }, [])
+  return <div className="app-shell"><SiteBackground theme={theme} /><a className="skip-link" href="#main-content">Skip to content</a><Header theme={theme} onToggle={() => setTheme((current) => current === 'dark' ? 'light' : 'dark')} /><div id="main-content"><Home /></div><Footer /></div>
 }
