@@ -171,9 +171,9 @@ function WorkSection({ standalone = false }) {
 }
 
 const featuredReels = [
-  { code: 'Dd9XWwXTwPa', label: '01', views: 79389 },
-  { code: 'DWEPrx7kwCK', label: '02', views: 58384 },
-  { code: 'DcoCA0LTpXS', label: '03', views: 24783 },
+  { code: 'Dd9XWwXTwPa', label: '01', views: 155000 },
+  { code: 'DWEPrx7kwCK', label: '02', views: 126000 },
+  { code: 'DcoCA0LTpXS', label: '03', views: 70900 },
 ]
 
 function FeaturedReelsSection() {
