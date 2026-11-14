@@ -1,6 +1,6 @@
 import { lazy, Suspense, useEffect, useRef, useState } from 'react'
 import { Link, Route, Routes, useLocation, useParams } from 'react-router-dom'
-import { ArrowDown, ArrowDownRight, ArrowLeft, ArrowRight, ArrowUpRight, Check, Moon, Sun } from 'lucide-react'
+import { ArrowDown, ArrowDownRight, ArrowLeft, ArrowRight, ArrowUpRight, Check, Eye, Moon, Sun } from 'lucide-react'
 import { getCalApi } from '@calcom/embed-react'
 import { capabilities, profile, projects } from './data/profile.js'
 import PillNav from './components/PillNav.jsx'
@@ -171,9 +171,9 @@ function WorkSection({ standalone = false }) {
 }
 
 const featuredReels = [
-  { code: 'Dd9XWwXTwPa', label: '01' },
-  { code: 'DWEPrx7kwCK', label: '02' },
-  { code: 'DcoCA0LTpXS', label: '03' },
+  { code: 'Dd9XWwXTwPa', label: '01', views: 79389 },
+  { code: 'DWEPrx7kwCK', label: '02', views: 58384 },
+  { code: 'DcoCA0LTpXS', label: '03', views: 24783 },
 ]
 
 function FeaturedReelsSection() {
@@ -197,15 +197,16 @@ function FeaturedReelsSection() {
       <p data-reveal>Three standout edits. Pick a frame to watch the full reel.</p>
     </div>
     <div className="featured-reels-grid">
-      {featuredReels.map(({ code, label }) => {
+      {featuredReels.map(({ code, label, views }) => {
         const reelUrl = `https://www.instagram.com/reel/${code}/`
+        const formattedViews = new Intl.NumberFormat('en', { notation: 'compact', maximumFractionDigits: 1 }).format(views)
         return <article className="featured-reel-card" data-reveal key={code}>
-          <button type="button" className="featured-reel-poster" onClick={() => setActiveReel({ code, label, reelUrl })} aria-label={`Play featured Instagram reel ${label}`}>
+          <button type="button" className="featured-reel-poster" onClick={() => setActiveReel({ code, label, reelUrl })} aria-label={`Play featured Instagram reel ${label}; ${formattedViews} views`}>
             <span className="reel-poster-index">{label}<i> / 03</i></span>
-            <span className="reel-poster-mark" aria-hidden="true">K<span>.</span></span>
+            <span className="reel-poster-mark" aria-hidden="true"><svg viewBox="0 0 24 24" role="presentation"><defs><linearGradient id={`instagram-reel-gradient-${label}`} x1="0" y1="1" x2="1" y2="0"><stop stopColor="#feda75" /><stop offset=".48" stopColor="#fa7e1e" /><stop offset="1" stopColor="#d62976" /></linearGradient></defs><rect x="3" y="3" width="18" height="18" rx="5.25" fill="none" stroke={`url(#instagram-reel-gradient-${label})`} strokeWidth="1.6" /><circle cx="12" cy="12" r="4.15" fill="none" stroke={`url(#instagram-reel-gradient-${label})`} strokeWidth="1.6" /><circle cx="17.65" cy="6.45" r="1.05" fill="#d62976" /></svg></span>
             <span className="reel-poster-meta"><i>INSTAGRAM</i><b>FEATURED REEL</b></span>
             <span className="reel-play-mark" aria-hidden="true"><i /></span>
-            <span className="reel-poster-bottom"><span>VIEW THE CUT</span><ArrowUpRight size={15} /></span>
+            <span className="reel-poster-bottom"><span><b><Eye size={13} /> {formattedViews} VIEWS</b><i>COUNT · NOV ’26</i></span><ArrowUpRight size={15} /></span>
           </button>
           <a className="featured-reel-link" href={reelUrl} target="_blank" rel="noreferrer"><span>OPEN ON INSTAGRAM</span><ArrowUpRight size={13} /></a>
         </article>
