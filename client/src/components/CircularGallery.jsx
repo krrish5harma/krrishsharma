@@ -387,43 +387,71 @@ const CircularGallery = ({
     let lastItems = null;
     let typing = false;
 
-    const textureFor = url => {
+    const textureFor = item => {
+      const url = item.video || item.image;
       const existing = textures.get(url);
       if (existing) return existing;
-      const entry = { texture: null, aspect: 1, ready: 0, loaded: false };
+      const entry = { texture: null, aspect: 1, ready: 0, loaded: false, video: null, lastVideoTime: -1 };
       textures.set(url, entry);
+      const upload = (source, mipmaps) => {
+        if (!textures.has(url)) return;
+        if (!entry.texture) entry.texture = gl.createTexture();
+        gl.bindTexture(gl.TEXTURE_2D, entry.texture);
+        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, source);
+        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
+        if (mipmaps) gl.generateMipmap(gl.TEXTURE_2D);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, mipmaps ? gl.LINEAR_MIPMAP_LINEAR : gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        if (anisotropy && mipmaps) {
+          const max = gl.getParameter(anisotropy.MAX_TEXTURE_MAX_ANISOTROPY_EXT);
+          gl.texParameterf(gl.TEXTURE_2D, anisotropy.TEXTURE_MAX_ANISOTROPY_EXT, Math.min(8, max));
+        }
+        entry.loaded = true;
+      };
+      entry.updateVideo = () => {
+        const video = entry.video;
+        if (!video || video.readyState < HTMLMediaElement.HAVE_CURRENT_DATA || entry.lastVideoTime === video.currentTime) return;
+        upload(video, false);
+        entry.aspect = video.videoWidth / Math.max(1, video.videoHeight);
+        entry.lastVideoTime = video.currentTime;
+      };
+      if (item.video) {
+        const video = document.createElement('video');
+        video.muted = true;
+        video.loop = true;
+        video.playsInline = true;
+        video.preload = 'metadata';
+        video.addEventListener('loadeddata', () => {
+          entry.lastVideoTime = -1;
+          entry.updateVideo();
+          wake();
+        });
+        video.src = item.video;
+        video.load();
+        entry.video = video;
+      }
       const image = new Image();
       image.crossOrigin = 'anonymous';
       image.decoding = 'async';
       image.onload = () => {
-        if (!textures.has(url)) return;
-        const texture = gl.createTexture();
-        gl.bindTexture(gl.TEXTURE_2D, texture);
-        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
-        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
-        gl.generateMipmap(gl.TEXTURE_2D);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-        if (anisotropy) {
-          const max = gl.getParameter(anisotropy.MAX_TEXTURE_MAX_ANISOTROPY_EXT);
-          gl.texParameterf(gl.TEXTURE_2D, anisotropy.TEXTURE_MAX_ANISOTROPY_EXT, Math.min(8, max));
-        }
-        entry.texture = texture;
+        if (entry.video?.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) return;
+        upload(image, true);
         entry.aspect = image.naturalWidth / Math.max(1, image.naturalHeight);
-        entry.loaded = true;
         wake();
       };
-      image.src = url;
+      image.src = item.image;
       return entry;
     };
 
     const prune = list => {
-      const keep = new Set(list.map(item => item.image));
+      const keep = new Set(list.map(item => item.video || item.image));
       textures.forEach((entry, url) => {
         if (keep.has(url)) return;
+        entry.video?.pause();
+        if (entry.video) { entry.video.removeAttribute('src'); entry.video.load(); }
         if (entry.texture) gl.deleteTexture(entry.texture);
         textures.delete(url);
       });
@@ -475,7 +503,7 @@ const CircularGallery = ({
       const margin = Math.max(20, Math.min(view.width, view.height) * 0.06);
       const baseLabel = h * 0.072 * fontScale(fontRef.current);
       const openFrame = item => {
-        const aspect = textureFor(item.image).aspect || w / h;
+        const aspect = textureFor(item).aspect || w / h;
         const titleSpace = item.text && s.showTitles ? captionSize() * 2.4 : 0;
         const captionSpace = titleSpace + (item.description ? 52 : 0);
         const width = Math.min(view.width - margin * 2, (view.height - margin * 2 - captionSpace) * aspect);
@@ -491,7 +519,7 @@ const CircularGallery = ({
       for (let slot = first; slot <= lastSlot; slot++) {
         const index = wrap(slot, count);
         const item = list[index];
-        const entry = textureFor(item.image);
+        const entry = textureFor(item);
         const focus = ease(state.focus.get(slot) || 0);
         let x = slot * spacing - scroll;
         x += Math.sign(x - activeX) * state.open * (1 - focus) * spread;
@@ -680,7 +708,7 @@ const CircularGallery = ({
       if (s.items !== lastItems) {
         lastItems = s.items;
         prune(s.items);
-        s.items.forEach(item => textureFor(item.image));
+        s.items.forEach(item => textureFor(item));
       }
       const idle = now - state.lastInput > 1800;
       const auto =
@@ -743,6 +771,18 @@ const CircularGallery = ({
         s.onActiveChange?.(index);
       }
       const metrics = layout();
+      const visibleVideos = new Set(cards
+        .filter(card => card.item.video && card.alpha > 0.02 && card.x + card.w / 2 > -view.width / 2 && card.x - card.w / 2 < view.width / 2)
+        .map(card => card.entry));
+      textures.forEach(entry => {
+        if (!entry.video) return;
+        if (visible && !document.hidden && visibleVideos.has(entry)) {
+          if (entry.video.paused) entry.video.play().catch(() => {});
+          entry.updateVideo();
+        } else if (!entry.video.paused) {
+          entry.video.pause();
+        }
+      });
       draw(metrics);
       placeLabels(metrics);
       const moving =
@@ -752,6 +792,7 @@ const CircularGallery = ({
         state.open !== state.openTarget ||
         state.intro < 1 ||
         (state.ring !== 0 && state.ring !== 1) ||
+        visibleVideos.size > 0 ||
         settling;
       if (moving) raf = requestAnimationFrame(frame);
       else last = 0;
@@ -966,6 +1007,7 @@ const CircularGallery = ({
 
     const onVisibility = () => {
       last = 0;
+      if (document.hidden) textures.forEach(entry => entry.video?.pause());
       wake();
     };
 
@@ -976,7 +1018,7 @@ const CircularGallery = ({
       if (visible) {
         last = 0;
         wake();
-      }
+      } else textures.forEach(entry => entry.video?.pause());
     });
     intersection.observe(container);
     container.addEventListener('pointerdown', onPointerDown);
@@ -992,7 +1034,7 @@ const CircularGallery = ({
     document.addEventListener('keydown', onAnyKey, true);
     document.addEventListener('pointerdown', onAnyPointer, true);
     lastItems = settingsRef.current.items;
-    lastItems.forEach(item => textureFor(item.image));
+    lastItems.forEach(item => textureFor(item));
     resize();
 
     const slotFor = index => {
@@ -1030,7 +1072,11 @@ const CircularGallery = ({
       document.removeEventListener('keydown', onAnyKey, true);
       document.removeEventListener('pointerdown', onAnyPointer, true);
       labelLayer.replaceChildren();
-      textures.forEach(entry => entry.texture && gl.deleteTexture(entry.texture));
+      textures.forEach(entry => {
+        entry.video?.pause();
+        if (entry.video) { entry.video.removeAttribute('src'); entry.video.load(); }
+        if (entry.texture) gl.deleteTexture(entry.texture);
+      });
       gl.deleteTexture(blank);
       gl.deleteProgram(program.program);
       gl.deleteBuffer(vertexBuffer);

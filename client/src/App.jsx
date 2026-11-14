@@ -74,17 +74,18 @@ function Marquee({ children, className = '' }) {
 }
 
 function HeroVideoCarousel() {
-  const items = [1, 2, 3].map((index) => ({
-    image: '/krrish-silhouette.png',
-    text: `VIDEO LINK 0${index}`,
-    alt: `Placeholder for video ${index}`,
-    description: 'Your YouTube video will appear here when you share its link.',
+  const items = [1, 2, 3, 4, 5].map((index) => ({
+    image: '/krrish-about.jpg',
+    video: `/hero%20section%20(${index}).mp4`,
+    text: `KRRISH / 0${index}`,
+    alt: `Krrish Sharma hero video ${index}`,
+    description: `Film ${index} from Krrish Sharma.`,
   }))
   return <div className="hero-video-carousel">
     <Suspense fallback={<div className="gallery-loading"><span className="eyebrow">VIDEO CAROUSEL</span><p>Waiting for your video links.</p></div>}>
       <CircularGallery items={items} bend={2.2} textColor="#ffffff" borderRadius={0.05} scrollEase={0.07} itemSize={0.82} itemAspect={16 / 10} gap={0.24} wave={0.18} fadeEdges={0.11} shadow={0.3} grayscale={false} showTitles font="500 20px 'DM Mono'" scrollSpeed={1.4} snap openOnClick={false} intro />
     </Suspense>
-    <span className="gallery-note">DRAG TO EXPLORE · VIDEO LINKS PENDING</span>
+    <span className="gallery-note">DRAG TO EXPLORE · FIVE FILMS</span>
   </div>
 }
 
