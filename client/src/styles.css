@@ -112,3 +112,49 @@
 .contact-page-inline{padding-top:38px;padding-bottom:0;margin-inline:0}
 .contact-section{padding-bottom:112px}
 @media(max-width:700px){#about,#work,#instagram-reels,#journey,#contact{scroll-margin-top:82px}.contact-page-inline{padding-top:27px;padding-bottom:0}.contact-section{padding-bottom:78px}}
+
+/* Readability pass: preserve the expressive display name while making supporting copy comfortable to read. */
+.brand-name{font-size:10px}
+.site-nav>a{font-size:12px}
+.theme-switch{font-size:11px!important}
+.eyebrow,.section-label{font-size:10px}
+.hero-description p,.about-copy p,.contact-page-intro>p{font-size:14px;line-height:1.75}
+.hero-description p{max-width:270px}
+.hero-education{font-size:10px;line-height:1.5;letter-spacing:.08em}
+.social-links a{font-size:10px;letter-spacing:.05em}
+.visual-index,.mono-caption,.expertise-number,.work-card-count,.work-card-meta,.work-controls,.timeline-item>span,.detail-facts{font-size:9px;letter-spacing:.08em}
+.scroll-cue{font-size:10px;letter-spacing:.08em}
+.artwork-red-column span,.artwork-marker,.artwork-slice,.artwork-orbit span,.artwork-coordinate,.visual-side-label{font-size:9px;letter-spacing:.08em}
+.artwork-marker small{font-size:8px}
+.marquee-track span{font-size:9px}
+.expertise-card p,.featured-reels-heading>p,.work-empty p,.timeline-item p{font-size:13px;line-height:1.7}
+.expertise-card p{max-width:280px}
+.tool-pill,.work-filters button{font-size:11px}
+.under-link,.button{font-size:12px}
+.book-call-button{font-size:12px!important}
+.header-book-call{font-size:11px!important}
+.hero-book-call,.footer-book-call{font-size:12px!important}
+.empty-stamp{font-size:9px}
+.contact-stamp{font-size:10px}
+.footer-top>.eyebrow{font-size:10px}
+.footer-bottom,.footer-mini-brand{font-size:9px;letter-spacing:.08em}
+.contact-form label small{font-size:10px}
+.featured-reel-link{font-size:9px;letter-spacing:.08em}
+.reel-poster-index,.reel-poster-meta,.reel-poster-bottom{font-size:9px;letter-spacing:.1em}
+.reel-poster-meta{font-size:9px}
+.reel-poster-bottom i{font-size:8px;letter-spacing:.08em}
+.reel-modal-heading,.reel-modal>a{font-size:10px;letter-spacing:.08em}
+.gallery-note{font-size:9px;letter-spacing:.08em}
+
+@media(max-width:700px){
+  .site-nav>a{font-size:14px}
+  .hero-description p,.about-copy p,.contact-page-intro>p{font-size:14px}
+  .hero-education{font-size:9px}
+  .section-label{font-size:9px}
+  .expertise-heading>p{font-size:13px}
+  .expertise-card p,.featured-reels-heading>p,.work-empty p,.timeline-item p{font-size:13px}
+  .work-empty p{line-height:1.65}
+  .footer-bottom,.footer-mini-brand{font-size:9px}
+  .contact-stamp{font-size:9px}
+  .header-book-call{font-size:10px!important}
+}
