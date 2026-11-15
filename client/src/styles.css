@@ -188,6 +188,10 @@
 .footer-socials{display:flex;align-items:center;gap:17px}
 .footer-socials a{display:grid;place-items:center;color:#581a20;transition:transform .2s,color .2s}
 .footer-socials a:hover{transform:translateY(-3px);color:#c92332}
+.footer-social-links{margin-top:0!important;gap:10px 16px;flex-wrap:wrap}
+.footer-social-links a{display:flex;align-items:center;gap:6px;color:#581a20;font:10px var(--mono);letter-spacing:.04em}
+.footer-social-links a:hover{color:#c92332}
+.footer-social-links .social-icon{flex:none}
 .footer-legal{display:flex;align-items:center;justify-content:space-between;gap:20px;padding-top:20px;color:rgba(255,247,238,.68);font:10px var(--mono);letter-spacing:.07em}
 .footer-legal>a{display:flex;align-items:center;gap:5px;color:#fff5ed}
 .footer-legal>a:hover{color:#ffc8a8}
@@ -215,8 +219,8 @@
   .footer-feature-main h2{font-size:clamp(52px,13vw,70px)}
   .footer-feature-main p{font-size:19px}
   .footer-feature-bottom{align-items:flex-end;font-size:10px}
-  .footer-socials{gap:12px}
-  .footer-socials a svg{width:18px;height:18px}
+  .footer-social-links{gap:9px 12px}
+  .footer-social-links a{font-size:9px}
   .footer-legal{display:grid;grid-template-columns:1fr auto;gap:12px;font-size:9px}
   .footer-legal>span:nth-child(2){grid-column:1}
   .footer-legal>a{grid-column:2;grid-row:1/3}

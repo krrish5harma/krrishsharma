@@ -12,9 +12,9 @@ const SideRays = lazy(() => import('./components/SideRays.jsx'))
 const CircularGallery = lazy(() => import('./components/CircularGallery.jsx'))
 
 const socials = [
-  { label: 'Instagram', href: profile.socials.instagram },
-  { label: 'YouTube', href: profile.socials.youtube },
-  { label: 'GitHub', href: profile.socials.github },
+  { label: 'Instagram', href: profile.socials.instagram, Icon: Instagram },
+  { label: 'GitHub', href: profile.socials.github, Icon: Github },
+  { label: 'YouTube', href: profile.socials.youtube, Icon: Youtube },
 ]
 
 function ActionButton({ as: Element = 'button', children, className = '', radius: _radius, size: _size, style, type = 'button', disabled, ...props }) {
@@ -64,8 +64,8 @@ function Header({ theme, onToggle }) {
   </header>
 }
 
-function SocialLinks({ compact = false }) {
-  return <div className={`social-links ${compact ? 'compact' : ''}`}>{socials.map(({ label, href }) => <a key={label} href={href} target="_blank" rel="noreferrer">{label}<ArrowUpRight size={12} /></a>)}</div>
+function SocialLinks({ compact = false, className = '', showArrow = true }) {
+  return <div className={`social-links ${compact ? 'compact' : ''}${className ? ` ${className}` : ''}`}>{socials.map(({ label, href, Icon }) => <a key={label} href={href} target="_blank" rel="noreferrer"><Icon className="social-icon" size={14} aria-hidden="true" /><span>{label}</span>{showArrow && <ArrowUpRight size={12} aria-hidden="true" />}</a>)}</div>
 }
 
 function Marquee({ children, className = '' }) {
@@ -226,13 +226,13 @@ function Footer() {
       <div className="footer-top">
         <div className="footer-intro"><a href="#top" className="footer-mark" aria-label="Krrish Sharma, back to top">K<span>.</span></a><p>Independent video editor and motion artist,<br />creating stories that stay with you.</p></div>
         <nav className="footer-column" aria-label="Footer navigation"><span>Explore</span><a href="#work">Selected work</a><a href="#about">About Krrish</a><a href="#expertise">Craft &amp; toolkit</a></nav>
-        <div className="footer-column"><span>Find me</span><a href={profile.socials.instagram} target="_blank" rel="noreferrer">Instagram</a><a href={profile.socials.youtube} target="_blank" rel="noreferrer">YouTube</a><a href={profile.socials.github} target="_blank" rel="noreferrer">GitHub</a></div>
+        <nav className="footer-column" aria-label="Get in touch"><span>Connect</span><a href="#contact">Book a conversation</a><a href="#contact">Start a project</a></nav>
         <div className="footer-column footer-location"><span>Based in</span><p>Jaipur, India<br />Available for select projects</p></div>
       </div>
       <div className="footer-feature">
         <div className="footer-feature-head"><span>INDEPENDENT CREATIVE · JAIPUR, INDIA</span><BookCallButton className="footer-feature-cta">Work together</BookCallButton></div>
         <div className="footer-feature-main"><h2>Krrish Sharma<span>.</span></h2><p>Let’s make something<br />worth feeling.</p></div>
-        <div className="footer-feature-bottom"><span>Have a story in mind? Let’s talk.</span><div className="footer-socials" aria-label="Social media links"><a href={profile.socials.instagram} target="_blank" rel="noreferrer" aria-label="Instagram"><Instagram size={20} /></a><a href={profile.socials.youtube} target="_blank" rel="noreferrer" aria-label="YouTube"><Youtube size={21} /></a><a href={profile.socials.github} target="_blank" rel="noreferrer" aria-label="GitHub"><Github size={20} /></a></div></div>
+        <div className="footer-feature-bottom"><span>Have a story in mind? Let’s talk.</span><SocialLinks compact className="footer-social-links" showArrow={false} /></div>
       </div>
       <div className="footer-legal"><span>© {new Date().getFullYear()} Krrish Sharma</span><span>Made with intention</span><a href="#top">Back to top <ArrowUpRight size={13} /></a></div>
     </div>
