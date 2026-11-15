@@ -108,10 +108,10 @@
 .site-header .portfolio-pill-nav{max-width:100%;}
 .site-header{background:transparent;backdrop-filter:none;border-bottom:0;}
 
-#about,#work,#instagram-reels,#journey,#contact{scroll-margin-top:104px}
+#about,#work,#instagram-reels,#contact{scroll-margin-top:104px}
 .contact-page-inline{padding-top:38px;padding-bottom:0;margin-inline:0}
 .contact-section{padding-bottom:112px}
-@media(max-width:700px){#about,#work,#instagram-reels,#journey,#contact{scroll-margin-top:82px}.contact-page-inline{padding-top:27px;padding-bottom:0}.contact-section{padding-bottom:78px}}
+@media(max-width:700px){#about,#work,#instagram-reels,#contact{scroll-margin-top:82px}.contact-page-inline{padding-top:27px;padding-bottom:0}.contact-section{padding-bottom:78px}}
 
 /* Readability pass: preserve the expressive display name while making supporting copy comfortable to read. */
 .brand-name{font-size:10px}

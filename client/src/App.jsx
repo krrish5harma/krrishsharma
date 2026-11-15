@@ -123,7 +123,7 @@ function AboutSection() {
     <SectionLabel number="02" title="A LITTLE ABOUT ME" />
     <div className="about-layout">
       <div className="about-monogram" data-reveal><div className="mono-frame about-portrait-frame"><img src="/krrish-about.jpg" alt="Krrish Sharma standing beside a car" /><i>SHARMA</i><b>↗</b></div><span className="mono-caption">JAIPUR · INDIA<br />26° 54′ N / 75° 48′ E</span></div>
-      <div className="about-copy" data-reveal><span className="eyebrow">EDITOR BY INSTINCT · FILMMAKER BY CURIOSITY</span><h2>Every frame<br />has a <em>feeling.</em></h2><p>I’m Krrish, a freelance creative video editor and motion graphics artist. I move between the edit, the camera and the details that make an image feel alive.</p><p>Currently studying BCA at Manipal University Jaipur, graduating in 2027. I enjoy working where cinematic storytelling meets motion and visual polish.</p><a href="#journey" className="under-link">More about my approach <ArrowUpRight size={14} /></a></div>
+      <div className="about-copy" data-reveal><span className="eyebrow">EDITOR BY INSTINCT · FILMMAKER BY CURIOSITY</span><h2>Every frame<br />has a <em>feeling.</em></h2><p>I’m Krrish, a freelance creative video editor and motion graphics artist. I move between the edit, the camera and the details that make an image feel alive.</p><p>Currently studying BCA at Manipal University Jaipur, graduating in 2027. I enjoy working where cinematic storytelling meets motion and visual polish.</p><a href="#expertise" className="under-link">More about my approach <ArrowUpRight size={14} /></a></div>
     </div>
     <Marquee className="skills-marquee">VIDEO EDITING · MOTION DESIGN · CINEMATOGRAPHY · FILMMAKING</Marquee>
   </section>
@@ -215,16 +215,9 @@ function FeaturedReelsSection() {
   </section>
 }
 
-function JourneySection() {
-  return <section className="journey-section page-shell" id="journey">
-    <SectionLabel number="06" title="THE JOURNEY SO FAR" />
-    <div className="journey-layout"><SectionTitle eyebrow="STILL LEARNING · ALWAYS MAKING">In progress<br /><em>by design.</em></SectionTitle><div className="timeline"><div className="timeline-item" data-reveal><span>NOW</span><div><h3>Independent creative</h3><p>Video editing · Motion graphics · Filmmaking</p></div><i /></div><div className="timeline-item" data-reveal><span>2027</span><div><h3>BCA · Manipal University Jaipur</h3><p>Expected graduation</p></div><i /></div></div></div>
-  </section>
-}
-
 function ContactSection() {
   return <section className="contact-section page-shell" id="contact">
-    <SectionLabel number="07" title="LET’S MAKE SOMETHING" />
+    <SectionLabel number="06" title="LET’S MAKE SOMETHING" />
     <div className="contact-callout" data-reveal><span className="eyebrow">HAVE A STORY IN MIND?</span><h2>Let’s make<br /><em>it move.</em></h2><a href="#contact-form" className="button button-cream">Tell me about it <ArrowUpRight size={16} /></a><div className="contact-stamp">OPEN<br />FOR<br />PROJECTS<span>↗</span></div></div>
     <div className="contact-page contact-page-inline" id="contact-form"><div className="contact-page-intro"><span className="eyebrow">A GOOD PLACE TO START</span><p>Share what you’re working on, where you are in the process and what you’re imagining.</p><SocialLinks /></div><ContactForm /></div>
   </section>
@@ -256,7 +249,7 @@ function ContactForm() {
 
 function Footer() {
   return <footer className="site-footer">
-    <div className="footer-top page-shell"><span className="eyebrow">08 / 08 · INDEPENDENT CREATIVE · JAIPUR, INDIA</span><div className="footer-actions"><BookCallButton className="footer-book-call">Book a 15-minute call</BookCallButton><SocialLinks /></div></div>
+    <div className="footer-top page-shell"><span className="eyebrow">07 / 07 · INDEPENDENT CREATIVE · JAIPUR, INDIA</span><div className="footer-actions"><BookCallButton className="footer-book-call">Book a 15-minute call</BookCallButton><SocialLinks /></div></div>
     <Marquee className="signature-marquee">KRRISH SHARMA</Marquee>
     <div className="footer-bottom page-shell"><a href="#top" className="footer-mini-brand">K<span>.</span>SHARMA</a><span>© {new Date().getFullYear()} · MADE WITH INTENTION</span><div><a href="#work">WORK</a><a href="#about">ABOUT</a><a href="#contact">CONTACT</a></div><a href="#top" className="back-top" aria-label="Back to top"><ArrowUpRight size={17} /></a></div>
   </footer>
@@ -283,7 +276,7 @@ function Home() {
     try { sessionStorage.setItem('krrish-intro-seen', '1') } catch { /* Storage can be disabled. */ }
     setIntro(false)
   }
-  return <><main id="top"><Hero /><AboutSection /><ExpertiseSection /><WorkSection /><FeaturedReelsSection /><JourneySection /><ContactSection /></main>{intro && <IntroLoader onFinish={finishIntro} />}</>
+  return <><main id="top"><Hero /><AboutSection /><ExpertiseSection /><WorkSection /><FeaturedReelsSection /><ContactSection /></main>{intro && <IntroLoader onFinish={finishIntro} />}</>
 }
 
 export default function App() {
