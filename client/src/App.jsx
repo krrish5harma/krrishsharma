@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect, useRef, useState } from 'react'
-import { ArrowDown, ArrowDownRight, ArrowLeft, ArrowRight, ArrowUpRight, Check, Eye, Moon, Sun } from 'lucide-react'
+import { ArrowDown, ArrowDownRight, ArrowLeft, ArrowRight, ArrowUpRight, Eye, Moon, Sun } from 'lucide-react'
 import { getCalApi } from '@calcom/embed-react'
 import { capabilities, profile, projects } from './data/profile.js'
 import PillNav from './components/PillNav.jsx'
@@ -218,33 +218,8 @@ function FeaturedReelsSection() {
 function ContactSection() {
   return <section className="contact-section page-shell" id="contact">
     <SectionLabel number="06" title="LET’S MAKE SOMETHING" />
-    <div className="contact-callout" data-reveal><span className="eyebrow">HAVE A STORY IN MIND?</span><h2>Let’s make<br /><em>it move.</em></h2><a href="#contact-form" className="button button-cream">Tell me about it <ArrowUpRight size={16} /></a><div className="contact-stamp">OPEN<br />FOR<br />PROJECTS<span>↗</span></div></div>
-    <div className="contact-page contact-page-inline" id="contact-form"><div className="contact-page-intro"><span className="eyebrow">A GOOD PLACE TO START</span><p>Share what you’re working on, where you are in the process and what you’re imagining.</p><SocialLinks /></div><ContactForm /></div>
+    <div className="contact-callout" data-reveal><span className="eyebrow">HAVE A STORY IN MIND?</span><h2>Let’s make<br /><em>it move.</em></h2><BookCallButton className="contact-book-call">Book a 15-minute call <ArrowUpRight size={21} /></BookCallButton><div className="contact-stamp">OPEN<br />FOR<br />PROJECTS<span>↗</span></div></div>
   </section>
-}
-
-function ContactForm() {
-  const [status, setStatus] = useState('idle')
-  const [feedback, setFeedback] = useState('')
-  async function submit(event) {
-    event.preventDefault(); setStatus('loading'); setFeedback('')
-    const form = event.currentTarget
-    try {
-      const response = await fetch('/api/contact', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(Object.fromEntries(new FormData(form).entries())) })
-      const data = await response.json().catch(() => ({}))
-      if (!response.ok) throw new Error(data.error || 'Your message could not be sent. Please try again.')
-      setStatus('success'); setFeedback('Thanks — your message has been accepted.'); form.reset()
-    } catch (error) { setStatus('error'); setFeedback(error.message || 'Connection issue. Please try again.') }
-  }
-  return <form className="contact-form" onSubmit={submit}>
-    <label>Your name <b>*</b><input name="name" autoComplete="name" required maxLength="100" placeholder="Name" /></label>
-    <label>Email address <b>*</b><input name="email" type="email" autoComplete="email" required maxLength="254" placeholder="you@example.com" /></label>
-    <div className="form-row"><label>Project type <small>OPTIONAL</small><select name="projectType" defaultValue=""><option value="">Choose a type</option><option>Video editing</option><option>Motion graphics</option><option>Filmmaking</option><option>Other</option></select></label><label>Budget range <small>OPTIONAL</small><select name="budget" defaultValue=""><option value="">Prefer not to say</option><option>Not sure yet</option><option>Let’s discuss</option></select></label></div>
-    <label>Project brief <b>*</b><textarea name="message" required minLength="10" maxLength="5000" rows="5" placeholder="A few details about the story, timing or idea…" /></label>
-    <div className="honeypot" aria-hidden="true"><label>Leave this empty<input name="website" tabIndex="-1" autoComplete="off" /></label></div>
-    <ActionButton className="button button-red" type="submit" size="sm" radius={10} style={{ minHeight: 48, padding: '0 18px', fontSize: 10, fontWeight: 700 }} disabled={status === 'loading'}>{status === 'loading' ? 'Sending…' : status === 'success' ? <>Message accepted <Check size={16} /></> : <>Send the brief <ArrowUpRight size={16} /></>}</ActionButton>
-    <p className={`form-feedback ${status}`} role="status">{feedback}</p>
-  </form>
 }
 
 function Footer() {
