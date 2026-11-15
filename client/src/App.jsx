@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect, useRef, useState } from 'react'
-import { ArrowDown, ArrowDownRight, ArrowLeft, ArrowRight, ArrowUpRight, Eye, Moon, Sun } from 'lucide-react'
+import { ArrowDown, ArrowDownRight, ArrowLeft, ArrowRight, ArrowUpRight, Eye, Github, Instagram, Moon, Sun, Youtube } from 'lucide-react'
 import { getCalApi } from '@calcom/embed-react'
 import { capabilities, profile, projects } from './data/profile.js'
 import PillNav from './components/PillNav.jsx'
@@ -224,9 +224,20 @@ function ContactSection() {
 
 function Footer() {
   return <footer className="site-footer">
-    <div className="footer-top page-shell"><span className="eyebrow">07 / 07 · INDEPENDENT CREATIVE · JAIPUR, INDIA</span><div className="footer-actions"><BookCallButton className="footer-book-call">Book a 15-minute call</BookCallButton><SocialLinks /></div></div>
-    <Marquee className="signature-marquee">KRRISH SHARMA</Marquee>
-    <div className="footer-bottom page-shell"><a href="#top" className="footer-mini-brand">K<span>.</span>SHARMA</a><span>© {new Date().getFullYear()} · MADE WITH INTENTION</span><div><a href="#work">WORK</a><a href="#about">ABOUT</a><a href="#contact">CONTACT</a></div><a href="#top" className="back-top" aria-label="Back to top"><ArrowUpRight size={17} /></a></div>
+    <div className="footer-shell page-shell">
+      <div className="footer-top">
+        <div className="footer-intro"><a href="#top" className="footer-mark" aria-label="Krrish Sharma, back to top">K<span>.</span></a><p>Independent video editor and motion artist,<br />creating stories that stay with you.</p></div>
+        <nav className="footer-column" aria-label="Footer navigation"><span>Explore</span><a href="#work">Selected work</a><a href="#about">About Krrish</a><a href="#expertise">Craft &amp; toolkit</a></nav>
+        <div className="footer-column"><span>Find me</span><a href={profile.socials.instagram} target="_blank" rel="noreferrer">Instagram</a><a href={profile.socials.youtube} target="_blank" rel="noreferrer">YouTube</a><a href={profile.socials.github} target="_blank" rel="noreferrer">GitHub</a></div>
+        <div className="footer-column footer-location"><span>Based in</span><p>Jaipur, India<br />Available for select projects</p></div>
+      </div>
+      <div className="footer-feature">
+        <div className="footer-feature-head"><span>INDEPENDENT CREATIVE · JAIPUR, INDIA</span><BookCallButton className="footer-feature-cta">Work together</BookCallButton></div>
+        <div className="footer-feature-main"><h2>Krrish Sharma<span>.</span></h2><p>Let’s make something<br />worth feeling.</p></div>
+        <div className="footer-feature-bottom"><span>Have a story in mind? Let’s talk.</span><div className="footer-socials" aria-label="Social media links"><a href={profile.socials.instagram} target="_blank" rel="noreferrer" aria-label="Instagram"><Instagram size={20} /></a><a href={profile.socials.youtube} target="_blank" rel="noreferrer" aria-label="YouTube"><Youtube size={21} /></a><a href={profile.socials.github} target="_blank" rel="noreferrer" aria-label="GitHub"><Github size={20} /></a></div></div>
+      </div>
+      <div className="footer-legal"><span>© {new Date().getFullYear()} Krrish Sharma</span><span>Made with intention</span><a href="#top">Back to top <ArrowUpRight size={13} /></a></div>
+    </div>
   </footer>
 }
 
