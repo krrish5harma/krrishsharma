@@ -1,7 +1,7 @@
 import { lazy, Suspense, useEffect, useRef, useState } from 'react'
-import { ArrowDown, ArrowDownRight, ArrowLeft, ArrowRight, ArrowUpRight, Eye, Github, Instagram, Moon, Sun, Youtube } from 'lucide-react'
+import { ArrowDown, ArrowDownRight, ArrowUpRight, Eye, Github, Instagram, Moon, Sun, Youtube } from 'lucide-react'
 import { getCalApi } from '@calcom/embed-react'
-import { capabilities, profile, projects } from './data/profile.js'
+import { capabilities, profile } from './data/profile.js'
 import PillNav from './components/PillNav.jsx'
 import CurvedLoop from './components/CurvedLoop.jsx'
 import ShinyText from './components/ShinyText.jsx'
@@ -137,27 +137,120 @@ function ExpertiseSection() {
   </section>
 }
 
-function WorkCard({ project, index, relative }) {
-  const distance = Math.abs(relative)
-  return <a href={project.videoUrl || project.thumbnail} target="_blank" rel="noreferrer" className={`work-card ${relative === 0 ? 'is-active' : ''}`} data-reveal aria-hidden={relative !== 0} tabIndex={relative === 0 ? 0 : -1} style={{ '--x': `${relative * 86}%`, '--rot': `${relative * -7}deg`, '--scale': distance ? '.84' : '1', '--card-opacity': distance > 1 ? '.3' : distance ? '.7' : '1', '--card-z': 10 - distance }}><div className="work-card-image"><img src={project.thumbnail} alt={project.title} loading="lazy" /><span className="work-card-count">0{index + 1}</span><span className="work-card-open"><ArrowUpRight /></span><span className="work-card-title">{project.title}</span></div><div className="work-card-meta"><span>{project.category}</span><span>{project.year || 'PROJECT'}</span></div></a>
+// Add Vimeo player embed URLs here as they are provided. Each active embed is muted and loops inline.
+const workVideos = [
+  { id: '01', title: 'Vimeo video 01', embedUrl: '' },
+  { id: '02', title: 'Vimeo video 02', embedUrl: '' },
+  { id: '03', title: 'Vimeo video 03', embedUrl: '' },
+  { id: '04', title: 'Vimeo video 04', embedUrl: '' },
+  { id: '05', title: 'Vimeo video 05', embedUrl: '' },
+]
+
+function getVimeoAutoplayUrl(embedUrl, autoplay) {
+  if (!embedUrl) return ''
+  try {
+    const source = new URL(embedUrl)
+    const id = source.pathname.match(/(?:video\/)?(\d+)/)?.[1]
+    const player = source.hostname === 'player.vimeo.com' && id
+      ? source
+      : id ? new URL(`https://player.vimeo.com/video/${id}`) : null
+    if (!player) return ''
+    const privacyHash = source.searchParams.get('h')
+    if (privacyHash && !player.searchParams.has('h')) player.searchParams.set('h', privacyHash)
+    player.searchParams.set('autoplay', autoplay ? '1' : '0')
+    player.searchParams.set('muted', '1')
+    player.searchParams.set('loop', '1')
+    player.searchParams.set('autopause', '0')
+    player.searchParams.set('playsinline', '1')
+    player.searchParams.set('controls', '1')
+    player.searchParams.set('title', '0')
+    player.searchParams.set('byline', '0')
+    player.searchParams.set('portrait', '0')
+    player.searchParams.set('dnt', '1')
+    return player.toString()
+  } catch {
+    return ''
+  }
+}
+
+function WorkPhone({ item, index, reducedMotion }) {
+  const src = getVimeoAutoplayUrl(item.embedUrl, !reducedMotion)
+  return <article className={`work-phone ${index % 3 === 1 ? 'is-lifted' : ''}`} aria-label={`${item.title}${item.embedUrl ? '' : ', video placeholder'}`}>
+    <div className="work-phone-frame">
+      <div className="work-phone-screen">
+        {src ? <iframe src={src} title={item.title} allow="autoplay; fullscreen; picture-in-picture" allowFullScreen loading="eager" referrerPolicy="strict-origin-when-cross-origin" /> : <div className="work-video-placeholder"><span className="placeholder-index">{item.id}</span><span className="placeholder-mark" aria-hidden="true">▶</span><span className="placeholder-caption">VIMEO EMBED<br />COMING SOON</span></div>}
+      </div>
+      <span className="work-phone-island" aria-hidden="true" />
+      <span className="work-phone-lens" aria-hidden="true" />
+    </div>
+    <div className="work-phone-caption"><span>VIDEO / {item.id}</span><span>{item.embedUrl ? 'NOW PLAYING · MUTED' : 'VIDEO SLOT'}</span></div>
+  </article>
 }
 
 function WorkSection() {
-  const [active, setActive] = useState(0)
+  const trackRef = useRef(null)
+  const [videoOrder, setVideoOrder] = useState(workVideos)
+  const [offset, setOffset] = useState(0)
+  const [position, setPosition] = useState(0)
+  const [moving, setMoving] = useState(false)
   const [paused, setPaused] = useState(false)
+  const [reducedMotion, setReducedMotion] = useState(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches)
+
   useEffect(() => {
-    if (paused || window.matchMedia('(prefers-reduced-motion: reduce)').matches || projects.length < 2) return undefined
-    const timer = window.setInterval(() => setActive((index) => (index + 1) % projects.length), 5000)
-    return () => window.clearInterval(timer)
-  }, [paused])
-  const visible = projects
+    const query = window.matchMedia('(prefers-reduced-motion: reduce)')
+    const updateMotion = () => setReducedMotion(query.matches)
+    query.addEventListener('change', updateMotion)
+    return () => query.removeEventListener('change', updateMotion)
+  }, [])
+
+  useEffect(() => {
+    const track = trackRef.current
+    if (!track) return undefined
+    const measure = () => {
+      const card = track.querySelector('.work-phone')
+      if (!card) return
+      const styles = window.getComputedStyle(track)
+      setOffset(card.getBoundingClientRect().width + parseFloat(styles.columnGap || styles.gap || '0'))
+    }
+    measure()
+    const observer = new ResizeObserver(measure)
+    observer.observe(track)
+    return () => observer.disconnect()
+  }, [])
+
+  useEffect(() => {
+    if (paused || reducedMotion || !offset) return undefined
+    const timer = window.setTimeout(() => setMoving(true), 80)
+    return () => window.clearTimeout(timer)
+  }, [paused, reducedMotion, offset, moving, videoOrder])
+
+  const finishAdvance = (event) => {
+    if (event.target !== trackRef.current || event.propertyName !== 'transform' || !moving) return
+    setVideoOrder((items) => [...items.slice(1), items[0]])
+    setPosition(0)
+    setMoving(false)
+  }
+
+  const pauseAtCurrentPosition = () => {
+    const track = trackRef.current
+    if (moving && track) {
+      const transform = window.getComputedStyle(track).transform
+      const currentX = transform === 'none' ? 0 : new DOMMatrixReadOnly(transform).m41
+      setPosition(currentX)
+      setMoving(false)
+    }
+    setPaused(true)
+  }
+
   return <section className="work-section page-shell" id="work">
     <SectionLabel number="04" title="SELECTED WORK" />
-    <div className="work-heading"><SectionTitle eyebrow="A FEW THINGS MADE WITH INTENTION">In good<br /><em>company.</em></SectionTitle><a href="#instagram-reels" className="under-link">See featured reels <ArrowUpRight size={14} /></a></div>
-    {visible.length ? <div className="work-carousel-wrap" onPointerEnter={() => setPaused(true)} onPointerLeave={() => setPaused(false)} onFocus={() => setPaused(true)} onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setPaused(false) }}>
-      <div className="work-carousel">{visible.map((project, index) => { const wrapped = (index - active + visible.length) % visible.length; const relative = wrapped > visible.length / 2 ? wrapped - visible.length : wrapped; return <WorkCard project={project} index={index} relative={relative} key={project.slug} /> })}</div>
-      {visible.length > 1 && <div className="work-controls"><ActionButton size="sm" radius={999} style={{ padding: 10 }} aria-label="Previous project" onClick={() => setActive((active - 1 + visible.length) % visible.length)}><ArrowLeft size={16} /></ActionButton><span>{String(active + 1).padStart(2, '0')} <i>/</i> {String(visible.length).padStart(2, '0')}</span><ActionButton size="sm" radius={999} style={{ padding: 10 }} aria-label="Next project" onClick={() => setActive((active + 1) % visible.length)}><ArrowRight size={16} /></ActionButton></div>}
-    </div> : <div className="work-empty" data-reveal><div className="empty-number">K<span>/</span>00</div><div><span className="eyebrow">THE REEL IS OPEN</span><h3>Next frame: yours.</h3><p>Selected edits, motion pieces and films will appear here as approved project media is ready.</p><a href={profile.socials.youtube} target="_blank" rel="noreferrer" className="under-link">Watch on YouTube <ArrowUpRight size={14} /></a></div><span className="empty-stamp">NO PLACEHOLDERS<br />AS PORTFOLIO WORK</span></div>}
+    <div className="work-heading"><SectionTitle eyebrow="A FEW THINGS MADE WITH INTENTION">Stories in<br /><em>motion.</em></SectionTitle><span className="work-vimeo-note">05 VIDEO SLOTS · VIMEO EMBEDS COMING SOON</span></div>
+    <div className={`work-marquee-viewport ${paused ? 'is-paused' : ''}`} onPointerEnter={pauseAtCurrentPosition} onPointerLeave={() => setPaused(false)} onFocus={pauseAtCurrentPosition} onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setPaused(false) }} role="region" aria-label="Selected video work, automatically scrolling left" aria-roledescription="carousel">
+      <div ref={trackRef} className={`work-marquee-track ${moving && !paused && !reducedMotion ? 'is-moving' : ''}`} style={{ '--work-shift': `${position - offset}px`, '--work-position': `${position}px` }} onTransitionEnd={finishAdvance}>
+        {videoOrder.map((item, index) => <WorkPhone key={item.id} item={item} index={index} reducedMotion={reducedMotion} />)}
+      </div>
+    </div>
+    <p className="work-marquee-hint">A rotating reel of edits, films and motion work <span>·</span> HOVER OR FOCUS TO PAUSE</p>
   </section>
 }
 
