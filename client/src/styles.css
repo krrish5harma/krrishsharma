@@ -328,3 +328,25 @@
   .work-video-context,.work-video-card .work-video-context{font-size:12px;line-height:1.5}
   .gallery-note,.featured-reel-link,.reel-poster-index,.reel-poster-meta,.reel-poster-bottom,.reel-poster-bottom i{font-size:10px}
 }
+
+/* Clear, touch-friendly header controls with familiar Lucide symbols. */
+.site-header .portfolio-pill-nav{--pn-font:14px}
+.site-header .portfolio-pill-nav .pill-nav__face{gap:.55em}
+.site-button.theme-switch{min-height:44px!important;padding:10px 15px!important;gap:9px;font-size:14px!important;font-weight:600;white-space:nowrap}
+.theme-switch-icon svg{width:18px;height:18px;stroke-width:2}
+.site-button.header-book-call{min-height:44px!important;padding:10px 15px!important;font-size:13px!important;gap:9px}
+.site-button.header-book-call svg,.site-button.book-call-button>svg{flex:none}
+.site-header .portfolio-pill-nav .pill-nav__item,.site-header .portfolio-pill-nav .pill-nav__row{font-size:14px}
+.social-links a,.footer-social-links a{font-size:12px}
+.footer-legal,.footer-bottom,.footer-mini-brand{font-size:11px}
+.featured-reel-link,.reel-modal-heading,.reel-modal>a,.gallery-note,.work-video-caption,.work-marquee-hint{font-size:11px}
+.work-view-bubble span{font-size:10px}
+@media(max-width:700px){
+  .site-button.theme-switch{min-height:44px!important;margin-left:5px!important;padding:10px 12px!important;font-size:13px!important}
+  .site-header>.theme-switch>span:not(.theme-switch-icon){display:inline!important}
+  .site-button.header-book-call{min-height:44px!important;margin-left:5px!important;padding:10px 11px!important;font-size:12px!important}
+  .site-header .portfolio-pill-nav{--pn-font:14px}
+  .site-header .portfolio-pill-nav .pill-nav__item{padding-inline:9px}
+  .social-links a,.footer-social-links a{font-size:11px}
+  .featured-reel-link,.reel-modal-heading,.reel-modal>a,.gallery-note,.work-video-caption,.work-marquee-hint{font-size:10px}
+}

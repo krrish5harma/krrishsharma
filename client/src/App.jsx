@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect, useRef, useState } from 'react'
-import { ArrowDown, ArrowDownRight, ArrowUpRight, Eye, Github, Instagram, Maximize2, Moon, Sun, X, Youtube } from 'lucide-react'
+import { ArrowDown, ArrowDownRight, ArrowUpRight, BriefcaseBusiness, CalendarDays, Eye, Github, Instagram, Mail, Maximize2, Moon, Sun, UserRound, X, Youtube } from 'lucide-react'
 import { getCalApi } from '@calcom/embed-react'
 import { capabilities, profile } from './data/profile.js'
 import PillNav from './components/PillNav.jsx'
@@ -29,8 +29,8 @@ function ActionButton({ as: Element = 'button', children, className = '', radius
 }
 
 function ThemeSwitch({ theme, onToggle }) {
-  return <ActionButton className="theme-switch" size="sm" radius={999} style={{ padding: '9px 12px', fontSize: 9 }} onClick={onToggle} aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}>
-    <span className="theme-switch-icon">{theme === 'dark' ? <Sun size={15} /> : <Moon size={15} />}</span><span>{theme === 'dark' ? 'Light mode' : 'Dark mode'}</span>
+  return <ActionButton className="theme-switch" size="md" radius={999} style={{ padding: '10px 14px' }} onClick={onToggle} aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}>
+    <span className="theme-switch-icon" aria-hidden="true">{theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}</span><span>{theme === 'dark' ? 'Light mode' : 'Dark mode'}</span>
   </ActionButton>
 }
 
@@ -44,7 +44,7 @@ function BookCallButton({ className = '', children = 'Book a call', size = 'sm',
     data-cal-link="krrish-sharma-pnmlzm/15min"
     data-cal-config='{"layout":"month_view","useSlotsViewOnSmallScreen":"true"}'
     aria-label="Book a 15-minute call with Krrish Sharma"
-  >{children}<ArrowUpRight size={14} /></ActionButton>
+  ><CalendarDays size={16} aria-hidden="true" />{children}<ArrowUpRight size={16} aria-hidden="true" /></ActionButton>
 }
 
 function PillAnchor({ href, ...props }) {
@@ -52,14 +52,14 @@ function PillAnchor({ href, ...props }) {
 }
 
 const navigationItems = [
-  { label: 'Work', href: '#work' },
-  { label: 'About', href: '#about' },
-  { label: 'Contact', href: '#contact' },
+  { label: 'Work', href: '#work', icon: <BriefcaseBusiness aria-hidden="true" /> },
+  { label: 'About', href: '#about', icon: <UserRound aria-hidden="true" /> },
+  { label: 'Contact', href: '#contact', icon: <Mail aria-hidden="true" /> },
 ]
 
 function Header({ theme, onToggle }) {
   return <header className="site-header">
-    <div className="site-header-nav"><PillNav logo="/krrish-silhouette.png" logoAlt="Krrish Sharma home" logoHref="#top" items={navigationItems} defaultActiveIndex={-1} linkComponent={PillAnchor} theme={theme} layout="split" itemStyle="pill" hoverEffect="fill" indicator="dot" surface="none" size="sm" highlightColor="#d62839" highlightTextColor="#ffffff" collapse="auto" intro ariaLabel="Main navigation" className="portfolio-pill-nav" /></div>
+    <div className="site-header-nav"><PillNav logo="/krrish-silhouette.png" logoAlt="Krrish Sharma home" logoHref="#top" items={navigationItems} defaultActiveIndex={-1} linkComponent={PillAnchor} theme={theme} layout="split" itemStyle="pill" hoverEffect="fill" indicator="dot" surface="none" size="md" highlightColor="#d62839" highlightTextColor="#ffffff" collapse="auto" intro ariaLabel="Main navigation" className="portfolio-pill-nav" /></div>
     <BookCallButton className="header-book-call" />
     <ThemeSwitch theme={theme} onToggle={onToggle} />
   </header>
@@ -103,7 +103,7 @@ function Hero() {
       <h1 className="hero-title"><ShinyText text="Krrish" className="title-serif" color="#ffffff" shineColor="#5f00ff" speed={HERO_CAROUSEL_INTERVAL_MS / 1000} shineWidth={100} softness={0.8} trigger="loop" glow={0.9} easing="snappy" pauseOnHover /><span className="title-sans"><ShinyText text="SHARMA" color="#ffffff" shineColor="#5f00ff" speed={HERO_CAROUSEL_INTERVAL_MS / 1000} shineWidth={100} softness={0.8} trigger="loop" glow={0.9} easing="snappy" pauseOnHover /><span className="red-period">.</span></span></h1>
       <div className="hero-description"><span className="hero-role">Video editor<br />& motion artist.</span><p>I shape footage, movement and atmosphere into stories that stay with you.</p></div>
       <div className="hero-education"><span>BASED IN INDIA</span><span>BCA · MANIPAL UNIVERSITY JAIPUR · CLASS OF 2027</span></div>
-      <div className="hero-actions"><BookCallButton className="hero-book-call" style={{ minHeight: 48, padding: '0 18px', fontSize: 10, fontWeight: 700 }}>Book a call <ArrowUpRight size={16} /></BookCallButton><a href="#work" className="under-link">Explore the work <ArrowDownRight size={14} /></a></div>
+      <div className="hero-actions"><BookCallButton className="hero-book-call" style={{ minHeight: 48, padding: '0 18px', fontSize: 10, fontWeight: 700 }}>Book a call</BookCallButton><a href="#work" className="under-link">Explore the work <ArrowDownRight size={14} /></a></div>
       <SocialLinks compact />
     </div>
     <div className="hero-visual" data-reveal><div className="visual-index"><span>VIDEO / 01</span><span>YOUR REEL</span></div><HeroVideoCarousel /></div>
@@ -401,7 +401,7 @@ function FeaturedReelsSection() {
 function ContactSection() {
   return <section className="contact-section page-shell" id="contact">
     <SectionLabel number="06" title="LET’S MAKE SOMETHING" />
-    <div className="contact-callout" data-reveal><span className="eyebrow">HAVE A STORY IN MIND?</span><h2>Let’s make<br /><em>it move.</em></h2><BookCallButton className="contact-book-call">Book a 15-minute call <ArrowUpRight size={21} /></BookCallButton><div className="contact-stamp">OPEN<br />FOR<br />PROJECTS<span>↗</span></div></div>
+    <div className="contact-callout" data-reveal><span className="eyebrow">HAVE A STORY IN MIND?</span><h2>Let’s make<br /><em>it move.</em></h2><BookCallButton className="contact-book-call">Book a 15-minute call</BookCallButton><div className="contact-stamp">OPEN<br />FOR<br />PROJECTS<span>↗</span></div></div>
   </section>
 }
 
