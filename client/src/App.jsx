@@ -141,15 +141,15 @@ function ExpertiseSection() {
 // Recycle each unique Vimeo phone after it exits left; there are no duplicated players.
 const workVideos = [
   { id: '01', title: 'Velocity edit for a German fashion brand', embedUrl: 'https://player.vimeo.com/video/1247151590?autopause=0&player_id=0&app_id=58479', overlayText: 'Velocity edit · German fashion brand', views: null },
-  { id: '02', title: 'Velocity edit for a German client', embedUrl: 'https://player.vimeo.com/video/1247151562?autopause=0&player_id=0&app_id=58479', overlayText: 'Velocity edit · German client', views: null },
+  { id: '02', title: 'Velocity edit for a German client', embedUrl: 'https://player.vimeo.com/video/1247151562?autopause=0&player_id=0&app_id=58479', overlayText: 'Velocity edit · German client', orientation: 'landscape', aspectRatio: '16 / 9', views: null },
   { id: '03', title: 'Velocity edit for a gym client', embedUrl: 'https://player.vimeo.com/video/1247151506?autopause=0&player_id=0&app_id=58479', overlayText: 'Velocity edit · Gym client', views: null },
   { id: '04', title: '3D camera animation for a client', embedUrl: 'https://player.vimeo.com/video/1247151497?autopause=0&player_id=0&app_id=58479', overlayText: '3D camera animation · Client project', views: null },
   { id: '05', title: 'University fest content creation and edit', embedUrl: 'https://player.vimeo.com/video/1247151493?autopause=0&player_id=0&app_id=58479', overlayText: 'University fest · Creator, velocity edit & videography', views: 126000 },
-  { id: '06', title: 'Velocity edit for an energy drink company', embedUrl: 'https://player.vimeo.com/video/1247151491?autopause=0&player_id=0&app_id=58479', overlayText: 'Velocity edit · Energy drink campaign', views: null },
-  { id: '07', title: 'Videography and fast-paced edit for a travel company', embedUrl: 'https://player.vimeo.com/video/1247151415?autopause=0&player_id=0&app_id=58479', overlayText: 'Travel company · Videography & fast-paced edit', views: null },
-  { id: '08', title: 'Content creation and edit for a dubstep campaign', embedUrl: 'https://player.vimeo.com/video/1247151416?autopause=0&player_id=0&app_id=58479', overlayText: 'Dubstep campaign · Content creation & edit', views: null },
+  { id: '06', title: 'Velocity edit for an energy drink company', embedUrl: 'https://player.vimeo.com/video/1247151491?autopause=0&player_id=0&app_id=58479', overlayText: 'Velocity edit · Energy drink campaign', orientation: 'landscape', aspectRatio: '16 / 9', views: null },
+  { id: '07', title: 'Videography and fast-paced edit for a travel company', embedUrl: 'https://player.vimeo.com/video/1247151415?autopause=0&player_id=0&app_id=58479', overlayText: 'Travel company · Videography & fast-paced edit', orientation: 'landscape', aspectRatio: '4 / 3', views: null },
+  { id: '08', title: 'Content creation and edit for a dubstep campaign', embedUrl: 'https://player.vimeo.com/video/1247151416?autopause=0&player_id=0&app_id=58479', overlayText: 'Dubstep campaign · Content creation & edit', orientation: 'landscape', aspectRatio: '16 / 9', views: null },
   { id: '09', title: 'Red Bull event F1 pit stop content creation', embedUrl: 'https://player.vimeo.com/video/1247151414?autopause=0&player_id=0&app_id=58479', overlayText: 'Red Bull F1 pit stop · Event media team', views: 161000 },
-  { id: '10', title: 'University Dandiya event content creation and edit', embedUrl: 'https://player.vimeo.com/video/1247151417?autopause=0&player_id=0&app_id=58479', overlayText: 'University Dandiya event · Executive committee', views: null },
+  { id: '10', title: 'University Dandiya event content creation and edit', embedUrl: 'https://player.vimeo.com/video/1247151417?autopause=0&player_id=0&app_id=58479', overlayText: 'University Dandiya event · Executive committee', orientation: 'landscape', aspectRatio: '16 / 9', views: null },
 ]
 
 function getVimeoAutoplayUrl(embedUrl, autoplay) {
@@ -182,7 +182,8 @@ function getVimeoAutoplayUrl(embedUrl, autoplay) {
 function WorkPhone({ item, index, reducedMotion }) {
   const src = getVimeoAutoplayUrl(item.embedUrl, !reducedMotion)
   const formattedViews = Number.isFinite(item.views) ? new Intl.NumberFormat('en', { notation: 'compact', maximumFractionDigits: 1 }).format(item.views) : null
-  return <article className={`work-phone ${index % 3 === 1 ? 'is-lifted' : ''}`} aria-label={`${item.title}${item.embedUrl ? '' : ', video placeholder'}`}>
+  const orientation = item.orientation || 'portrait'
+  return <article className={`work-phone is-${orientation} ${index % 3 === 1 ? 'is-lifted' : ''}`} style={{ '--screen-aspect': item.aspectRatio || (orientation === 'landscape' ? '16 / 9' : '9 / 16') }} aria-label={`${item.title}${item.embedUrl ? '' : ', video placeholder'}`}>
     <div className="work-phone-frame">
       <div className="work-phone-screen">
         {src ? <iframe src={src} title={item.title} allow="autoplay; fullscreen; picture-in-picture" allowFullScreen loading="eager" referrerPolicy="strict-origin-when-cross-origin" /> : <div className="work-video-placeholder"><span className="placeholder-index">{item.id}</span><span className="placeholder-mark" aria-hidden="true">▶</span><span className="placeholder-caption">VIMEO EMBED<br />COMING SOON</span></div>}
@@ -225,7 +226,7 @@ function WorkSection() {
     const observer = new ResizeObserver(measure)
     observer.observe(track)
     return () => observer.disconnect()
-  }, [])
+  }, [videoOrder])
 
   useEffect(() => {
     if (paused || reducedMotion || !offset) return undefined

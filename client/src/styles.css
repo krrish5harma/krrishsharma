@@ -230,14 +230,19 @@
 .work-vimeo-note{margin-bottom:10px;color:var(--muted);font:10px var(--mono);letter-spacing:.11em}
 .work-marquee-viewport{position:relative;width:calc(100% + 112px);margin-left:-56px;overflow:hidden;mask-image:linear-gradient(90deg,transparent 0,#000 5%,#000 95%,transparent 100%);touch-action:pan-y}
 .work-marquee-track{display:flex;width:max-content;align-items:center;gap:28px;padding:20px 0 27px;transform:translate3d(var(--work-position,0px),0,0);will-change:transform}
-.work-marquee-track.is-moving{transform:translate3d(var(--work-shift,0px),0,0);transition:transform 400ms linear}
+.work-marquee-track.is-moving{transform:translate3d(var(--work-shift,0px),0,0);transition:transform 350ms linear}
 .work-phone{position:relative;flex:0 0 clamp(216px,19.5vw,270px);}
+.work-phone.is-landscape{flex-basis:clamp(300px,28vw,390px)}
 .work-phone.is-lifted{transform:translateY(17px) rotate(1deg)}
 .work-phone-frame{position:relative;padding:8px;border:1px solid rgba(255,255,255,.2);border-radius:42px;background:linear-gradient(145deg,#303030,#111 24%,#090909 75%,#272727);box-shadow:0 0 0 1px rgba(0,0,0,.8),0 24px 65px rgba(0,0,0,.38),0 0 42px rgba(181,18,36,.12)}
-.work-phone-screen{position:relative;width:100%;aspect-ratio:9/19.5;overflow:hidden;border-radius:34px;background:#070606;box-shadow:inset 0 0 0 1px rgba(255,255,255,.1)}
+.work-phone-screen{position:relative;width:100%;aspect-ratio:var(--screen-aspect,9/19.5);overflow:hidden;border-radius:34px;background:#070606;box-shadow:inset 0 0 0 1px rgba(255,255,255,.1)}
 .work-phone-screen iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:#070606}
 .work-phone-island{position:absolute;z-index:2;top:15px;left:50%;width:74px;height:20px;transform:translateX(-50%);border-radius:999px;background:#020202;box-shadow:0 1px 1px rgba(255,255,255,.12)}
 .work-phone-lens{position:absolute;z-index:3;top:21px;left:calc(50% + 22px);width:6px;height:6px;border-radius:50%;background:#101b31;box-shadow:inset 0 0 0 1px #26354c}
+.work-phone.is-landscape .work-phone-frame{border-radius:34px}
+.work-phone.is-landscape .work-phone-screen{border-radius:26px}
+.work-phone.is-landscape .work-phone-island{top:50%;left:15px;width:20px;height:72px;transform:translateY(-50%)}
+.work-phone.is-landscape .work-phone-lens{top:calc(50% - 3px);left:22px}
 .work-view-bubble{position:absolute;z-index:4;top:48px;right:17px;display:flex;align-items:center;gap:5px;padding:7px 10px;border:1px solid rgba(255,255,255,.35);border-radius:999px;background:rgba(245,243,240,.16);backdrop-filter:blur(16px) saturate(1.6);-webkit-backdrop-filter:blur(16px) saturate(1.6);box-shadow:0 5px 20px rgba(0,0,0,.2),inset 0 1px 0 rgba(255,255,255,.24);color:#fff;font:600 10px var(--mono);text-shadow:0 1px 5px rgba(0,0,0,.45)}
 .work-view-bubble span{font-size:7px;letter-spacing:.09em;color:rgba(255,255,255,.82)}
 .work-video-context{position:absolute;z-index:2;left:17px;right:17px;bottom:43px;padding:11px 12px;border:1px solid rgba(255,255,255,.18);border-radius:12px;background:rgba(12,9,9,.48);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);color:#fff;font-size:12px;line-height:1.4;box-shadow:0 8px 22px rgba(0,0,0,.18)}
@@ -257,6 +262,7 @@
   .work-marquee-viewport{width:calc(100% + 40px);margin-left:-20px;mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent)}
   .work-marquee-track{gap:18px;padding:14px 0 22px}
   .work-phone{flex-basis:clamp(202px,64vw,245px)}
+  .work-phone.is-landscape{flex-basis:clamp(290px,84vw,370px)}
   .work-phone-frame{padding:7px;border-radius:36px}
   .work-phone-screen{border-radius:29px}
   .work-view-bubble{top:44px;right:14px;padding:6px 8px;font-size:9px}
