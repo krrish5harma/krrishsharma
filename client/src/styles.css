@@ -350,3 +350,24 @@
   .social-links a,.footer-social-links a{font-size:11px}
   .featured-reel-link,.reel-modal-heading,.reel-modal>a,.gallery-note,.work-video-caption,.work-marquee-hint{font-size:10px}
 }
+
+/* Final contrast audit: the hero metadata sits over animated rays, so give it
+   a stable surface and use readable, theme-aware text instead of faint microcopy. */
+:root{--muted:#c0b9b7}
+:root[data-theme=light]{--muted:#514a48}
+.hero-kicker{width:fit-content;max-width:100%;padding:7px 10px;border:1px solid color-mix(in srgb,var(--ink) 14%,transparent);border-radius:7px;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);font-family:Manrope,Arial,sans-serif;font-size:13px;font-weight:650;line-height:1.4;letter-spacing:.035em;color:var(--ink)}
+.hero-education{width:fit-content;max-width:100%;padding:10px 12px;border-left:2px solid var(--red-hot);background:color-mix(in srgb,var(--bg) 86%,transparent);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);font-family:Manrope,Arial,sans-serif;font-size:12px;font-weight:600;line-height:1.6;letter-spacing:.035em;color:var(--ink)}
+.hero-education span:first-child{color:var(--ink)}
+.eyebrow,.section-label{font-size:12px;color:var(--ink);letter-spacing:.075em}
+.section-label{line-height:1.5}
+.visual-index,.mono-caption,.expertise-number,.work-card-count,.work-card-meta,.work-controls,.timeline-item>span,.detail-facts,.scroll-cue{font-size:11px;line-height:1.6}
+.hero-description p,.about-copy p,.expertise-card p,.expertise-heading>p,.timeline-item p,.featured-reels-heading>p,.work-empty p,.contact-page-intro>p{color:var(--muted)}
+.gallery-note,.work-vimeo-note,.work-marquee-hint,.work-video-caption,.featured-reel-link{font-size:11px;line-height:1.6;color:var(--ink)}
+.work-video-caption span:last-child{color:var(--muted)}
+@media(max-width:700px){
+  .hero-kicker{font-size:12px;line-height:1.5;padding:7px 9px}
+  .hero-education{width:100%;font-size:12px;line-height:1.65;padding:10px 11px}
+  .eyebrow,.section-label{font-size:11px}
+  .visual-index,.mono-caption,.expertise-number,.work-card-count,.work-card-meta,.work-controls,.timeline-item>span,.detail-facts,.scroll-cue{font-size:10px}
+  .gallery-note,.work-vimeo-note,.work-marquee-hint,.work-video-caption,.featured-reel-link{font-size:10px}
+}
