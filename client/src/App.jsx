@@ -4,7 +4,7 @@ import { getCalApi } from '@calcom/embed-react'
 import { capabilities, profile } from './data/profile.js'
 import PillNav from './components/PillNav.jsx'
 import ShinyText from './components/ShinyText.jsx'
-import CurvedLoop from './components/CurvedLoop.jsx'
+import TextLoop from './components/TextLoop.jsx'
 
 const HERO_CAROUSEL_INTERVAL_MS = 3500
 
@@ -119,6 +119,14 @@ function SectionTitle({ eyebrow, children, className = '' }) {
   return <div className={`section-title ${className}`} data-reveal><span className="eyebrow">{eyebrow}</span><h2>{children}</h2></div>
 }
 
+function ToolLogo({ name }) {
+  if (name === 'DaVinci Resolve') return <svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="14" cy="14" r="8" fill="#e64c4c" /><circle cx="26" cy="14" r="8" fill="#56b879" /><circle cx="20" cy="25" r="8" fill="#5597dc" /><circle cx="20" cy="18" r="3.5" fill="#171313" /></svg>
+  if (name === 'Topaz AI') return <svg viewBox="0 0 32 32" aria-hidden="true"><path fill="#f2c75c" d="M4 23h6v-6h6v-6h6V5h6v18H4Z" /></svg>
+  const isAfterEffects = name === 'Adobe After Effects'
+  const mark = isAfterEffects ? 'Ae' : 'Pr'
+  return <svg viewBox="0 0 40 40" aria-hidden="true"><rect x="1" y="1" width="38" height="38" rx="9" fill={isAfterEffects ? '#24113f' : '#17123f'} /><text x="20" y="26" textAnchor="middle" fill={isAfterEffects ? '#d4b7ff' : '#c3b5ff'} fontFamily="Arial, sans-serif" fontSize="20" fontWeight="700">{mark}</text></svg>
+}
+
 function AboutSection() {
   return <section className="about-section page-shell" id="about">
     <SectionLabel number="02" title="A LITTLE ABOUT ME" />
@@ -128,9 +136,10 @@ function AboutSection() {
     </div>
     <div className="tools-loop skills-display" data-reveal>
       <div className="skills-display-heading"><span className="eyebrow">SKILLS &amp; TOOLS</span><p>The software behind the work.</p></div>
-      <div className="skills-curved-loop" aria-label="Animated skills and tools loop">
-        <CurvedLoop marqueeText="▣ Ae  ADOBE AFTER EFFECTS     ▣ Pr  ADOBE PREMIERE PRO     ◉ DAVINCI RESOLVE     ◢ TOPAZ AI" speed={1.05} curveAmount={120} shape="wave" fontSize={28} fontWeight={600} letterSpacing={1} color="var(--ink)" separator="✳" separatorColor="var(--red-hot)" pauseOnHover interactive edgeFade={0.08} />
+      <div className="skills-logo-row" aria-label="Software used: Adobe After Effects, Adobe Premiere Pro, DaVinci Resolve and Topaz AI">
+        {profile.tools.map((tool) => <span className={`skills-logo skills-logo-${tool.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`} key={tool} title={tool}><ToolLogo name={tool} /></span>)}
       </div>
+      <TextLoop className="skills-text-loop" text="After Effects    Premiere Pro    DaVinci Resolve    Topaz AI" shape="wave" speed={90} direction="forward" separator="✦" curviness={24} tilt={0} fontSize={46} fontWeight={600} letterSpacing={1} uppercase ribbon ribbonColor="#4f0000" ribbonWidth={92} edgeFade={0} cross={false} crossAngle={16} draggable={false} scrollBoost={1.1} outline={false} pauseOnHover crossColor="#935555" style={{ height: 270 }} />
     </div>
   </section>
 }

@@ -466,14 +466,18 @@
 .featured-reel-live-frame iframe{display:block;width:100%;height:100%;border:0;background:#090809}
 @media(max-width:700px){.featured-reel-poster{height:auto;aspect-ratio:3/4}.featured-reel-live{aspect-ratio:3/4}}
 
-.tools-loop.skills-display{grid-template-columns:1fr;align-items:center;gap:18px;padding:30px 0 0;border-top:1px solid var(--line)}
+.tools-loop.skills-display{grid-template-columns:auto 1fr;align-items:center;gap:14px 24px;padding:30px 0 0;border-top:1px solid var(--line)}
 .skills-display-heading{display:grid;gap:9px}
 .skills-display-heading .eyebrow{font-size:10px;color:var(--ink)}
 .skills-display-heading p{margin:0;color:var(--muted);font-size:12px;line-height:1.5}
-.skills-curved-loop{grid-column:1/-1;min-width:0;margin:0 -2vw;overflow:hidden;border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:color-mix(in srgb,var(--panel) 24%,transparent)}
-.skills-curved-loop .curved-loop-jacket{width:100%;height:84px;min-height:84px;overflow:hidden}
-.skills-curved-loop .curved-loop-svg{width:100%;height:100%;aspect-ratio:auto;color:var(--ink)}
-@media(max-width:700px){.tools-loop.skills-display{grid-template-columns:1fr;gap:13px;padding-top:23px}.skills-curved-loop{margin:0 -5vw}.skills-curved-loop .curved-loop-jacket{height:68px;min-height:68px}}
+.skills-logo-row{display:flex;align-items:center;justify-content:flex-end;gap:clamp(16px,3vw,38px);min-height:48px}
+.skills-logo{width:36px;height:36px;display:grid;place-items:center;filter:drop-shadow(0 3px 8px rgba(0,0,0,.3));transition:transform .25s ease}
+.skills-logo:hover{transform:translateY(-3px) scale(1.08)}
+.skills-logo svg{width:100%;height:100%;display:block}
+.skills-text-loop{grid-column:1/-1;width:100%;height:clamp(230px,24vw,310px);overflow:hidden;border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:color-mix(in srgb,var(--panel) 24%,transparent)}
+.skills-text-loop .text-loop-svg{width:100%;height:100%}
+.skills-text-loop .text-loop-text{font-family:Manrope,Arial,sans-serif;letter-spacing:1px}
+@media(max-width:700px){.tools-loop.skills-display{grid-template-columns:1fr;gap:13px;padding-top:23px}.skills-logo-row{justify-content:flex-start;gap:20px}.skills-logo{width:32px;height:32px}.skills-text-loop{height:180px}}
 
 .work-heading .eyebrow{font-size:14px;line-height:1.5;letter-spacing:.065em}
 .work-vimeo-note{font-size:14px;line-height:1.55;letter-spacing:.07em}
