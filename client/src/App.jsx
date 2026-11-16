@@ -138,7 +138,7 @@ function ExpertiseSection() {
   </section>
 }
 
-// Vimeo embeds stay unloaded as players until a viewer selects a carousel card.
+// A single paused Vimeo player warms on hover/press; no carousel videos autoplay.
 const workVideos = [
   { id: '01', title: 'Velocity edit for a German fashion brand', embedUrl: 'https://player.vimeo.com/video/1247151590?autopause=0&player_id=0&app_id=58479', overlayText: 'Velocity edit · German fashion brand', views: null },
   { id: '02', title: 'Velocity edit for a German client', embedUrl: 'https://player.vimeo.com/video/1247151562?autopause=0&player_id=0&app_id=58479', overlayText: 'Velocity edit · German client', orientation: 'landscape', aspectRatio: '16 / 9', views: null },
@@ -171,7 +171,7 @@ const workCarouselItems = workVideos.map((item) => ({
   subtitle: item.views ? `${item.overlayText} · ${new Intl.NumberFormat('en', { notation: 'compact' }).format(item.views)} views` : item.overlayText,
 }))
 
-function getVimeoAutoplayUrl(embedUrl, autoplay, controls = false) {
+function getVimeoAutoplayUrl(embedUrl, autoplay, controls = false, playerId = 'portfolio-work') {
   if (!embedUrl) return ''
   try {
     const source = new URL(embedUrl)
@@ -192,15 +192,55 @@ function getVimeoAutoplayUrl(embedUrl, autoplay, controls = false) {
     player.searchParams.set('byline', '0')
     player.searchParams.set('portrait', '0')
     player.searchParams.set('dnt', '1')
+    player.searchParams.set('api', '1')
+    player.searchParams.set('player_id', playerId)
     return player.toString()
   } catch {
     return ''
   }
 }
 
+let vimeoSdkPromise
+
+function loadVimeoSdk() {
+  if (window.Vimeo?.Player) return Promise.resolve(window.Vimeo.Player)
+  if (vimeoSdkPromise) return vimeoSdkPromise
+
+  vimeoSdkPromise = new Promise((resolve) => {
+    const existingScript = document.querySelector('script[data-vimeo-player-sdk]')
+    const script = existingScript || document.createElement('script')
+    const finish = () => resolve(window.Vimeo?.Player || null)
+    script.addEventListener('load', finish, { once: true })
+    script.addEventListener('error', finish, { once: true })
+    if (!existingScript) {
+      script.src = 'https://player.vimeo.com/api/player.js'
+      script.async = true
+      script.dataset.vimeoPlayerSdk = 'true'
+      document.head.appendChild(script)
+    }
+  })
+
+  return vimeoSdkPromise
+}
+
 function WorkSection() {
   const closeViewerRef = useRef(null)
+  const playerIframeRef = useRef(null)
+  const vimeoPlayerRef = useRef(null)
+  const pendingPlayRef = useRef(null)
+  const warmTimerRef = useRef(null)
+  const hoveredVideoIdRef = useRef(null)
   const [activeVideo, setActiveVideo] = useState(null)
+  const [warmVideo, setWarmVideo] = useState(null)
+  const [carouselIndex, setCarouselIndex] = useState(0)
+  const playerVideo = activeVideo || warmVideo
+
+  const closeWorkVideo = () => {
+    pendingPlayRef.current = null
+    setActiveVideo(null)
+    setWarmVideo(null)
+    hoveredVideoIdRef.current = null
+  }
 
   useEffect(() => {
     if (!activeVideo) return undefined
@@ -208,7 +248,7 @@ function WorkSection() {
     const previousFocus = document.activeElement
     document.body.style.overflow = 'hidden'
     const focusTimer = window.setTimeout(() => closeViewerRef.current?.focus(), 0)
-    const onKeyDown = (event) => { if (event.key === 'Escape') setActiveVideo(null) }
+    const onKeyDown = (event) => { if (event.key === 'Escape') closeWorkVideo() }
     window.addEventListener('keydown', onKeyDown)
     return () => {
       window.clearTimeout(focusTimer)
@@ -218,25 +258,85 @@ function WorkSection() {
     }
   }, [activeVideo])
 
+  useEffect(() => {
+    if (!playerVideo) return undefined
+    let cancelled = false
+    let player = null
+
+    loadVimeoSdk().then((Player) => {
+      if (cancelled || !Player || !playerIframeRef.current) return
+      player = new Player(playerIframeRef.current)
+      vimeoPlayerRef.current = player
+      player.ready().then(() => {
+        if (cancelled) return
+        if (pendingPlayRef.current === playerVideo.id) {
+          pendingPlayRef.current = null
+          player.play().catch(() => {})
+        }
+      }).catch(() => {})
+    })
+
+    return () => {
+      cancelled = true
+      if (vimeoPlayerRef.current === player) vimeoPlayerRef.current = null
+      player?.destroy().catch(() => {})
+    }
+  }, [playerVideo?.id])
+
+  useEffect(() => {
+    if (!activeVideo || activeVideo.id !== warmVideo?.id) return
+    const player = vimeoPlayerRef.current
+    if (!player) {
+      pendingPlayRef.current = activeVideo.id
+      return
+    }
+    player.play().catch(() => {})
+  }, [activeVideo, warmVideo])
+
+  useEffect(() => () => window.clearTimeout(warmTimerRef.current), [])
+
+  const scheduleVideoWarmup = (event) => {
+    const card = event.target.closest?.('[data-cc-index]')
+    if (!card) return
+    const video = workVideos[Number(card.getAttribute('data-cc-index'))]
+    if (!video || video.id === hoveredVideoIdRef.current) return
+    hoveredVideoIdRef.current = video.id
+    window.clearTimeout(warmTimerRef.current)
+    warmTimerRef.current = window.setTimeout(() => setWarmVideo(video), 120)
+  }
+
+  const warmVideoOnPress = (event) => {
+    const card = event.target.closest?.('[data-cc-index]')
+    if (!card) return
+    const video = workVideos[Number(card.getAttribute('data-cc-index'))]
+    if (!video) return
+    window.clearTimeout(warmTimerRef.current)
+    hoveredVideoIdRef.current = video.id
+    setWarmVideo(video)
+  }
+
   const openWorkVideo = (item) => {
     const selectedVideo = workVideos.find((video) => video.id === item.id)
-    if (selectedVideo) setActiveVideo(selectedVideo)
+    if (!selectedVideo) return
+    if (warmVideo?.id !== selectedVideo.id) setWarmVideo(null)
+    pendingPlayRef.current = warmVideo?.id === selectedVideo.id ? selectedVideo.id : null
+    setActiveVideo(selectedVideo)
   }
 
   return <section className="work-section page-shell" id="work">
     <SectionLabel number="04" title="SELECTED WORK" />
     <div className="work-heading"><SectionTitle eyebrow="A FEW THINGS MADE WITH INTENTION">Stories in<br /><em>motion.</em></SectionTitle><span className="work-vimeo-note">10 FILMS · DRAG THE RING TO EXPLORE</span></div>
-    <div className="work-circular-stage">
+    <div className="work-circular-stage" onPointerMove={scheduleVideoWarmup} onPointerDown={warmVideoOnPress} onPointerLeave={() => { hoveredVideoIdRef.current = null }} onFocusCapture={() => setWarmVideo(workVideos[carouselIndex])}>
       <Suspense fallback={<div className="gallery-loading work-carousel-loading"><span className="eyebrow">SELECTED WORK</span><p>Preparing the video reel…</p></div>}>
         <CircularCarousel
           items={workCarouselItems}
           preset="cylinder"
           intro="rise"
-          cardWidth={234}
+          cardWidth={420}
           aspectRatio={1}
           speed={11}
           captions
-          gap={32}
+          gap={48}
           perspective={3200}
           momentum={0.3}
           autoplay={activeVideo ? 'off' : 'drift'}
@@ -248,18 +348,19 @@ function WorkSection() {
           fadeColor="var(--bg)"
           cornerRadius={18}
           innerShade={0.5}
+          onChange={setCarouselIndex}
           onItemClick={openWorkVideo}
         />
       </Suspense>
     </div>
     <p className="work-marquee-hint">DRAG OR SCROLL TO BROWSE <span>·</span> SELECT A FILM TO WATCH</p>
-    {activeVideo && <div className="work-viewer-backdrop" onMouseDown={(event) => { if (event.target === event.currentTarget) setActiveVideo(null) }} onContextMenu={(event) => event.preventDefault()}>
-      <section className="work-viewer" role="dialog" aria-modal="true" aria-labelledby="work-viewer-title" onContextMenu={(event) => event.preventDefault()}>
-        <header className="work-viewer-header"><div><span>SELECTED WORK / {activeVideo.id}</span><h2 id="work-viewer-title">{activeVideo.title}</h2></div><button ref={closeViewerRef} type="button" className="work-viewer-close" onClick={() => setActiveVideo(null)} aria-label="Close full screen video"><X size={20} /></button></header>
-        <div className={`work-viewer-stage is-${activeVideo.orientation || 'portrait'}`} style={{ '--viewer-aspect': activeVideo.aspectRatio || (activeVideo.orientation === 'landscape' ? '16 / 9' : '9 / 16') }} onContextMenu={(event) => event.preventDefault()}>
-          <iframe src={getVimeoAutoplayUrl(activeVideo.embedUrl, true, true)} title={activeVideo.title} allow="autoplay; fullscreen; picture-in-picture" allowFullScreen referrerPolicy="strict-origin-when-cross-origin" tabIndex={0} />
+    {playerVideo && <div className={activeVideo ? 'work-viewer-backdrop' : 'work-player-prewarm'} onMouseDown={(event) => { if (activeVideo && event.target === event.currentTarget) closeWorkVideo() }} onContextMenu={(event) => event.preventDefault()} aria-hidden={!activeVideo}>
+      <section className={`work-viewer${activeVideo ? '' : ' work-viewer-prewarm'}`} role={activeVideo ? 'dialog' : undefined} aria-modal={activeVideo ? 'true' : undefined} aria-labelledby={activeVideo ? 'work-viewer-title' : undefined} onContextMenu={(event) => event.preventDefault()}>
+        {activeVideo && <header className="work-viewer-header"><div><span>SELECTED WORK / {activeVideo.id}</span><h2 id="work-viewer-title">{activeVideo.title}</h2></div><button ref={closeViewerRef} type="button" className="work-viewer-close" onClick={closeWorkVideo} aria-label="Close full screen video"><X size={20} /></button></header>}
+        <div className={`work-viewer-stage is-${playerVideo.orientation || 'portrait'}`} style={{ '--viewer-aspect': playerVideo.aspectRatio || (playerVideo.orientation === 'landscape' ? '16 / 9' : '9 / 16') }} onContextMenu={(event) => event.preventDefault()}>
+          <iframe ref={playerIframeRef} src={getVimeoAutoplayUrl(playerVideo.embedUrl, Boolean(activeVideo && activeVideo.id !== warmVideo?.id), true, `portfolio-work-${playerVideo.id}`)} title={playerVideo.title} allow="autoplay; fullscreen; picture-in-picture" allowFullScreen referrerPolicy="strict-origin-when-cross-origin" tabIndex={activeVideo ? 0 : -1} />
         </div>
-        <footer className="work-viewer-footer"><p>{activeVideo.overlayText}</p>{Number.isFinite(activeVideo.views) && <span><Eye size={14} aria-hidden="true" />{new Intl.NumberFormat('en', { notation: 'compact', maximumFractionDigits: 1 }).format(activeVideo.views)} views</span>}</footer>
+        {activeVideo && <footer className="work-viewer-footer"><p>{activeVideo.overlayText}</p>{Number.isFinite(activeVideo.views) && <span><Eye size={14} aria-hidden="true" />{new Intl.NumberFormat('en', { notation: 'compact', maximumFractionDigits: 1 }).format(activeVideo.views)} views</span>}</footer>}
       </section>
     </div>}
   </section>
