@@ -138,15 +138,19 @@ function ExpertiseSection() {
 }
 
 // Add Vimeo player embed URLs here as they are provided. Each active embed is muted and loops inline.
-// These 12 slots keep the viewport filled during the wrap. Replace slots with approved videos;
-// the sequence remains seamless with 10–15 clips because each is recycled after it exits left.
-const workVideos = Array.from({ length: 12 }, (_, index) => ({
-  id: String(index + 1).padStart(2, '0'),
-  title: `Vimeo video ${String(index + 1).padStart(2, '0')}`,
-  embedUrl: '',
-  overlayText: '',
-  views: null,
-}))
+// Recycle each unique Vimeo phone after it exits left; there are no duplicated players.
+const workVideos = [
+  { id: '01', title: 'Velocity edit for a German fashion brand', embedUrl: 'https://player.vimeo.com/video/1247151590?autopause=0&player_id=0&app_id=58479', overlayText: 'Velocity edit · German fashion brand', views: null },
+  { id: '02', title: 'Velocity edit for a German client', embedUrl: 'https://player.vimeo.com/video/1247151562?autopause=0&player_id=0&app_id=58479', overlayText: 'Velocity edit · German client', views: null },
+  { id: '03', title: 'Velocity edit for a gym client', embedUrl: 'https://player.vimeo.com/video/1247151506?autopause=0&player_id=0&app_id=58479', overlayText: 'Velocity edit · Gym client', views: null },
+  { id: '04', title: '3D camera animation for a client', embedUrl: 'https://player.vimeo.com/video/1247151497?autopause=0&player_id=0&app_id=58479', overlayText: '3D camera animation · Client project', views: null },
+  { id: '05', title: 'University fest content creation and edit', embedUrl: 'https://player.vimeo.com/video/1247151493?autopause=0&player_id=0&app_id=58479', overlayText: 'University fest · Creator, velocity edit & videography', views: 126000 },
+  { id: '06', title: 'Velocity edit for an energy drink company', embedUrl: 'https://player.vimeo.com/video/1247151491?autopause=0&player_id=0&app_id=58479', overlayText: 'Velocity edit · Energy drink campaign', views: null },
+  { id: '07', title: 'Videography and fast-paced edit for a travel company', embedUrl: 'https://player.vimeo.com/video/1247151415?autopause=0&player_id=0&app_id=58479', overlayText: 'Travel company · Videography & fast-paced edit', views: null },
+  { id: '08', title: 'Content creation and edit for a dubstep campaign', embedUrl: 'https://player.vimeo.com/video/1247151416?autopause=0&player_id=0&app_id=58479', overlayText: 'Dubstep campaign · Content creation & edit', views: null },
+  { id: '09', title: 'Red Bull event F1 pit stop content creation', embedUrl: 'https://player.vimeo.com/video/1247151414?autopause=0&player_id=0&app_id=58479', overlayText: 'Red Bull F1 pit stop · Event media team', views: 161000 },
+  { id: '10', title: 'University Dandiya event content creation and edit', embedUrl: 'https://player.vimeo.com/video/1247151417?autopause=0&player_id=0&app_id=58479', overlayText: 'University Dandiya event · Executive committee', views: null },
+]
 
 function getVimeoAutoplayUrl(embedUrl, autoplay) {
   if (!embedUrl) return ''
@@ -249,7 +253,7 @@ function WorkSection() {
 
   return <section className="work-section page-shell" id="work">
     <SectionLabel number="04" title="SELECTED WORK" />
-    <div className="work-heading"><SectionTitle eyebrow="A FEW THINGS MADE WITH INTENTION">Stories in<br /><em>motion.</em></SectionTitle><span className="work-vimeo-note">12 VIDEO SLOTS · VIMEO EMBEDS COMING SOON</span></div>
+    <div className="work-heading"><SectionTitle eyebrow="A FEW THINGS MADE WITH INTENTION">Stories in<br /><em>motion.</em></SectionTitle><span className="work-vimeo-note">10 SELECTED VIDEOS · MUTED INLINE PLAYBACK</span></div>
     <div className={`work-marquee-viewport ${paused ? 'is-paused' : ''}`} onPointerEnter={pauseAtCurrentPosition} onPointerLeave={() => setPaused(false)} onFocus={pauseAtCurrentPosition} onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setPaused(false) }} role="region" aria-label="Selected video work, automatically scrolling left" aria-roledescription="carousel">
       <div ref={trackRef} className={`work-marquee-track ${moving && !paused && !reducedMotion ? 'is-moving' : ''}`} style={{ '--work-shift': `${position - offset}px`, '--work-position': `${position}px` }} onTransitionEnd={finishAdvance}>
         {videoOrder.map((item, index) => <WorkPhone key={item.id} item={item} index={index} reducedMotion={reducedMotion} />)}
