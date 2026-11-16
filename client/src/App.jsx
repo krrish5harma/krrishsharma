@@ -167,16 +167,16 @@ const workVideos = [
 ]
 
 const workThumbnails = {
-  '01': 'https://i.vimeocdn.com/video/2226995976-9e562171a1e76ad6c6127369973cbc203081e21f21d9c53e994a708ada12c419-d_1280?region=us',
-  '02': 'https://i.vimeocdn.com/video/2226996719-50f546b2af42373f6b625966a50f2e6f5c89086d0891aca684aa04f13f613e71-d_1280?region=us',
-  '03': 'https://i.vimeocdn.com/video/2226997275-fc01b684983e3380270da4a2e070de8f23bc636610b61b7d7b27205410db5ebe-d_1280?region=us',
-  '04': 'https://i.vimeocdn.com/video/2226995404-9d3481290043a1ca94d12ef68bbc8a218564ae4228b4d65c0172e67d8a3f6a88-d_1280?region=us',
-  '05': 'https://i.vimeocdn.com/video/2226997650-60cef249ea559bc02a6574fca1e6370fa5f25341d1984083021b1b78241bb2f0-d_1280?region=us',
-  '06': 'https://i.vimeocdn.com/video/2226994774-3626c6a3561973b35560e0cdc8a77394c3d7da15aed82fef69434c819e166884-d_1280?region=us',
-  '07': 'https://i.vimeocdn.com/video/2226999237-b8c9065bc2556adc7153f7a9f4fdac1c8095fc0be3be29c9b0f4e6e522d2e871-d_1280?region=us',
-  '08': 'https://i.vimeocdn.com/video/2226999945-547a2ba94dac948d695dfbfe11aac2eb84226f1b8ac566a8b2f981e2dd9f558c-d_1280?region=us',
-  '09': 'https://i.vimeocdn.com/video/2226999558-1b9e8a8f78ea00ca7b078b1a2642b86b0fad697f4e06079fc5f885cbaa9f47c9-d_1280?region=us',
-  '10': 'https://i.vimeocdn.com/video/2226999753-d5dac74cda92549aa1234bc136e35fe73885413720ebd16810dc153330bec070-d_1280?region=us',
+  '01': 'https://i.vimeocdn.com/video/2226995976-9e562171a1e76ad6c6127369973cbc203081e21f21d9c53e994a708ada12c419-d_640?region=us',
+  '02': 'https://i.vimeocdn.com/video/2226996719-50f546b2af42373f6b625966a50f2e6f5c89086d0891aca684aa04f13f613e71-d_640?region=us',
+  '03': 'https://i.vimeocdn.com/video/2226997275-fc01b684983e3380270da4a2e070de8f23bc636610b61b7d7b27205410db5ebe-d_640?region=us',
+  '04': 'https://i.vimeocdn.com/video/2226995404-9d3481290043a1ca94d12ef68bbc8a218564ae4228b4d65c0172e67d8a3f6a88-d_640?region=us',
+  '05': 'https://i.vimeocdn.com/video/2226997650-60cef249ea559bc02a6574fca1e6370fa5f25341d1984083021b1b78241bb2f0-d_640?region=us',
+  '06': 'https://i.vimeocdn.com/video/2226994774-3626c6a3561973b35560e0cdc8a77394c3d7da15aed82fef69434c819e166884-d_640?region=us',
+  '07': 'https://i.vimeocdn.com/video/2226999237-b8c9065bc2556adc7153f7a9f4fdac1c8095fc0be3be29c9b0f4e6e522d2e871-d_640?region=us',
+  '08': 'https://i.vimeocdn.com/video/2226999945-547a2ba94dac948d695dfbfe11aac2eb84226f1b8ac566a8b2f981e2dd9f558c-d_640?region=us',
+  '09': 'https://i.vimeocdn.com/video/2226999558-1b9e8a8f78ea00ca7b078b1a2642b86b0fad697f4e06079fc5f885cbaa9f47c9-d_640?region=us',
+  '10': 'https://i.vimeocdn.com/video/2226999753-d5dac74cda92549aa1234bc136e35fe73885413720ebd16810dc153330bec070-d_640?region=us',
 }
 
 function getVimeoAutoplayUrl(embedUrl, autoplay, controls = false, playerId = 'portfolio-work') {
@@ -243,6 +243,7 @@ function WorkSection() {
   const [activeVideo, setActiveVideo] = useState(null)
   const [warmVideo, setWarmVideo] = useState(null)
   const [readyVideoId, setReadyVideoId] = useState(null)
+  const [playingVideoId, setPlayingVideoId] = useState(null)
   const [carouselIndex, setCarouselIndex] = useState(0)
   const [thumbnailUrls, setThumbnailUrls] = useState(workThumbnails)
   const workCarouselItems = workVideos.map((item) => ({
@@ -254,6 +255,7 @@ function WorkSection() {
   const playerVideo = activeVideo || warmVideo
   const iframeMode = !activeVideo || reuseWarmPlayerRef.current ? 'warm' : 'autoplay'
   const playerIsReady = Boolean(playerVideo && readyVideoId === playerVideo.id)
+  const playerIsPlaying = Boolean(activeVideo && playingVideoId === activeVideo.id)
 
   const closeWorkVideo = () => {
     pendingPlayRef.current = null
@@ -261,6 +263,7 @@ function WorkSection() {
     setActiveVideo(null)
     setWarmVideo(null)
     setReadyVideoId(null)
+    setPlayingVideoId(null)
     hoveredVideoIdRef.current = null
   }
 
@@ -275,7 +278,7 @@ function WorkSection() {
         if (!id) return null
         try {
           const page = `https://vimeo.com/${id}`
-          const endpoint = `https://vimeo.com/api/oembed.json?url=${encodeURIComponent(page)}&width=1280`
+          const endpoint = `https://vimeo.com/api/oembed.json?url=${encodeURIComponent(page)}&width=640`
           const response = await fetch(endpoint, { cache: 'no-store' })
           if (!response.ok) return null
           const data = await response.json()
@@ -285,7 +288,9 @@ function WorkSection() {
         }
       })).then((updates) => {
         const fresh = Object.fromEntries(updates.filter(Boolean))
-        if (Object.keys(fresh).length) setThumbnailUrls((current) => ({ ...current, ...fresh }))
+        if (Object.keys(fresh).some((id) => fresh[id] !== workThumbnails[id])) {
+          setThumbnailUrls((current) => ({ ...current, ...fresh }))
+        }
       })
       observer.disconnect()
     }, { rootMargin: '650px 0px' })
@@ -314,10 +319,12 @@ function WorkSection() {
     let cancelled = false
     let player = null
     setReadyVideoId(null)
+    setPlayingVideoId(null)
 
     loadVimeoSdk().then((Player) => {
       if (cancelled || !Player || !playerIframeRef.current) return
       player = new Player(playerIframeRef.current)
+      player.on('playing', () => setPlayingVideoId(playerVideo.id))
       player.ready().then(() => {
         if (cancelled) return
         vimeoPlayerRef.current = player
@@ -418,8 +425,8 @@ function WorkSection() {
       <section className={`work-viewer${activeVideo ? '' : ' work-viewer-prewarm'}`} role={activeVideo ? 'dialog' : undefined} aria-modal={activeVideo ? 'true' : undefined} aria-labelledby={activeVideo ? 'work-viewer-title' : undefined} onContextMenu={(event) => event.preventDefault()}>
         {activeVideo && <header className="work-viewer-header"><div><span>SELECTED WORK / {activeVideo.id}</span><h2 id="work-viewer-title">{activeVideo.title}</h2></div><button ref={closeViewerRef} type="button" className="work-viewer-close" onClick={closeWorkVideo} aria-label="Close full screen video"><X size={20} /></button></header>}
         <div className={`work-viewer-stage is-${playerVideo.orientation || 'portrait'}${activeVideo && !playerIsReady ? ' is-loading' : ''}`} style={{ '--viewer-aspect': playerVideo.aspectRatio || (playerVideo.orientation === 'landscape' ? '16 / 9' : '9 / 16') }} onContextMenu={(event) => event.preventDefault()}>
-          {activeVideo && !playerIsReady && <><img className="work-viewer-poster" src={workThumbnails[activeVideo.id]} alt="" /><span className="work-viewer-loading" role="status">Opening film…</span></>}
-          <iframe key={`${playerVideo.id}-${activeVideo ? iframeMode : 'warm'}`} ref={playerIframeRef} onLoad={() => setReadyVideoId(playerVideo.id)} src={getVimeoAutoplayUrl(playerVideo.embedUrl, Boolean(activeVideo && !reuseWarmPlayerRef.current), true, `portfolio-work-${playerVideo.id}`)} title={playerVideo.title} allow="autoplay; fullscreen; picture-in-picture" allowFullScreen referrerPolicy="strict-origin-when-cross-origin" tabIndex={activeVideo ? 0 : -1} />
+          {activeVideo && !playerIsPlaying && <><img className="work-viewer-poster" src={thumbnailUrls[activeVideo.id] || workThumbnails[activeVideo.id]} alt="" /><span className="work-viewer-loading" role="status">Opening film…</span></>}
+          <iframe key={`${playerVideo.id}-${activeVideo ? iframeMode : 'warm'}`} ref={playerIframeRef} src={getVimeoAutoplayUrl(playerVideo.embedUrl, Boolean(activeVideo && !reuseWarmPlayerRef.current), true, `portfolio-work-${playerVideo.id}`)} title={playerVideo.title} allow="autoplay; fullscreen; picture-in-picture" allowFullScreen referrerPolicy="strict-origin-when-cross-origin" tabIndex={activeVideo ? 0 : -1} />
         </div>
         {activeVideo && <footer className="work-viewer-footer"><p>{activeVideo.overlayText}</p>{Number.isFinite(activeVideo.views) && <span><Eye size={14} aria-hidden="true" />{new Intl.NumberFormat('en', { notation: 'compact', maximumFractionDigits: 1 }).format(activeVideo.views)} views</span>}</footer>}
       </section>

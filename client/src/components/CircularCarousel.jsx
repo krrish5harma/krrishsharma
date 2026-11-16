@@ -342,7 +342,9 @@ const CircularCarousel = ({
       setLeaving(null);
       setList(next);
     }
-    const sources = next.slice(0, 16).map(item => item.src);
+    // The front half of the ring is enough to reveal the carousel. Remaining
+    // cards load lazily as the browser brings them into view during rotation.
+    const sources = next.slice(0, Math.min(5, next.length)).map(item => item.src);
     const load = src =>
       new Promise(resolve => {
         const image = new Image();
@@ -868,6 +870,7 @@ const CircularCarousel = ({
             src={item.src}
             alt=""
             draggable={false}
+            loading="lazy"
             decoding="async"
             style={photoStyle}
           />
@@ -878,6 +881,7 @@ const CircularCarousel = ({
               src={gone.src}
               alt=""
               draggable={false}
+              loading="lazy"
               decoding="async"
               style={{ ...photoStyle, animationDelay: `${Math.round(leaving.delays[index])}ms` }}
             />
