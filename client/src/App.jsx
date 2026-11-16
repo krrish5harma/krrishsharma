@@ -395,9 +395,9 @@ function WorkSection() {
   </section>
 }
 const featuredReels = [
-  { code: 'Dd9XWwXTwPa', label: '01', views: 161000, thumbnail: '/images/reels/redbull-f1-event.png' },
-  { code: 'DWEPrx7kwCK', label: '02', views: 126000, thumbnail: '/images/reels/oniros-college-fest.png' },
-  { code: 'DcoCA0LTpXS', label: '03', views: 71000, thumbnail: '/images/reels/manipal-fest.png' },
+  { code: 'Dd9XWwXTwPa', label: '01', title: 'Red Bull event - F1 pit stop video', views: 161000, thumbnail: '/images/reels/redbull-f1-event.png' },
+  { code: 'DWEPrx7kwCK', label: '02', title: 'Manipal Jaipur University fest video', views: 126000, thumbnail: '/images/reels/oniros-college-fest.png' },
+  { code: 'DcoCA0LTpXS', label: '03', title: 'Manipal University cinematic video', views: 71000, thumbnail: '/images/reels/manipal-fest.png' },
 ]
 
 function FeaturedReelsSection() {
@@ -410,18 +410,18 @@ function FeaturedReelsSection() {
       <p data-reveal>Three standout edits. Pick a frame to watch the full reel.</p>
     </div>
     <div className="featured-reels-grid">
-      {featuredReels.map(({ code, label, views, thumbnail }) => {
+      {featuredReels.map(({ code, label, title, views, thumbnail }) => {
         const reelUrl = `https://www.instagram.com/reel/${code}/`
         const formattedViews = new Intl.NumberFormat('en', { notation: 'compact', maximumFractionDigits: 1 }).format(views)
         return <article className="featured-reel-card" data-reveal key={code}>
           {activeReel === code
             ? <div className="featured-reel-live">
-              <div className="featured-reel-live-head"><span><Instagram size={14} /> INSTAGRAM / {label}</span><button type="button" onClick={() => setActiveReel(null)} aria-label={`Close Instagram reel ${label}`}><X size={16} /></button></div>
-              <div className="featured-reel-live-frame"><iframe src={`${reelUrl}embed/?theme=dark`} title={`Krrish Sharma Instagram reel ${label}`} allow="encrypted-media; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" /></div>
+              <div className="featured-reel-live-head"><span><Instagram size={14} /> {title}</span><button type="button" onClick={() => setActiveReel(null)} aria-label={`Close ${title}`}><X size={16} /></button></div>
+              <div className="featured-reel-live-frame"><iframe src={`${reelUrl}embed/?theme=dark`} title={`Krrish Sharma — ${title}`} allow="encrypted-media; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" /></div>
             </div>
-            : <button type="button" className="featured-reel-poster" onClick={() => setActiveReel(code)} aria-label={`Play featured Instagram reel ${label}; ${formattedViews} views`}>
+            : <button type="button" className="featured-reel-poster" onClick={() => setActiveReel(code)} aria-label={`Play ${title}; ${formattedViews} views`}>
               <img className="reel-thumbnail" src={thumbnail} alt="" loading="lazy" decoding="async" />
-              <span className="reel-poster-index">{label}<i> / 03</i></span>
+              <span className="reel-poster-title">{title}</span>
               <span className="reel-play-mark" aria-hidden="true"><i /></span>
             </button>}
           <a className="featured-reel-link" href={reelUrl} target="_blank" rel="noreferrer"><span>OPEN ON INSTAGRAM</span><ArrowUpRight size={13} /></a>
