@@ -138,7 +138,7 @@ function AboutSection() {
       <div className="skills-display-heading"><span className="eyebrow">SKILLS &amp; TOOLS</span><p>The software behind the work.</p></div>
       <div className="skills-tool-grid">{profile.tools.map((tool) => <div className={`skills-tool skills-tool-${tool.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`} key={tool}><span className="skills-tool-logo"><ToolLogo name={tool} /></span><span>{tool}</span></div>)}</div>
       <div className="skills-curved-loop" aria-label="Animated skills and tools loop">
-        <CurvedLoop marqueeText={profile.tools.join('     ✳     ')} speed={1.4} curveAmount={180} shape="wave" fontSize={30} fontWeight={600} letterSpacing={1.2} color="var(--ink)" separator="✳" separatorColor="var(--red-hot)" pauseOnHover interactive edgeFade={0.08} />
+        <CurvedLoop marqueeText="▣ AE  AFTER EFFECTS     ▣ PR  PREMIERE PRO     ◉ DAVINCI RESOLVE     ◢ TOPAZ AI" speed={1.4} curveAmount={180} shape="wave" fontSize={30} fontWeight={600} letterSpacing={1.2} color="var(--ink)" separator="✳" separatorColor="var(--red-hot)" pauseOnHover interactive edgeFade={0.08} />
       </div>
     </div>
   </section>

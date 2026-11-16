@@ -338,6 +338,8 @@
 .site-header .portfolio-pill-nav{--pn-font:14px}
 .site-header .portfolio-pill-nav .pill-nav__face{gap:.55em}
 .site-button.theme-switch{min-height:44px!important;padding:10px 15px!important;gap:9px;font-size:14px!important;font-weight:600;white-space:nowrap}
+.site-header .site-button.theme-switch{background:color-mix(in srgb,var(--panel) 94%,transparent)!important;border:1px solid color-mix(in srgb,var(--ink) 24%,transparent)!important;color:var(--ink)!important;box-shadow:0 5px 22px rgba(0,0,0,.2),inset 0 1px 0 color-mix(in srgb,var(--ink) 9%,transparent);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+.site-header .site-button.theme-switch:hover{background:color-mix(in srgb,var(--panel) 100%,transparent)!important;border-color:var(--red-hot)!important}
 .theme-switch-icon svg{width:18px;height:18px;stroke-width:2}
 .site-button.header-book-call{min-height:44px!important;padding:10px 15px!important;font-size:13px!important;gap:9px}
 .site-button.header-book-call svg,.site-button.book-call-button>svg{flex:none}
