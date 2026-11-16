@@ -4,7 +4,7 @@ import { getCalApi } from '@calcom/embed-react'
 import { capabilities, profile } from './data/profile.js'
 import PillNav from './components/PillNav.jsx'
 import ShinyText from './components/ShinyText.jsx'
-import TextLoop from './components/TextLoop.jsx'
+import CurvedLoop from './components/CurvedLoop.jsx'
 
 const HERO_CAROUSEL_INTERVAL_MS = 3500
 
@@ -135,11 +135,10 @@ function AboutSection() {
       <div className="about-copy" data-reveal><span className="eyebrow">EDITOR BY INSTINCT · FILMMAKER BY CURIOSITY</span><h2>Every frame<br />has a <em>feeling.</em></h2><p>I’m Krrish, a freelance creative video editor and motion graphics artist. I move between the edit, the camera and the details that make an image feel alive.</p><p>Currently studying BCA at Manipal University Jaipur, graduating in 2027. I enjoy working where cinematic storytelling meets motion and visual polish.</p><a href="#expertise" className="under-link">More about my approach <ArrowUpRight size={14} /></a></div>
     </div>
     <div className="tools-loop skills-display" data-reveal>
-      <div className="skills-display-heading"><span className="eyebrow">SKILLS &amp; TOOLS</span><p>The software behind the work.</p></div>
-      <div className="skills-logo-row" aria-label="Software used: Adobe After Effects, Adobe Premiere Pro, DaVinci Resolve and Topaz AI">
+      <div className="skills-display-head"><div className="skills-display-heading"><span className="eyebrow">SKILLS &amp; TOOLS</span><p>Software I use to shape the story.</p></div><div className="skills-logo-row" aria-label="Adobe After Effects, Adobe Premiere Pro, DaVinci Resolve and Topaz AI">
         {profile.tools.map((tool) => <span className={`skills-logo skills-logo-${tool.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`} key={tool} title={tool}><ToolLogo name={tool} /></span>)}
-      </div>
-      <TextLoop className="skills-text-loop" text="After Effects    Premiere Pro    DaVinci Resolve    Topaz AI" shape="wave" speed={90} direction="forward" separator="✦" curviness={24} tilt={0} fontSize={46} fontWeight={600} letterSpacing={1} uppercase ribbon ribbonColor="#4f0000" ribbonWidth={92} edgeFade={0} cross={false} crossAngle={16} draggable={false} scrollBoost={1.1} outline={false} pauseOnHover crossColor="#935555" style={{ height: 270 }} />
+      </div></div>
+      <div className="skills-curved-loop"><CurvedLoop marqueeText="AFTER EFFECTS ✦ PREMIERE PRO ✦ DAVINCI RESOLVE ✦ TOPAZ AI ✦" shape="wave" speed={2} curveAmount={70} direction="left" fontSize={64} fontWeight={700} letterSpacing={0} separator="" outline={false} scrollBoost={0} edgeFade={0} interactive pauseOnHover={false} /></div>
     </div>
   </section>
 }
@@ -484,12 +483,12 @@ function Footer() {
         <div className="footer-intro"><a href="#top" className="footer-mark" aria-label="Krrish Sharma, back to top">K<span>.</span></a><p>Independent video editor and motion artist,<br />creating stories that stay with you.</p></div>
         <nav className="footer-column" aria-label="Footer navigation"><span>Explore</span><a href="#work">Selected work</a><a href="#about">About Krrish</a><a href="#expertise">Craft &amp; toolkit</a></nav>
         <nav className="footer-column" aria-label="Get in touch"><span>Connect</span><a href="#contact">Book a conversation</a><a href="#contact">Start a project</a></nav>
-        <div className="footer-column footer-location"><span>Based in</span><p>Jaipur, India<br />Available for select projects</p></div>
+        <div className="footer-column footer-location"><span>Based in</span><a href="https://www.google.com/maps/search/?api=1&amp;query=Jaipur%2C%20India" target="_blank" rel="noreferrer">Jaipur, India <ArrowUpRight size={13} aria-hidden="true" /></a><a href="https://www.google.com/maps/search/?api=1&amp;query=Jharkhand%2C%20India" target="_blank" rel="noreferrer">Jharkhand, India <ArrowUpRight size={13} aria-hidden="true" /></a></div>
       </div>
-      <div className="footer-feature">
+      <div className="footer-feature" data-reveal>
         <div className="footer-feature-head"><span>INDEPENDENT CREATIVE · JAIPUR, INDIA</span><BookCallButton className="footer-feature-cta">Work together</BookCallButton></div>
         <div className="footer-feature-main"><h2>Krrish Sharma<span>.</span></h2><p>Let’s make something<br />worth feeling.</p></div>
-        <div className="footer-feature-bottom"><span>Have a story in mind? Let’s talk.</span><SocialLinks compact className="footer-social-links" showArrow={false} /></div>
+        <div className="footer-feature-bottom"><SocialLinks compact className="footer-social-links" showArrow={false} /></div>
       </div>
       <div className="footer-legal"><span>© {new Date().getFullYear()} Krrish Sharma</span><span>Made with intention</span><a href="#top">Back to top <ArrowUpRight size={13} /></a></div>
     </div>
