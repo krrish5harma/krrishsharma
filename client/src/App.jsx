@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect, useRef, useState } from 'react'
-import { ArrowDown, ArrowDownRight, ArrowUpRight, BriefcaseBusiness, CalendarDays, ChevronLeft, ChevronRight, Eye, Github, Instagram, Mail, Maximize2, Moon, Pause, Play, Sun, UserRound, X, Youtube } from 'lucide-react'
+import { ArrowDown, ArrowDownRight, ArrowUpRight, BriefcaseBusiness, CalendarDays, Eye, Github, Instagram, Mail, Moon, Sun, UserRound, X, Youtube } from 'lucide-react'
 import { getCalApi } from '@calcom/embed-react'
 import { capabilities, profile } from './data/profile.js'
 import PillNav from './components/PillNav.jsx'
@@ -7,10 +7,10 @@ import CurvedLoop from './components/CurvedLoop.jsx'
 import ShinyText from './components/ShinyText.jsx'
 
 const HERO_CAROUSEL_INTERVAL_MS = 3500
-const WORK_MARQUEE_DWELL_MS = 850
 
 const SideRays = lazy(() => import('./components/SideRays.jsx'))
 const CircularGallery = lazy(() => import('./components/CircularGallery.jsx'))
+const CircularCarousel = lazy(() => import('./components/CircularCarousel.jsx'))
 
 const socials = [
   { label: 'Instagram', href: profile.socials.instagram, Icon: Instagram },
@@ -138,8 +138,7 @@ function ExpertiseSection() {
   </section>
 }
 
-// Add Vimeo player embed URLs here as they are provided. Previews stay paused until a viewer starts one.
-// Recycle each unique Vimeo phone after it exits left; there are no duplicated players.
+// Vimeo embeds stay unloaded as players until a viewer selects a carousel card.
 const workVideos = [
   { id: '01', title: 'Velocity edit for a German fashion brand', embedUrl: 'https://player.vimeo.com/video/1247151590?autopause=0&player_id=0&app_id=58479', overlayText: 'Velocity edit · German fashion brand', views: null },
   { id: '02', title: 'Velocity edit for a German client', embedUrl: 'https://player.vimeo.com/video/1247151562?autopause=0&player_id=0&app_id=58479', overlayText: 'Velocity edit · German client', orientation: 'landscape', aspectRatio: '16 / 9', views: null },
@@ -152,6 +151,25 @@ const workVideos = [
   { id: '09', title: 'Red Bull event F1 pit stop content creation', embedUrl: 'https://player.vimeo.com/video/1247151414?autopause=0&player_id=0&app_id=58479', overlayText: 'Red Bull F1 pit stop · Event media team', views: 161000 },
   { id: '10', title: 'University Dandiya event content creation and edit', embedUrl: 'https://player.vimeo.com/video/1247151417?autopause=0&player_id=0&app_id=58479', overlayText: 'University Dandiya event · Executive committee', orientation: 'landscape', aspectRatio: '16 / 9', views: null },
 ]
+
+const workThumbnails = {
+  '01': 'https://i.vimeocdn.com/video/2226833485-edf41f00641ed2bfb182ce2ba2c960199e037c471e3ee28abaf6887d116e1547-d_640x1138?region=us',
+  '02': 'https://i.vimeocdn.com/video/2226833464-921d6904ada53d84ee49e93cde93be9a011e5ea3a5880268512cc5ca8d52be4e-d_640x360?region=us',
+  '03': 'https://i.vimeocdn.com/video/2226833364-a4448d34e63d246c6e514d21b702f91c8ef8648b10b921266a7bd7825bab55f9-d_640x1138?region=us',
+  '04': 'https://i.vimeocdn.com/video/2226833529-7ec8217c91f43b48bef585735511aaa8eff74e7aff6ccd3293ad11ae7a3afe0a-d_640x1138?region=us',
+  '05': 'https://i.vimeocdn.com/video/2226833385-361a195f90072a7ba1d4b9533adad4da445e3155e9c35f1ff76b9960d4845be3-d_640x1138?region=us',
+  '06': 'https://i.vimeocdn.com/video/2226833771-166065f639114bd4fd712f7e989b7d05af49a781d847fbf848dc9cbab6ee5ed2-d_640x360?region=us',
+  '07': 'https://i.vimeocdn.com/video/2226833263-804dbdcbc6a49666025aebf83c228b0bdb24152a46b7cbcb57c97722dcc9240f-d_640x480?region=us',
+  '08': 'https://i.vimeocdn.com/video/2226833264-aed028a93f5cf7b3e17db02081ddcbb6418d7368353b9e794f2bd79eb3de4429-d_640x360?region=us',
+  '09': 'https://i.vimeocdn.com/video/2226833273-c3a20a6f4cec5c3cf7893e64bec00a1ae76fdbedaf0669c9219eb11d1cb7356f-d_640x1138?region=us',
+  '10': 'https://i.vimeocdn.com/video/2226833269-cda70d8e4a921725a23e452d86e0f4d6de7de5853d64f92412ffc7519e229fb7-d_640x360?region=us',
+}
+const workCarouselItems = workVideos.map((item) => ({
+  ...item,
+  src: workThumbnails[item.id],
+  alt: `${item.title} video thumbnail`,
+  subtitle: item.views ? `${item.overlayText} · ${new Intl.NumberFormat('en', { notation: 'compact' }).format(item.views)} views` : item.overlayText,
+}))
 
 function getVimeoAutoplayUrl(embedUrl, autoplay, controls = false) {
   if (!embedUrl) return ''
@@ -180,104 +198,9 @@ function getVimeoAutoplayUrl(embedUrl, autoplay, controls = false) {
   }
 }
 
-function WorkVideoCard({ item, index, isPlaying, onTogglePlayback, onExpand }) {
-  const src = getVimeoAutoplayUrl(item.embedUrl, isPlaying)
-  const formattedViews = Number.isFinite(item.views) ? new Intl.NumberFormat('en', { notation: 'compact', maximumFractionDigits: 1 }).format(item.views) : null
-  const orientation = item.orientation || 'portrait'
-  const sourceAspect = item.aspectRatio ? item.aspectRatio.split('/').map((part) => Number(part.trim())).reduce((width, height) => width / height) : (orientation === 'landscape' ? 16 / 9 : 9 / 16)
-  const cropWidth = sourceAspect > 3 / 4 ? `${sourceAspect / (3 / 4) * 100}%` : '100%'
-  const cropHeight = sourceAspect < 3 / 4 ? `${(3 / 4) / sourceAspect * 100}%` : '100%'
-  const cropLeft = sourceAspect > 3 / 4 ? `${(100 - parseFloat(cropWidth)) / 2}%` : '0%'
-  const cropTop = sourceAspect < 3 / 4 ? `${(100 - parseFloat(cropHeight)) / 2}%` : '0%'
-  return <article className={`work-video-card is-${orientation} ${isPlaying ? 'is-playing' : 'is-paused'}`} data-video-id={item.id} style={{ '--screen-aspect': '3 / 4', '--crop-width': cropWidth, '--crop-height': cropHeight, '--crop-left': cropLeft, '--crop-top': cropTop, '--arc-order': index }} aria-label={`${item.title}${item.embedUrl ? '' : ', video placeholder'}`}>
-      <div className="work-video-frame" onContextMenu={(event) => event.preventDefault()}>
-        {src ? <iframe src={src} title={item.title} allow="autoplay; fullscreen; picture-in-picture" allowFullScreen loading={isPlaying ? 'eager' : 'lazy'} referrerPolicy="strict-origin-when-cross-origin" tabIndex={-1} style={{ width: 'var(--crop-width)', height: 'var(--crop-height)', left: 'var(--crop-left)', top: 'var(--crop-top)' }} /> : <div className="work-video-placeholder"><span className="placeholder-index">{item.id}</span><span className="placeholder-mark" aria-hidden="true"><Play size={18} /></span><span className="placeholder-caption">VIMEO EMBED<br />COMING SOON</span></div>}
-        {item.embedUrl && <button type="button" className="work-video-play" onClick={() => onTogglePlayback(item.id)} onContextMenu={(event) => event.preventDefault()} aria-label={`${isPlaying ? 'Pause' : 'Play'} ${item.title}`} aria-pressed={isPlaying}><span>{isPlaying ? <Pause size={20} fill="currentColor" aria-hidden="true" /> : <Play size={20} fill="currentColor" aria-hidden="true" />}</span></button>}
-        <button type="button" className="work-video-expand" onClick={() => onExpand(item)} onContextMenu={(event) => event.preventDefault()} aria-label={`Expand ${item.title}`}><Maximize2 size={17} aria-hidden="true" /><span>EXPAND</span></button>
-      </div>
-      {formattedViews && <span className="work-view-bubble"><Eye size={12} aria-hidden="true" />{formattedViews}<span>VIEWS</span></span>}
-      {item.overlayText && <span className="work-video-context">{item.overlayText}</span>}
-    <div className="work-video-caption"><span>VIDEO / {item.id}</span><span>{isPlaying ? 'PLAYING · CLICK TO PAUSE' : 'CLICK TO PLAY'}</span></div>
-  </article>
-}
-
 function WorkSection() {
-  const viewportRef = useRef(null)
-  const trackRef = useRef(null)
   const closeViewerRef = useRef(null)
-  const [videoOrder, setVideoOrder] = useState(workVideos)
-  const [offset, setOffset] = useState(0)
-  const [position, setPosition] = useState(0)
-  const [targetPosition, setTargetPosition] = useState(0)
-  const [moving, setMoving] = useState(false)
-  const [paused, setPaused] = useState(false)
-  const [reducedMotion, setReducedMotion] = useState(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches)
-  const [playingVideoId, setPlayingVideoId] = useState(null)
-  const moveDirectionRef = useRef(1)
-  const dragRef = useRef(null)
   const [activeVideo, setActiveVideo] = useState(null)
-
-  useEffect(() => {
-    const query = window.matchMedia('(prefers-reduced-motion: reduce)')
-    const updateMotion = () => setReducedMotion(query.matches)
-    query.addEventListener('change', updateMotion)
-    return () => query.removeEventListener('change', updateMotion)
-  }, [])
-
-  useEffect(() => {
-    const track = trackRef.current
-    if (!track) return undefined
-    const measure = () => {
-      const card = track.querySelector('.work-video-card')
-      if (!card) return
-      const styles = window.getComputedStyle(track)
-      setOffset(card.getBoundingClientRect().width + parseFloat(styles.columnGap || styles.gap || '0'))
-    }
-    measure()
-    const observer = new ResizeObserver(measure)
-    observer.observe(track)
-    return () => observer.disconnect()
-  }, [videoOrder])
-
-  useEffect(() => {
-    const viewport = viewportRef.current
-    const track = trackRef.current
-    if (!viewport || !track) return undefined
-    let frame = 0
-    let active = false
-    const curve = () => {
-      if (!active) return
-      const viewportBox = viewport.getBoundingClientRect()
-      const trackBox = track.getBoundingClientRect()
-      const matrix = new DOMMatrixReadOnly(window.getComputedStyle(track).transform)
-      const styles = window.getComputedStyle(track)
-      const gap = parseFloat(styles.columnGap || styles.gap || '0')
-      let left = trackBox.left - matrix.m41 + (parseFloat(styles.paddingLeft) || 0)
-      const center = viewportBox.left + viewportBox.width / 2
-      const reach = viewportBox.width / 2
-      track.querySelectorAll('.work-video-card').forEach((card) => {
-        const width = card.offsetWidth
-        const cardCenter = left + width / 2
-        const signedDistance = Math.max(-1, Math.min(1, (cardCenter - center) / reach))
-        const distance = Math.abs(signedDistance)
-        const bend = Math.pow(distance, 1.65)
-        card.style.setProperty('--arc-y', `${bend * 78}px`)
-        card.style.setProperty('--arc-rotation', `${signedDistance * -13}deg`)
-        card.style.setProperty('--arc-scale', `${1 - bend * .2}`)
-        card.style.setProperty('--arc-opacity', `${1 - bend * .52}`)
-        left += width + gap
-      })
-      frame = window.requestAnimationFrame(curve)
-    }
-    const observer = new IntersectionObserver(([entry]) => {
-      active = entry.isIntersecting
-      window.cancelAnimationFrame(frame)
-      if (active) frame = window.requestAnimationFrame(curve)
-      else setPlayingVideoId(null)
-    }, { threshold: 0 })
-    observer.observe(viewport)
-    return () => { active = false; observer.disconnect(); window.cancelAnimationFrame(frame) }
-  }, [])
 
   useEffect(() => {
     if (!activeVideo) return undefined
@@ -295,117 +218,41 @@ function WorkSection() {
     }
   }, [activeVideo])
 
-  useEffect(() => {
-    if (paused || reducedMotion || !offset || moving) return undefined
-    const timer = window.setTimeout(() => {
-      moveDirectionRef.current = 1
-      setTargetPosition(position - offset)
-      setMoving(true)
-    }, WORK_MARQUEE_DWELL_MS)
-    return () => window.clearTimeout(timer)
-  }, [paused, reducedMotion, offset, moving, videoOrder, position])
-
-  const finishAdvance = (event) => {
-    if (event.target !== trackRef.current || event.propertyName !== 'transform' || !moving) return
-    if (moveDirectionRef.current > 0) setVideoOrder((items) => [...items.slice(1), items[0]])
-    setPosition(0)
-    setTargetPosition(0)
-    setMoving(false)
-  }
-
-  const pauseAtCurrentPosition = () => {
-    const track = trackRef.current
-    if (moving && track) {
-      const transform = window.getComputedStyle(track).transform
-      const currentX = transform === 'none' ? 0 : new DOMMatrixReadOnly(transform).m41
-      setPosition(currentX)
-      setTargetPosition(currentX)
-      setMoving(false)
-    }
-    setPaused(true)
-  }
-
-  const navigateWork = (direction) => {
-    if (!offset || moving) return
-    setPaused(true)
-    setPlayingVideoId(null)
-    moveDirectionRef.current = direction
-    if (reducedMotion) {
-      setVideoOrder((items) => direction > 0 ? [...items.slice(1), items[0]] : [items[items.length - 1], ...items.slice(0, -1)])
-      setPosition(0)
-      setTargetPosition(0)
-      return
-    }
-    if (direction > 0) {
-      setTargetPosition(position - offset)
-      setMoving(true)
-      return
-    }
-    setVideoOrder((items) => [items[items.length - 1], ...items.slice(0, -1)])
-    setPosition(-offset)
-    setTargetPosition(0)
-    window.requestAnimationFrame(() => setMoving(true))
-  }
-
-  const toggleInlinePlayback = (id) => {
-    setPlayingVideoId((current) => current === id ? null : id)
-  }
-
-  const beginDrag = (event) => {
-    if (event.target.closest('button')) return
-    const track = trackRef.current
-    if (!track) return
-    pauseAtCurrentPosition()
-    const transform = window.getComputedStyle(track).transform
-    const currentX = transform === 'none' ? 0 : new DOMMatrixReadOnly(transform).m41
-    dragRef.current = { pointerId: event.pointerId, originX: event.clientX, originPosition: currentX, orderShift: 0, position: currentX, didMove: false }
-    event.currentTarget.setPointerCapture(event.pointerId)
-    event.preventDefault()
-  }
-  const moveDrag = (event) => {
-    const drag = dragRef.current
-    if (!drag || drag.pointerId !== event.pointerId || !offset) return
-    const rawPosition = drag.originPosition + event.clientX - drag.originX
-    let nextShift = 0
-    if (rawPosition <= -offset) nextShift = Math.floor(-rawPosition / offset)
-    else if (rawPosition > 0) nextShift = -Math.ceil(rawPosition / offset)
-    const shiftDelta = nextShift - drag.orderShift
-    if (shiftDelta) {
-      setVideoOrder((items) => {
-        let next = items
-        if (shiftDelta > 0) {
-          const count = shiftDelta % items.length
-          next = [...items.slice(count), ...items.slice(0, count)]
-        } else {
-          const count = (-shiftDelta) % items.length
-          next = [...items.slice(items.length - count), ...items.slice(0, items.length - count)]
-        }
-        return next
-      })
-      drag.orderShift = nextShift
-    }
-    drag.position = rawPosition + nextShift * offset
-    drag.didMove ||= Math.abs(event.clientX - drag.originX) > 4
-    setPosition(drag.position)
-    setTargetPosition(drag.position)
-    setMoving(false)
-  }
-  const endDrag = (event) => {
-    const drag = dragRef.current
-    if (!drag || drag.pointerId !== event.pointerId) return
-    dragRef.current = null
-    if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId)
+  const openWorkVideo = (item) => {
+    const selectedVideo = workVideos.find((video) => video.id === item.id)
+    if (selectedVideo) setActiveVideo(selectedVideo)
   }
 
   return <section className="work-section page-shell" id="work">
     <SectionLabel number="04" title="SELECTED WORK" />
-    <div className="work-heading"><SectionTitle eyebrow="A FEW THINGS MADE WITH INTENTION">Stories in<br /><em>motion.</em></SectionTitle><div className="work-heading-tools"><span className="work-vimeo-note">10 SELECTED VIDEOS · CLICK TO PLAY</span><div className="work-nav-controls" aria-label="Browse selected work"><button type="button" onPointerEnter={pauseAtCurrentPosition} onClick={() => navigateWork(-1)} aria-label="Previous video"><ChevronLeft size={19} /></button><button type="button" onPointerEnter={pauseAtCurrentPosition} onClick={() => navigateWork(1)} aria-label="Next video"><ChevronRight size={19} /></button></div></div></div>
-    <div ref={viewportRef} className={`work-marquee-viewport ${paused ? 'is-paused' : ''}`} onPointerEnter={pauseAtCurrentPosition} onPointerLeave={() => { if (!activeVideo && !playingVideoId && !dragRef.current) setPaused(false) }} onPointerDown={beginDrag} onPointerMove={moveDrag} onPointerUp={endDrag} onLostPointerCapture={endDrag} onPointerCancel={endDrag} onWheel={(event) => { if (Math.abs(event.deltaX) > 24 || event.shiftKey) { event.preventDefault(); navigateWork((event.deltaX || event.deltaY) < 0 ? -1 : 1) } }} onKeyDown={(event) => { if (event.key === 'ArrowRight') { event.preventDefault(); navigateWork(1) } else if (event.key === 'ArrowLeft') { event.preventDefault(); navigateWork(-1) } }} onFocus={pauseAtCurrentPosition} onBlur={(event) => { if (!activeVideo && !playingVideoId && !event.currentTarget.contains(event.relatedTarget)) setPaused(false) }} role="region" aria-label="Selected video work carousel. Drag, use the arrow keys, swipe, or navigation buttons to browse." aria-roledescription="carousel" tabIndex={0}>
-      <div ref={trackRef} className={`work-marquee-track ${moving && !reducedMotion ? 'is-moving' : ''}`} style={{ '--work-shift': `${targetPosition}px`, '--work-position': `${position}px` }} onTransitionEnd={finishAdvance}>
-        {videoOrder.map((item, index) => <WorkVideoCard key={item.id} item={item} index={index} isPlaying={playingVideoId === item.id && !activeVideo} onTogglePlayback={toggleInlinePlayback} onExpand={(video) => { setPaused(true); setPlayingVideoId(null); setActiveVideo(video) }} />)}
-      </div>
+    <div className="work-heading"><SectionTitle eyebrow="A FEW THINGS MADE WITH INTENTION">Stories in<br /><em>motion.</em></SectionTitle><span className="work-vimeo-note">10 FILMS · DRAG THE RING TO EXPLORE</span></div>
+    <div className="work-circular-stage">
+      <Suspense fallback={<div className="gallery-loading work-carousel-loading"><span className="eyebrow">SELECTED WORK</span><p>Preparing the video reel…</p></div>}>
+        <CircularCarousel
+          items={workCarouselItems}
+          preset="cylinder"
+          intro="rise"
+          cardWidth={234}
+          aspectRatio={1}
+          speed={11}
+          captions
+          gap={32}
+          perspective={3200}
+          momentum={0.3}
+          autoplay={activeVideo ? 'off' : 'drift'}
+          direction="left"
+          draggable
+          snap
+          pauseOnHover
+          focusOnClick
+          fadeColor="var(--bg)"
+          cornerRadius={18}
+          innerShade={0.5}
+          onItemClick={openWorkVideo}
+        />
+      </Suspense>
     </div>
-    <p className="work-marquee-hint">A rotating reel of edits, films and motion work <span>·</span> CLICK TO PLAY · DRAG OR USE ARROWS TO BROWSE</p>
+    <p className="work-marquee-hint">DRAG OR SCROLL TO BROWSE <span>·</span> SELECT A FILM TO WATCH</p>
     {activeVideo && <div className="work-viewer-backdrop" onMouseDown={(event) => { if (event.target === event.currentTarget) setActiveVideo(null) }} onContextMenu={(event) => event.preventDefault()}>
       <section className="work-viewer" role="dialog" aria-modal="true" aria-labelledby="work-viewer-title" onContextMenu={(event) => event.preventDefault()}>
         <header className="work-viewer-header"><div><span>SELECTED WORK / {activeVideo.id}</span><h2 id="work-viewer-title">{activeVideo.title}</h2></div><button ref={closeViewerRef} type="button" className="work-viewer-close" onClick={() => setActiveVideo(null)} aria-label="Close full screen video"><X size={20} /></button></header>
@@ -417,7 +264,6 @@ function WorkSection() {
     </div>}
   </section>
 }
-
 const featuredReels = [
   { code: 'Dd9XWwXTwPa', label: '01', views: 155000 },
   { code: 'DWEPrx7kwCK', label: '02', views: 126000 },

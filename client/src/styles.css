@@ -422,3 +422,16 @@
   .work-viewer-stage{border-radius:15px}
   .work-viewer-footer{font-size:12px}
 }
+
+.work-circular-stage{position:relative;width:100%;height:clamp(460px,52vw,560px);margin-top:10px;isolation:isolate}
+.work-circular-stage:before{content:"";position:absolute;z-index:-1;left:50%;top:51%;width:min(88%,980px);height:67%;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(ellipse,rgba(147,12,30,.2),rgba(83,8,16,.09) 45%,transparent 74%);filter:blur(34px);pointer-events:none}
+.work-circular-stage .circular-carousel{color:var(--ink)}
+.work-circular-stage .circular-carousel__caption{text-shadow:0 2px 18px rgba(0,0,0,.62)}
+.work-circular-stage .circular-carousel__subtitle{color:var(--ink);opacity:.82}
+.work-carousel-loading{position:relative;min-height:100%;border:1px solid var(--line);border-radius:24px;background:color-mix(in srgb,var(--panel) 72%,transparent);backdrop-filter:blur(16px)}
+@media(max-width:700px){
+  .work-circular-stage{height:clamp(440px,130vw,520px);margin-top:0}
+  .work-circular-stage:before{width:96%;height:60%;filter:blur(26px)}
+  .work-circular-stage .circular-carousel__caption{bottom:28px;padding-inline:20px}
+  .work-circular-stage .circular-carousel__title{font-size:14px}
+}
