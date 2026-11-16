@@ -180,13 +180,13 @@ function getVimeoAutoplayUrl(embedUrl, autoplay, controls = false) {
   }
 }
 
-function WorkVideoCard({ item, index, reducedMotion, onOpen }) {
-  const src = getVimeoAutoplayUrl(item.embedUrl, !reducedMotion)
+function WorkVideoCard({ item, index, reducedMotion, active, onOpen }) {
+  const src = getVimeoAutoplayUrl(item.embedUrl, active && !reducedMotion)
   const formattedViews = Number.isFinite(item.views) ? new Intl.NumberFormat('en', { notation: 'compact', maximumFractionDigits: 1 }).format(item.views) : null
   const orientation = item.orientation || 'portrait'
-  return <article className={`work-video-card is-${orientation}`} style={{ '--screen-aspect': item.aspectRatio || (orientation === 'landscape' ? '16 / 9' : '9 / 16'), '--arc-order': index }} aria-label={`${item.title}${item.embedUrl ? '' : ', video placeholder'}`}>
+  return <article className={`work-video-card is-${orientation} ${active ? 'is-playing' : 'is-paused'}`} data-video-id={item.id} style={{ '--screen-aspect': item.aspectRatio || (orientation === 'landscape' ? '16 / 9' : '9 / 16'), '--arc-order': index }} aria-label={`${item.title}${item.embedUrl ? '' : ', video placeholder'}`}>
       <div className="work-video-frame" onContextMenu={(event) => event.preventDefault()}>
-        {src ? <iframe src={src} title={item.title} allow="autoplay; fullscreen; picture-in-picture" allowFullScreen loading="eager" referrerPolicy="strict-origin-when-cross-origin" tabIndex={-1} /> : <div className="work-video-placeholder"><span className="placeholder-index">{item.id}</span><span className="placeholder-mark" aria-hidden="true">▶</span><span className="placeholder-caption">VIMEO EMBED<br />COMING SOON</span></div>}
+        {src ? <iframe src={src} title={item.title} allow="autoplay; fullscreen; picture-in-picture" allowFullScreen loading={active ? 'eager' : 'lazy'} referrerPolicy="strict-origin-when-cross-origin" tabIndex={-1} /> : <div className="work-video-placeholder"><span className="placeholder-index">{item.id}</span><span className="placeholder-mark" aria-hidden="true">▶</span><span className="placeholder-caption">VIMEO EMBED<br />COMING SOON</span></div>}
         <button type="button" className="work-video-open" onClick={() => onOpen(item)} onContextMenu={(event) => event.preventDefault()} aria-label={`Open ${item.title} full screen`}><span><Maximize2 size={17} aria-hidden="true" /></span></button>
       </div>
       {formattedViews && <span className="work-view-bubble"><Eye size={12} aria-hidden="true" />{formattedViews}<span>VIEWS</span></span>}
@@ -205,6 +205,8 @@ function WorkSection() {
   const [moving, setMoving] = useState(false)
   const [paused, setPaused] = useState(false)
   const [reducedMotion, setReducedMotion] = useState(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches)
+  const [activeVideoId, setActiveVideoId] = useState(null)
+  const activeVideoIdRef = useRef(null)
   const [activeVideo, setActiveVideo] = useState(null)
 
   useEffect(() => {
@@ -245,9 +247,12 @@ function WorkSection() {
       let left = trackBox.left - matrix.m41 + (parseFloat(styles.paddingLeft) || 0)
       const center = viewportBox.left + viewportBox.width / 2
       const reach = viewportBox.width / 2
+      let closestId = null
+      let closestDistance = Infinity
       track.querySelectorAll('.work-video-card').forEach((card) => {
         const width = card.offsetWidth
         const cardCenter = left + width / 2
+        const centerDistance = Math.abs(cardCenter - center)
         const signedDistance = Math.max(-1, Math.min(1, (cardCenter - center) / reach))
         const distance = Math.abs(signedDistance)
         const bend = Math.pow(distance, 1.65)
@@ -255,14 +260,26 @@ function WorkSection() {
         card.style.setProperty('--arc-rotation', `${signedDistance * -13}deg`)
         card.style.setProperty('--arc-scale', `${1 - bend * .2}`)
         card.style.setProperty('--arc-opacity', `${1 - bend * .52}`)
+        if (centerDistance < closestDistance) {
+          closestDistance = centerDistance
+          closestId = card.dataset.videoId
+        }
         left += width + gap
       })
+      if (closestId && closestId !== activeVideoIdRef.current) {
+        activeVideoIdRef.current = closestId
+        setActiveVideoId(closestId)
+      }
       frame = window.requestAnimationFrame(curve)
     }
     const observer = new IntersectionObserver(([entry]) => {
       active = entry.isIntersecting
       window.cancelAnimationFrame(frame)
       if (active) frame = window.requestAnimationFrame(curve)
+      else {
+        activeVideoIdRef.current = null
+        setActiveVideoId(null)
+      }
     }, { threshold: 0 })
     observer.observe(viewport)
     return () => { active = false; observer.disconnect(); window.cancelAnimationFrame(frame) }
@@ -313,7 +330,7 @@ function WorkSection() {
     <div className="work-heading"><SectionTitle eyebrow="A FEW THINGS MADE WITH INTENTION">Stories in<br /><em>motion.</em></SectionTitle><span className="work-vimeo-note">10 SELECTED VIDEOS · MUTED INLINE PLAYBACK</span></div>
     <div ref={viewportRef} className={`work-marquee-viewport ${paused ? 'is-paused' : ''}`} onPointerEnter={pauseAtCurrentPosition} onPointerLeave={() => { if (!activeVideo) setPaused(false) }} onFocus={pauseAtCurrentPosition} onBlur={(event) => { if (!activeVideo && !event.currentTarget.contains(event.relatedTarget)) setPaused(false) }} role="region" aria-label="Selected video work, automatically scrolling left" aria-roledescription="carousel">
       <div ref={trackRef} className={`work-marquee-track ${moving && !paused && !reducedMotion ? 'is-moving' : ''}`} style={{ '--work-shift': `${position - offset}px`, '--work-position': `${position}px` }} onTransitionEnd={finishAdvance}>
-        {videoOrder.map((item, index) => <WorkVideoCard key={item.id} item={item} index={index} reducedMotion={reducedMotion} onOpen={(video) => { setPaused(true); setActiveVideo(video) }} />)}
+        {videoOrder.map((item, index) => <WorkVideoCard key={item.id} item={item} index={index} reducedMotion={reducedMotion} active={activeVideoId === item.id && !activeVideo} onOpen={(video) => { setPaused(true); setActiveVideo(video) }} />)}
       </div>
     </div>
     <p className="work-marquee-hint">A rotating reel of edits, films and motion work <span>·</span> HOVER OR FOCUS TO PAUSE</p>
