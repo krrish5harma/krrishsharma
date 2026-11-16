@@ -5,7 +5,6 @@ import { capabilities, profile } from './data/profile.js'
 import PillNav from './components/PillNav.jsx'
 import ShinyText from './components/ShinyText.jsx'
 import CurvedLoop from './components/CurvedLoop.jsx'
-import { siDavinciresolve } from 'simple-icons'
 
 const HERO_CAROUSEL_INTERVAL_MS = 3500
 
@@ -120,13 +119,6 @@ function SectionTitle({ eyebrow, children, className = '' }) {
   return <div className={`section-title ${className}`} data-reveal><span className="eyebrow">{eyebrow}</span><h2>{children}</h2></div>
 }
 
-function ToolLogo({ name }) {
-  if (name === 'DaVinci Resolve') return <svg viewBox="0 0 24 24" aria-hidden="true"><path d={siDavinciresolve.path} /></svg>
-  if (name === 'Topaz AI') return <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M4 23h6v-6h6v-6h6V5h6v18H4Z" /></svg>
-  const mark = name === 'Adobe After Effects' ? 'Ae' : 'Pr'
-  return <svg viewBox="0 0 40 40" aria-hidden="true"><rect x="1" y="1" width="38" height="38" rx="9" /><text x="20" y="26" textAnchor="middle">{mark}</text></svg>
-}
-
 function AboutSection() {
   return <section className="about-section page-shell" id="about">
     <SectionLabel number="02" title="A LITTLE ABOUT ME" />
@@ -136,9 +128,8 @@ function AboutSection() {
     </div>
     <div className="tools-loop skills-display" data-reveal>
       <div className="skills-display-heading"><span className="eyebrow">SKILLS &amp; TOOLS</span><p>The software behind the work.</p></div>
-      <div className="skills-tool-grid">{profile.tools.map((tool) => <div className={`skills-tool skills-tool-${tool.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`} key={tool}><span className="skills-tool-logo"><ToolLogo name={tool} /></span><span>{tool}</span></div>)}</div>
       <div className="skills-curved-loop" aria-label="Animated skills and tools loop">
-        <CurvedLoop marqueeText="▣ AE  AFTER EFFECTS     ▣ PR  PREMIERE PRO     ◉ DAVINCI RESOLVE     ◢ TOPAZ AI" speed={1.4} curveAmount={180} shape="wave" fontSize={30} fontWeight={600} letterSpacing={1.2} color="var(--ink)" separator="✳" separatorColor="var(--red-hot)" pauseOnHover interactive edgeFade={0.08} />
+        <CurvedLoop marqueeText="▣ Ae  ADOBE AFTER EFFECTS     ▣ Pr  ADOBE PREMIERE PRO     ◉ DAVINCI RESOLVE     ◢ TOPAZ AI" speed={1.05} curveAmount={120} shape="wave" fontSize={28} fontWeight={600} letterSpacing={1} color="var(--ink)" separator="✳" separatorColor="var(--red-hot)" pauseOnHover interactive edgeFade={0.08} />
       </div>
     </div>
   </section>
