@@ -479,8 +479,11 @@
 .skills-tool-adobe-premiere-pro .skills-tool-logo svg text{fill:#c3b5ff;font:700 20px Manrope,Arial,sans-serif}
 .skills-tool-davinci-resolve .skills-tool-logo{color:#74a9c9;background:rgba(39,104,138,.15)}
 .skills-tool-topaz-ai .skills-tool-logo{color:#e5c982;background:rgba(177,140,55,.14)}
+.skills-curved-loop{grid-column:1/-1;min-width:0;margin:2px -2vw 0;overflow:hidden;border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:color-mix(in srgb,var(--panel) 24%,transparent)}
+.skills-curved-loop .curved-loop-jacket{width:100%;height:84px;min-height:84px;overflow:hidden}
+.skills-curved-loop .curved-loop-svg{width:100%;height:100%;aspect-ratio:auto;color:var(--ink)}
 @media(max-width:900px){.skills-tool-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:700px){.tools-loop.skills-display{grid-template-columns:1fr;gap:16px;padding-top:23px}.skills-tool-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.skills-tool{min-height:72px;gap:9px;padding:10px;font-size:11px}.skills-tool-logo{width:34px;height:34px}.skills-tool-logo svg{width:27px;height:27px}}
+@media(max-width:700px){.tools-loop.skills-display{grid-template-columns:1fr;gap:16px;padding-top:23px}.skills-tool-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.skills-tool{min-height:72px;gap:9px;padding:10px;font-size:11px}.skills-tool-logo{width:34px;height:34px}.skills-tool-logo svg{width:27px;height:27px}.skills-curved-loop{margin:0 -5vw}.skills-curved-loop .curved-loop-jacket{height:68px;min-height:68px}}
 
 .work-heading .eyebrow{font-size:14px;line-height:1.5;letter-spacing:.065em}
 .work-vimeo-note{font-size:14px;line-height:1.55;letter-spacing:.07em}
