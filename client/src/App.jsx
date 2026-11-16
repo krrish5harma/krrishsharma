@@ -7,6 +7,7 @@ import CurvedLoop from './components/CurvedLoop.jsx'
 import ShinyText from './components/ShinyText.jsx'
 
 const HERO_CAROUSEL_INTERVAL_MS = 3500
+const WORK_MARQUEE_DWELL_MS = 850
 
 const SideRays = lazy(() => import('./components/SideRays.jsx'))
 const CircularGallery = lazy(() => import('./components/CircularGallery.jsx'))
@@ -285,7 +286,7 @@ function WorkSection() {
 
   useEffect(() => {
     if (paused || reducedMotion || !offset) return undefined
-    const timer = window.setTimeout(() => setMoving(true), 20)
+    const timer = window.setTimeout(() => setMoving(true), WORK_MARQUEE_DWELL_MS)
     return () => window.clearTimeout(timer)
   }, [paused, reducedMotion, offset, moving, videoOrder])
 
