@@ -167,23 +167,17 @@ const workVideos = [
 ]
 
 const workThumbnails = {
-  '01': 'https://i.vimeocdn.com/video/2226833485-edf41f00641ed2bfb182ce2ba2c960199e037c471e3ee28abaf6887d116e1547-d_640x1138?region=us',
-  '02': 'https://i.vimeocdn.com/video/2226833464-921d6904ada53d84ee49e93cde93be9a011e5ea3a5880268512cc5ca8d52be4e-d_640x360?region=us',
-  '03': 'https://i.vimeocdn.com/video/2226833364-a4448d34e63d246c6e514d21b702f91c8ef8648b10b921266a7bd7825bab55f9-d_640x1138?region=us',
-  '04': 'https://i.vimeocdn.com/video/2226833529-7ec8217c91f43b48bef585735511aaa8eff74e7aff6ccd3293ad11ae7a3afe0a-d_640x1138?region=us',
-  '05': 'https://i.vimeocdn.com/video/2226833385-361a195f90072a7ba1d4b9533adad4da445e3155e9c35f1ff76b9960d4845be3-d_640x1138?region=us',
-  '06': 'https://i.vimeocdn.com/video/2226833771-166065f639114bd4fd712f7e989b7d05af49a781d847fbf848dc9cbab6ee5ed2-d_640x360?region=us',
-  '07': 'https://i.vimeocdn.com/video/2226833263-804dbdcbc6a49666025aebf83c228b0bdb24152a46b7cbcb57c97722dcc9240f-d_640x480?region=us',
-  '08': 'https://i.vimeocdn.com/video/2226833264-aed028a93f5cf7b3e17db02081ddcbb6418d7368353b9e794f2bd79eb3de4429-d_640x360?region=us',
-  '09': 'https://i.vimeocdn.com/video/2226833273-c3a20a6f4cec5c3cf7893e64bec00a1ae76fdbedaf0669c9219eb11d1cb7356f-d_640x1138?region=us',
-  '10': 'https://i.vimeocdn.com/video/2226833269-cda70d8e4a921725a23e452d86e0f4d6de7de5853d64f92412ffc7519e229fb7-d_640x360?region=us',
+  '01': 'https://i.vimeocdn.com/video/2226995976-9e562171a1e76ad6c6127369973cbc203081e21f21d9c53e994a708ada12c419-d_1280?region=us',
+  '02': 'https://i.vimeocdn.com/video/2226996719-50f546b2af42373f6b625966a50f2e6f5c89086d0891aca684aa04f13f613e71-d_1280?region=us',
+  '03': 'https://i.vimeocdn.com/video/2226997275-fc01b684983e3380270da4a2e070de8f23bc636610b61b7d7b27205410db5ebe-d_1280?region=us',
+  '04': 'https://i.vimeocdn.com/video/2226995404-9d3481290043a1ca94d12ef68bbc8a218564ae4228b4d65c0172e67d8a3f6a88-d_1280?region=us',
+  '05': 'https://i.vimeocdn.com/video/2226997650-60cef249ea559bc02a6574fca1e6370fa5f25341d1984083021b1b78241bb2f0-d_1280?region=us',
+  '06': 'https://i.vimeocdn.com/video/2226994774-3626c6a3561973b35560e0cdc8a77394c3d7da15aed82fef69434c819e166884-d_1280?region=us',
+  '07': 'https://i.vimeocdn.com/video/2226999237-b8c9065bc2556adc7153f7a9f4fdac1c8095fc0be3be29c9b0f4e6e522d2e871-d_1280?region=us',
+  '08': 'https://i.vimeocdn.com/video/2226999945-547a2ba94dac948d695dfbfe11aac2eb84226f1b8ac566a8b2f981e2dd9f558c-d_1280?region=us',
+  '09': 'https://i.vimeocdn.com/video/2226999558-1b9e8a8f78ea00ca7b078b1a2642b86b0fad697f4e06079fc5f885cbaa9f47c9-d_1280?region=us',
+  '10': 'https://i.vimeocdn.com/video/2226999753-d5dac74cda92549aa1234bc136e35fe73885413720ebd16810dc153330bec070-d_1280?region=us',
 }
-const workCarouselItems = workVideos.map((item) => ({
-  ...item,
-  src: workThumbnails[item.id],
-  alt: `${item.title} video thumbnail`,
-  subtitle: item.views ? `${item.overlayText} · ${new Intl.NumberFormat('en', { notation: 'compact' }).format(item.views)} views` : item.overlayText,
-}))
 
 function getVimeoAutoplayUrl(embedUrl, autoplay, controls = false, playerId = 'portfolio-work') {
   if (!embedUrl) return ''
@@ -250,6 +244,13 @@ function WorkSection() {
   const [warmVideo, setWarmVideo] = useState(null)
   const [readyVideoId, setReadyVideoId] = useState(null)
   const [carouselIndex, setCarouselIndex] = useState(0)
+  const [thumbnailUrls, setThumbnailUrls] = useState(workThumbnails)
+  const workCarouselItems = workVideos.map((item) => ({
+    ...item,
+    src: thumbnailUrls[item.id] || workThumbnails[item.id],
+    alt: `${item.title} video thumbnail`,
+    subtitle: item.views ? `${item.overlayText} · ${new Intl.NumberFormat('en', { notation: 'compact' }).format(item.views)} views` : item.overlayText,
+  }))
   const playerVideo = activeVideo || warmVideo
   const iframeMode = !activeVideo || reuseWarmPlayerRef.current ? 'warm' : 'autoplay'
   const playerIsReady = Boolean(playerVideo && readyVideoId === playerVideo.id)
@@ -269,6 +270,23 @@ function WorkSection() {
     const observer = new IntersectionObserver((entries) => {
       if (!entries.some((entry) => entry.isIntersecting)) return
       loadVimeoSdk()
+      Promise.all(workVideos.map(async (video) => {
+        const id = video.embedUrl.match(/\/video\/(\d+)/)?.[1]
+        if (!id) return null
+        try {
+          const page = `https://vimeo.com/${id}`
+          const endpoint = `https://vimeo.com/api/oembed.json?url=${encodeURIComponent(page)}&width=1280`
+          const response = await fetch(endpoint, { cache: 'no-store' })
+          if (!response.ok) return null
+          const data = await response.json()
+          return data.thumbnail_url ? [video.id, data.thumbnail_url] : null
+        } catch {
+          return null
+        }
+      })).then((updates) => {
+        const fresh = Object.fromEntries(updates.filter(Boolean))
+        if (Object.keys(fresh).length) setThumbnailUrls((current) => ({ ...current, ...fresh }))
+      })
       observer.disconnect()
     }, { rootMargin: '650px 0px' })
     observer.observe(section)
