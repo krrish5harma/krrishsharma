@@ -3,8 +3,8 @@ import { ArrowDown, ArrowDownRight, ArrowUpRight, BriefcaseBusiness, CalendarDay
 import { getCalApi } from '@calcom/embed-react'
 import { capabilities, profile } from './data/profile.js'
 import PillNav from './components/PillNav.jsx'
-import CurvedLoop from './components/CurvedLoop.jsx'
 import ShinyText from './components/ShinyText.jsx'
+import { siDavinciresolve } from 'simple-icons'
 
 const HERO_CAROUSEL_INTERVAL_MS = 3500
 
@@ -119,6 +119,13 @@ function SectionTitle({ eyebrow, children, className = '' }) {
   return <div className={`section-title ${className}`} data-reveal><span className="eyebrow">{eyebrow}</span><h2>{children}</h2></div>
 }
 
+function ToolLogo({ name }) {
+  if (name === 'DaVinci Resolve') return <svg viewBox="0 0 24 24" aria-hidden="true"><path d={siDavinciresolve.path} /></svg>
+  if (name === 'Topaz AI') return <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M4 23h6v-6h6v-6h6V5h6v18H4Z" /></svg>
+  const mark = name === 'Adobe After Effects' ? 'Ae' : 'Pr'
+  return <svg viewBox="0 0 40 40" aria-hidden="true"><rect x="1" y="1" width="38" height="38" rx="9" /><text x="20" y="26" textAnchor="middle">{mark}</text></svg>
+}
+
 function AboutSection() {
   return <section className="about-section page-shell" id="about">
     <SectionLabel number="02" title="A LITTLE ABOUT ME" />
@@ -126,7 +133,10 @@ function AboutSection() {
       <div className="about-monogram" data-reveal><div className="mono-frame about-portrait-frame"><img src="/krrish-about.jpg" alt="Krrish Sharma standing beside a car" /><i>SHARMA</i><b>↗</b></div><span className="mono-caption">JAIPUR · INDIA<br />26° 54′ N / 75° 48′ E</span></div>
       <div className="about-copy" data-reveal><span className="eyebrow">EDITOR BY INSTINCT · FILMMAKER BY CURIOSITY</span><h2>Every frame<br />has a <em>feeling.</em></h2><p>I’m Krrish, a freelance creative video editor and motion graphics artist. I move between the edit, the camera and the details that make an image feel alive.</p><p>Currently studying BCA at Manipal University Jaipur, graduating in 2027. I enjoy working where cinematic storytelling meets motion and visual polish.</p><a href="#expertise" className="under-link">More about my approach <ArrowUpRight size={14} /></a></div>
     </div>
-    <div className="tools-loop skills-display" data-reveal><span className="eyebrow">SKILLS &amp; TOOLS</span><CurvedLoop className="skills-loop-text" marqueeText={profile.tools.join('     ')} shape="wave" speed={0.7} curveAmount={54} direction="left" fontSize={44} fontWeight={500} letterSpacing={1.4} separator="✦" separatorColor="var(--red-hot)" color="var(--ink)" scrollBoost={0.25} edgeFade={0.12} interactive pauseOnHover /></div>
+    <div className="tools-loop skills-display" data-reveal>
+      <div className="skills-display-heading"><span className="eyebrow">SKILLS &amp; TOOLS</span><p>The software behind the work.</p></div>
+      <div className="skills-tool-grid">{profile.tools.map((tool) => <div className={`skills-tool skills-tool-${tool.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`} key={tool}><span className="skills-tool-logo"><ToolLogo name={tool} /></span><span>{tool}</span></div>)}</div>
+    </div>
   </section>
 }
 
