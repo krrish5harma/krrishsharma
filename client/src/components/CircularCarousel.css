@@ -239,3 +239,42 @@
   }
 }
 
+.circular-carousel__play {
+  position: absolute;
+  z-index: 8;
+  display: grid;
+  place-items: center;
+  border-radius: var(--cc-radius);
+  transform: translateZ(4px);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  pointer-events: none;
+}
+
+.circular-carousel__play::before {
+  content: "";
+  position: absolute;
+  width: 58px;
+  height: 58px;
+  border: 1px solid rgba(255, 255, 255, .78);
+  border-radius: 50%;
+  background: rgba(8, 8, 9, .54);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, .38), inset 0 1px 0 rgba(255, 255, 255, .24);
+  backdrop-filter: blur(12px) saturate(1.2);
+  -webkit-backdrop-filter: blur(12px) saturate(1.2);
+}
+
+.circular-carousel__play svg {
+  position: relative;
+  width: 23px;
+  height: 23px;
+  margin-left: 3px;
+  fill: #fff;
+  filter: drop-shadow(0 2px 5px rgba(0, 0, 0, .5));
+}
+
+@media (max-width: 700px) {
+  .circular-carousel__play::before { width: 50px; height: 50px; }
+  .circular-carousel__play svg { width: 21px; height: 21px; }
+}
+

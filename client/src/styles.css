@@ -481,3 +481,23 @@
 .skills-tool-topaz-ai .skills-tool-logo{color:#e5c982;background:rgba(177,140,55,.14)}
 @media(max-width:900px){.skills-tool-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:700px){.tools-loop.skills-display{grid-template-columns:1fr;gap:16px;padding-top:23px}.skills-tool-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.skills-tool{min-height:72px;gap:9px;padding:10px;font-size:11px}.skills-tool-logo{width:34px;height:34px}.skills-tool-logo svg{width:27px;height:27px}}
+
+.work-heading .eyebrow{font-size:14px;line-height:1.5;letter-spacing:.065em}
+.work-vimeo-note{font-size:14px;line-height:1.55;letter-spacing:.07em}
+.work-marquee-hint{font-size:13px;line-height:1.65;letter-spacing:.07em}
+.expertise-heading>p{max-width:460px;font-size:16px;line-height:1.65}
+.expertise-card p{max-width:270px;font-size:15px;line-height:1.65}
+.expertise-number{font-size:12px}
+.work-circular-stage .circular-carousel__title{font-size:18px;line-height:1.4}
+.work-circular-stage .circular-carousel__subtitle{font-size:14px;line-height:1.5;opacity:.95}
+.work-circular-stage .circular-carousel__count{font-size:13px;opacity:.8}
+@media(max-width:1000px){.expertise-heading>p{font-size:15px}.expertise-card p{font-size:14px}}
+@media(max-width:700px){
+  .work-heading .eyebrow{font-size:13px}
+  .work-vimeo-note{font-size:12px}
+  .work-marquee-hint{font-size:12px}
+  .expertise-heading>p{font-size:15px}
+  .expertise-card p{font-size:14px;line-height:1.6}
+  .work-circular-stage .circular-carousel__title{font-size:16px}
+  .work-circular-stage .circular-carousel__subtitle{font-size:13px}
+}

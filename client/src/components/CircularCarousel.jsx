@@ -935,6 +935,13 @@ const CircularCarousel = ({
                 >
                   {tiles.map(tile => renderTile(item, tile, false, index))}
                   {layout.backfaces && tiles.map(tile => renderTile(item, tile, true, index))}
+                  <span
+                    className="circular-carousel__play"
+                    style={{ left: -cardW / 2, top: -cardH / 2, width: cardW, height: cardH }}
+                    aria-hidden="true"
+                  >
+                    <svg viewBox="0 0 24 24" focusable="false"><path d="M8.3 5.9a1 1 0 0 1 1.52-.85l9.1 5.65a1.52 1.52 0 0 1 0 2.58l-9.1 5.65a1 1 0 0 1-1.52-.85V5.9Z" /></svg>
+                  </span>
                 </div>
               ))}
             </div>
