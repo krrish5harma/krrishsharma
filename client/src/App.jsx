@@ -138,13 +138,15 @@ function ExpertiseSection() {
 }
 
 // Add Vimeo player embed URLs here as they are provided. Each active embed is muted and loops inline.
-const workVideos = [
-  { id: '01', title: 'Vimeo video 01', embedUrl: '' },
-  { id: '02', title: 'Vimeo video 02', embedUrl: '' },
-  { id: '03', title: 'Vimeo video 03', embedUrl: '' },
-  { id: '04', title: 'Vimeo video 04', embedUrl: '' },
-  { id: '05', title: 'Vimeo video 05', embedUrl: '' },
-]
+// These 12 slots keep the viewport filled during the wrap. Replace slots with approved videos;
+// the sequence remains seamless with 10–15 clips because each is recycled after it exits left.
+const workVideos = Array.from({ length: 12 }, (_, index) => ({
+  id: String(index + 1).padStart(2, '0'),
+  title: `Vimeo video ${String(index + 1).padStart(2, '0')}`,
+  embedUrl: '',
+  overlayText: '',
+  views: null,
+}))
 
 function getVimeoAutoplayUrl(embedUrl, autoplay) {
   if (!embedUrl) return ''
@@ -175,11 +177,14 @@ function getVimeoAutoplayUrl(embedUrl, autoplay) {
 
 function WorkPhone({ item, index, reducedMotion }) {
   const src = getVimeoAutoplayUrl(item.embedUrl, !reducedMotion)
+  const formattedViews = Number.isFinite(item.views) ? new Intl.NumberFormat('en', { notation: 'compact', maximumFractionDigits: 1 }).format(item.views) : null
   return <article className={`work-phone ${index % 3 === 1 ? 'is-lifted' : ''}`} aria-label={`${item.title}${item.embedUrl ? '' : ', video placeholder'}`}>
     <div className="work-phone-frame">
       <div className="work-phone-screen">
         {src ? <iframe src={src} title={item.title} allow="autoplay; fullscreen; picture-in-picture" allowFullScreen loading="eager" referrerPolicy="strict-origin-when-cross-origin" /> : <div className="work-video-placeholder"><span className="placeholder-index">{item.id}</span><span className="placeholder-mark" aria-hidden="true">▶</span><span className="placeholder-caption">VIMEO EMBED<br />COMING SOON</span></div>}
       </div>
+      {formattedViews && <span className="work-view-bubble"><Eye size={12} aria-hidden="true" />{formattedViews}<span>VIEWS</span></span>}
+      {item.overlayText && <span className="work-video-context">{item.overlayText}</span>}
       <span className="work-phone-island" aria-hidden="true" />
       <span className="work-phone-lens" aria-hidden="true" />
     </div>
@@ -220,7 +225,7 @@ function WorkSection() {
 
   useEffect(() => {
     if (paused || reducedMotion || !offset) return undefined
-    const timer = window.setTimeout(() => setMoving(true), 80)
+    const timer = window.setTimeout(() => setMoving(true), 20)
     return () => window.clearTimeout(timer)
   }, [paused, reducedMotion, offset, moving, videoOrder])
 
@@ -244,7 +249,7 @@ function WorkSection() {
 
   return <section className="work-section page-shell" id="work">
     <SectionLabel number="04" title="SELECTED WORK" />
-    <div className="work-heading"><SectionTitle eyebrow="A FEW THINGS MADE WITH INTENTION">Stories in<br /><em>motion.</em></SectionTitle><span className="work-vimeo-note">05 VIDEO SLOTS · VIMEO EMBEDS COMING SOON</span></div>
+    <div className="work-heading"><SectionTitle eyebrow="A FEW THINGS MADE WITH INTENTION">Stories in<br /><em>motion.</em></SectionTitle><span className="work-vimeo-note">12 VIDEO SLOTS · VIMEO EMBEDS COMING SOON</span></div>
     <div className={`work-marquee-viewport ${paused ? 'is-paused' : ''}`} onPointerEnter={pauseAtCurrentPosition} onPointerLeave={() => setPaused(false)} onFocus={pauseAtCurrentPosition} onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setPaused(false) }} role="region" aria-label="Selected video work, automatically scrolling left" aria-roledescription="carousel">
       <div ref={trackRef} className={`work-marquee-track ${moving && !paused && !reducedMotion ? 'is-moving' : ''}`} style={{ '--work-shift': `${position - offset}px`, '--work-position': `${position}px` }} onTransitionEnd={finishAdvance}>
         {videoOrder.map((item, index) => <WorkPhone key={item.id} item={item} index={index} reducedMotion={reducedMotion} />)}
