@@ -305,3 +305,26 @@
   .work-video-card .work-view-bubble{top:9px;right:9px}
   .work-video-card .work-video-context{left:10px;right:10px;bottom:34px;padding:8px 9px;font-size:10px}
 }
+
+/* Supporting copy stays legible at desktop and mobile sizes. */
+:root{--muted:#b0a9a7}
+:root[data-theme=light]{--muted:#625c5a}
+.eyebrow,.section-label{font-size:11px}
+.hero-education,.visual-index,.mono-caption,.expertise-number,.work-card-count,.work-card-meta,.work-controls,.timeline-item>span,.detail-facts,.scroll-cue{font-size:10px;line-height:1.55}
+.artwork-red-column span,.artwork-marker,.artwork-slice,.artwork-orbit span,.artwork-coordinate,.visual-side-label{font-size:10px;line-height:1.5}
+.artwork-marker small{font-size:9px}
+.social-links a,.footer-bottom,.footer-mini-brand,.footer-legal,.footer-feature-head>span,.footer-social-links a{font-size:11px}
+.featured-reel-link,.reel-poster-index,.reel-poster-meta,.reel-poster-bottom,.reel-modal-heading,.reel-modal>a{font-size:10px}
+.reel-poster-bottom i,.gallery-note,.work-video-caption,.work-vimeo-note,.work-view-bubble span,.placeholder-index,.placeholder-caption{font-size:10px}
+.work-marquee-hint{font-size:11px}
+.work-video-context{font-size:13px;line-height:1.55}
+.work-video-card .work-video-context{font-size:12px}
+.work-video-caption span:last-child{color:rgba(245,243,240,.78)}
+.placeholder-index,.placeholder-caption{color:rgba(245,243,240,.78)}
+.footer-feature-head>span{color:#75564e}
+@media(max-width:700px){
+  .hero-education,.section-label,.work-vimeo-note,.work-marquee-hint,.work-video-caption,.footer-bottom,.footer-mini-brand,.footer-legal,.footer-social-links a{font-size:10px}
+  .hero-description p,.about-copy p,.contact-page-intro>p,.expertise-heading>p,.expertise-card p,.featured-reels-heading>p,.work-empty p,.timeline-item p{font-size:14px;line-height:1.65}
+  .work-video-context,.work-video-card .work-video-context{font-size:12px;line-height:1.5}
+  .gallery-note,.featured-reel-link,.reel-poster-index,.reel-poster-meta,.reel-poster-bottom,.reel-poster-bottom i{font-size:10px}
+}
