@@ -505,6 +505,12 @@
 @media(max-width:700px){.skills-display-head{align-items:flex-start;flex-direction:column;gap:10px}.skills-logo-row{justify-content:flex-start;gap:20px}.skills-curved-loop{width:calc(100% + 10vw);margin-left:-5vw}.skills-curved-loop .curved-loop-jacket{height:86px}.skills-curved-loop .curved-loop-svg{font-size:34px!important}.footer-shell{padding-top:106px}.footer-top{padding-bottom:22px}.footer-feature-bottom{align-items:flex-start}.footer-social-links{gap:10px 16px}.footer-social-links a{font-size:12px}}
 @media(prefers-reduced-motion:reduce){.footer-feature{opacity:1;transform:none;filter:none;transition:none}}
 
+/* Let the footer meet the page background without a black notch or spacer. */
+.site-footer:before{clip-path:none;background:#5a191d}
+.footer-shell{padding-top:48px}
+@media(max-width:800px){.footer-shell{padding-top:40px}}
+@media(max-width:520px){.footer-shell{padding-top:34px}}
+
 .work-heading .eyebrow{font-size:14px;line-height:1.5;letter-spacing:.065em}
 .work-vimeo-note{font-size:14px;line-height:1.55;letter-spacing:.07em}
 .work-marquee-hint{font-size:13px;line-height:1.65;letter-spacing:.07em}
