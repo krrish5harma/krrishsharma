@@ -505,6 +505,64 @@
 @media(max-width:700px){.skills-display-head{align-items:flex-start;flex-direction:column;gap:10px}.skills-logo-row{justify-content:flex-start;gap:20px}.skills-curved-loop{width:calc(100% + 10vw);margin-left:-5vw}.skills-curved-loop .curved-loop-jacket{height:86px}.skills-curved-loop .curved-loop-svg{font-size:34px!important}.footer-shell{padding-top:106px}.footer-top{padding-bottom:22px}.footer-feature-bottom{align-items:flex-start}.footer-social-links{gap:10px 16px}.footer-social-links a{font-size:12px}}
 @media(prefers-reduced-motion:reduce){.footer-feature{opacity:1;transform:none;filter:none;transition:none}}
 
+/* Phone layout refinements */
+@media(max-width:700px){
+  html,body{overflow-x:clip}
+  .hero-frame{gap:28px;padding-top:24px;padding-bottom:54px}
+  .hero-title{margin:22px 0 20px}
+  .hero-description{grid-template-columns:1fr;gap:8px}
+  .hero-description p{max-width:34em;font-size:13px;line-height:1.6}
+  .hero-education{margin-top:20px;font-size:9px;line-height:1.55}
+  .hero-actions{gap:14px;margin-top:22px;flex-wrap:wrap}
+  .social-links.compact{margin-top:22px}
+  .about-section,.expertise-section,.work-section,.journey-section,.contact-section{padding-top:58px}
+  .about-layout{gap:28px;padding-block:30px 26px}
+  .about-copy p{font-size:14px;line-height:1.7}
+  .expertise-heading,.work-heading{gap:14px;padding:26px 0 19px}
+  .expertise-heading>p{font-size:14px;line-height:1.65}
+  .expertise-card p{font-size:13px;line-height:1.6}
+  .skills-display-heading p{font-size:13px}
+  .work-circular-stage{height:clamp(470px,128vw,580px)}
+  .contact-section{padding-bottom:52px}
+  .contact-callout{min-height:310px;margin-top:20px;padding:30px 22px}
+  .footer-feature{min-height:220px}
+}
+@media(max-width:460px){
+  .page-shell{width:calc(100% - 32px)}
+  .site-header{height:64px;padding-inline:12px;gap:7px}
+  .site-header-nav{flex:1;min-width:0}
+  .site-header .portfolio-pill-nav{--pn-font:12px}
+  .site-header .portfolio-pill-nav .pill-nav__item{padding-inline:7px}
+  .site-button.header-book-call{width:42px;min-width:42px;height:42px;min-height:42px!important;margin-left:0!important;padding:0!important;justify-content:center}
+  .site-button.header-book-call .book-call-label,.site-button.header-book-call>svg:last-child{display:none}
+  .site-header>.theme-switch{width:42px;height:42px;min-height:42px!important;margin-left:0!important;padding:0!important;justify-content:center}
+  .site-header>.theme-switch .theme-switch-label{display:none!important}
+  .hero-frame{gap:24px;padding-top:18px;padding-bottom:42px}
+  .hero-kicker{font-size:8px;letter-spacing:.08em}
+  .title-serif{font-size:clamp(76px,20vw,94px)}
+  .title-sans{font-size:clamp(61px,16vw,76px)}
+  .hero-role{font-size:22px}
+  .hero-visual{margin-inline:-4px}
+  .gallery-note{font-size:9px}
+  .about-monogram{max-width:100%}
+  .mono-frame{height:clamp(270px,78vw,330px)}
+  .expertise-grid{grid-template-columns:1fr}
+  .expertise-card,.expertise-card:nth-child(3){min-height:150px;padding:17px 14px;border-bottom:1px solid var(--line);border-right:0}
+  .expertise-card:last-child{border-bottom:0}
+  .expertise-card h3{font-size:25px}
+  .expertise-card p{max-width:34em;font-size:14px}
+  .work-circular-stage{height:clamp(450px,124vw,520px)}
+  .work-circular-stage .circular-carousel__caption{bottom:18px}
+  .footer-top{grid-template-columns:1fr 1fr;gap:20px 14px;padding-top:16px}
+  .footer-intro{grid-column:1/-1}
+  .footer-location{grid-column:auto}
+  .footer-feature{min-height:214px;padding:18px 15px 15px}
+  .footer-feature-main h2{font-size:clamp(46px,12vw,58px)}
+  .footer-feature-main p{font-size:17px}
+  .footer-social-links a{font-size:11px}
+  .footer-social-links .social-icon{width:17px;height:17px}
+}
+
 /* Let the footer meet the page background without a black notch or spacer. */
 .site-footer:before{clip-path:none;background:#5a191d}
 .footer-shell{padding-top:48px}

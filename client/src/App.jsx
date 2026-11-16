@@ -30,7 +30,7 @@ function ActionButton({ as: Element = 'button', children, className = '', radius
 
 function ThemeSwitch({ theme, onToggle }) {
   return <ActionButton className="theme-switch" size="md" radius={999} style={{ padding: '10px 14px' }} onClick={onToggle} aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}>
-    <span className="theme-switch-icon" aria-hidden="true">{theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}</span><span>{theme === 'dark' ? 'Light mode' : 'Dark mode'}</span>
+    <span className="theme-switch-icon" aria-hidden="true">{theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}</span><span className="theme-switch-label">{theme === 'dark' ? 'Light mode' : 'Dark mode'}</span>
   </ActionButton>
 }
 
@@ -44,7 +44,7 @@ function BookCallButton({ className = '', children = 'Book a call', size = 'sm',
     data-cal-link="krrish-sharma-pnmlzm/15min"
     data-cal-config='{"layout":"month_view","useSlotsViewOnSmallScreen":"true"}'
     aria-label="Book a 15-minute call with Krrish Sharma"
-  ><CalendarDays size={16} aria-hidden="true" />{children}<ArrowUpRight size={16} aria-hidden="true" /></ActionButton>
+  ><CalendarDays size={16} aria-hidden="true" /><span className="book-call-label">{children}</span><ArrowUpRight size={16} aria-hidden="true" /></ActionButton>
 }
 
 function PillAnchor({ href, ...props }) {
