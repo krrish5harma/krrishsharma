@@ -185,11 +185,11 @@ function WorkVideoCard({ item, index, isPlaying, onTogglePlayback, onExpand }) {
   const formattedViews = Number.isFinite(item.views) ? new Intl.NumberFormat('en', { notation: 'compact', maximumFractionDigits: 1 }).format(item.views) : null
   const orientation = item.orientation || 'portrait'
   const sourceAspect = item.aspectRatio ? item.aspectRatio.split('/').map((part) => Number(part.trim())).reduce((width, height) => width / height) : (orientation === 'landscape' ? 16 / 9 : 9 / 16)
-  const cropWidth = sourceAspect > 4 / 3 ? `${sourceAspect / (4 / 3) * 100}%` : '100%'
-  const cropHeight = sourceAspect < 4 / 3 ? `${(4 / 3) / sourceAspect * 100}%` : '100%'
-  const cropLeft = sourceAspect > 4 / 3 ? `${(100 - parseFloat(cropWidth)) / 2}%` : '0%'
-  const cropTop = sourceAspect < 4 / 3 ? `${(100 - parseFloat(cropHeight)) / 2}%` : '0%'
-  return <article className={`work-video-card is-${orientation} ${isPlaying ? 'is-playing' : 'is-paused'}`} data-video-id={item.id} style={{ '--screen-aspect': '4 / 3', '--crop-width': cropWidth, '--crop-height': cropHeight, '--crop-left': cropLeft, '--crop-top': cropTop, '--arc-order': index }} aria-label={`${item.title}${item.embedUrl ? '' : ', video placeholder'}`}>
+  const cropWidth = sourceAspect > 3 / 4 ? `${sourceAspect / (3 / 4) * 100}%` : '100%'
+  const cropHeight = sourceAspect < 3 / 4 ? `${(3 / 4) / sourceAspect * 100}%` : '100%'
+  const cropLeft = sourceAspect > 3 / 4 ? `${(100 - parseFloat(cropWidth)) / 2}%` : '0%'
+  const cropTop = sourceAspect < 3 / 4 ? `${(100 - parseFloat(cropHeight)) / 2}%` : '0%'
+  return <article className={`work-video-card is-${orientation} ${isPlaying ? 'is-playing' : 'is-paused'}`} data-video-id={item.id} style={{ '--screen-aspect': '3 / 4', '--crop-width': cropWidth, '--crop-height': cropHeight, '--crop-left': cropLeft, '--crop-top': cropTop, '--arc-order': index }} aria-label={`${item.title}${item.embedUrl ? '' : ', video placeholder'}`}>
       <div className="work-video-frame" onContextMenu={(event) => event.preventDefault()}>
         {src ? <iframe src={src} title={item.title} allow="autoplay; fullscreen; picture-in-picture" allowFullScreen loading={isPlaying ? 'eager' : 'lazy'} referrerPolicy="strict-origin-when-cross-origin" tabIndex={-1} style={{ width: 'var(--crop-width)', height: 'var(--crop-height)', left: 'var(--crop-left)', top: 'var(--crop-top)' }} /> : <div className="work-video-placeholder"><span className="placeholder-index">{item.id}</span><span className="placeholder-mark" aria-hidden="true"><Play size={18} /></span><span className="placeholder-caption">VIMEO EMBED<br />COMING SOON</span></div>}
         {item.embedUrl && <button type="button" className="work-video-play" onClick={() => onTogglePlayback(item.id)} onContextMenu={(event) => event.preventDefault()} aria-label={`${isPlaying ? 'Pause' : 'Play'} ${item.title}`} aria-pressed={isPlaying}><span>{isPlaying ? <Pause size={20} fill="currentColor" aria-hidden="true" /> : <Play size={20} fill="currentColor" aria-hidden="true" />}</span></button>}
@@ -214,7 +214,7 @@ function WorkSection() {
   const [reducedMotion, setReducedMotion] = useState(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches)
   const [playingVideoId, setPlayingVideoId] = useState(null)
   const moveDirectionRef = useRef(1)
-  const swipeStartRef = useRef(null)
+  const dragRef = useRef(null)
   const [activeVideo, setActiveVideo] = useState(null)
 
   useEffect(() => {
@@ -351,28 +351,61 @@ function WorkSection() {
     setPlayingVideoId((current) => current === id ? null : id)
   }
 
-  const beginSwipe = (event) => {
+  const beginDrag = (event) => {
     if (event.target.closest('button')) return
+    const track = trackRef.current
+    if (!track) return
     pauseAtCurrentPosition()
-    swipeStartRef.current = { x: event.clientX, y: event.clientY }
+    const transform = window.getComputedStyle(track).transform
+    const currentX = transform === 'none' ? 0 : new DOMMatrixReadOnly(transform).m41
+    dragRef.current = { pointerId: event.pointerId, originX: event.clientX, originPosition: currentX, orderShift: 0, position: currentX, didMove: false }
+    event.currentTarget.setPointerCapture(event.pointerId)
+    event.preventDefault()
   }
-  const finishSwipe = (event) => {
-    if (!swipeStartRef.current) return
-    const deltaX = event.clientX - swipeStartRef.current.x
-    const deltaY = event.clientY - swipeStartRef.current.y
-    swipeStartRef.current = null
-    if (Math.abs(deltaX) > 48 && Math.abs(deltaX) > Math.abs(deltaY)) navigateWork(deltaX < 0 ? 1 : -1)
+  const moveDrag = (event) => {
+    const drag = dragRef.current
+    if (!drag || drag.pointerId !== event.pointerId || !offset) return
+    const rawPosition = drag.originPosition + event.clientX - drag.originX
+    let nextShift = 0
+    if (rawPosition <= -offset) nextShift = Math.floor(-rawPosition / offset)
+    else if (rawPosition > 0) nextShift = -Math.ceil(rawPosition / offset)
+    const shiftDelta = nextShift - drag.orderShift
+    if (shiftDelta) {
+      setVideoOrder((items) => {
+        let next = items
+        if (shiftDelta > 0) {
+          const count = shiftDelta % items.length
+          next = [...items.slice(count), ...items.slice(0, count)]
+        } else {
+          const count = (-shiftDelta) % items.length
+          next = [...items.slice(items.length - count), ...items.slice(0, items.length - count)]
+        }
+        return next
+      })
+      drag.orderShift = nextShift
+    }
+    drag.position = rawPosition + nextShift * offset
+    drag.didMove ||= Math.abs(event.clientX - drag.originX) > 4
+    setPosition(drag.position)
+    setTargetPosition(drag.position)
+    setMoving(false)
+  }
+  const endDrag = (event) => {
+    const drag = dragRef.current
+    if (!drag || drag.pointerId !== event.pointerId) return
+    dragRef.current = null
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId)
   }
 
   return <section className="work-section page-shell" id="work">
     <SectionLabel number="04" title="SELECTED WORK" />
     <div className="work-heading"><SectionTitle eyebrow="A FEW THINGS MADE WITH INTENTION">Stories in<br /><em>motion.</em></SectionTitle><div className="work-heading-tools"><span className="work-vimeo-note">10 SELECTED VIDEOS · CLICK TO PLAY</span><div className="work-nav-controls" aria-label="Browse selected work"><button type="button" onPointerEnter={pauseAtCurrentPosition} onClick={() => navigateWork(-1)} aria-label="Previous video"><ChevronLeft size={19} /></button><button type="button" onPointerEnter={pauseAtCurrentPosition} onClick={() => navigateWork(1)} aria-label="Next video"><ChevronRight size={19} /></button></div></div></div>
-    <div ref={viewportRef} className={`work-marquee-viewport ${paused ? 'is-paused' : ''}`} onPointerEnter={pauseAtCurrentPosition} onPointerLeave={() => { if (!activeVideo && !playingVideoId) setPaused(false) }} onPointerDown={beginSwipe} onPointerUp={finishSwipe} onPointerCancel={() => { swipeStartRef.current = null }} onWheel={(event) => { if (Math.abs(event.deltaX) > 24 || event.shiftKey) { event.preventDefault(); navigateWork((event.deltaX || event.deltaY) < 0 ? -1 : 1) } }} onKeyDown={(event) => { if (event.key === 'ArrowRight') { event.preventDefault(); navigateWork(1) } else if (event.key === 'ArrowLeft') { event.preventDefault(); navigateWork(-1) } }} onFocus={pauseAtCurrentPosition} onBlur={(event) => { if (!activeVideo && !playingVideoId && !event.currentTarget.contains(event.relatedTarget)) setPaused(false) }} role="region" aria-label="Selected video work carousel. Use the arrow keys, swipe, or navigation buttons to browse." aria-roledescription="carousel" tabIndex={0}>
+    <div ref={viewportRef} className={`work-marquee-viewport ${paused ? 'is-paused' : ''}`} onPointerEnter={pauseAtCurrentPosition} onPointerLeave={() => { if (!activeVideo && !playingVideoId && !dragRef.current) setPaused(false) }} onPointerDown={beginDrag} onPointerMove={moveDrag} onPointerUp={endDrag} onLostPointerCapture={endDrag} onPointerCancel={endDrag} onWheel={(event) => { if (Math.abs(event.deltaX) > 24 || event.shiftKey) { event.preventDefault(); navigateWork((event.deltaX || event.deltaY) < 0 ? -1 : 1) } }} onKeyDown={(event) => { if (event.key === 'ArrowRight') { event.preventDefault(); navigateWork(1) } else if (event.key === 'ArrowLeft') { event.preventDefault(); navigateWork(-1) } }} onFocus={pauseAtCurrentPosition} onBlur={(event) => { if (!activeVideo && !playingVideoId && !event.currentTarget.contains(event.relatedTarget)) setPaused(false) }} role="region" aria-label="Selected video work carousel. Drag, use the arrow keys, swipe, or navigation buttons to browse." aria-roledescription="carousel" tabIndex={0}>
       <div ref={trackRef} className={`work-marquee-track ${moving && !reducedMotion ? 'is-moving' : ''}`} style={{ '--work-shift': `${targetPosition}px`, '--work-position': `${position}px` }} onTransitionEnd={finishAdvance}>
         {videoOrder.map((item, index) => <WorkVideoCard key={item.id} item={item} index={index} isPlaying={playingVideoId === item.id && !activeVideo} onTogglePlayback={toggleInlinePlayback} onExpand={(video) => { setPaused(true); setPlayingVideoId(null); setActiveVideo(video) }} />)}
       </div>
     </div>
-    <p className="work-marquee-hint">A rotating reel of edits, films and motion work <span>·</span> CLICK TO PLAY · SWIPE OR USE ARROWS TO BROWSE</p>
+    <p className="work-marquee-hint">A rotating reel of edits, films and motion work <span>·</span> CLICK TO PLAY · DRAG OR USE ARROWS TO BROWSE</p>
     {activeVideo && <div className="work-viewer-backdrop" onMouseDown={(event) => { if (event.target === event.currentTarget) setActiveVideo(null) }} onContextMenu={(event) => event.preventDefault()}>
       <section className="work-viewer" role="dialog" aria-modal="true" aria-labelledby="work-viewer-title" onContextMenu={(event) => event.preventDefault()}>
         <header className="work-viewer-header"><div><span>SELECTED WORK / {activeVideo.id}</span><h2 id="work-viewer-title">{activeVideo.title}</h2></div><button ref={closeViewerRef} type="button" className="work-viewer-close" onClick={() => setActiveVideo(null)} aria-label="Close full screen video"><X size={20} /></button></header>
