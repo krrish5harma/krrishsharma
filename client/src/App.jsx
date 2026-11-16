@@ -395,24 +395,13 @@ function WorkSection() {
   </section>
 }
 const featuredReels = [
-  { code: 'Dd9XWwXTwPa', label: '01', views: 155000 },
-  { code: 'DWEPrx7kwCK', label: '02', views: 126000 },
-  { code: 'DcoCA0LTpXS', label: '03', views: 70900 },
+  { code: 'Dd9XWwXTwPa', label: '01', views: 161000, thumbnail: '/images/reels/redbull-f1-event.png' },
+  { code: 'DWEPrx7kwCK', label: '02', views: 126000, thumbnail: '/images/reels/oniros-college-fest.png' },
+  { code: 'DcoCA0LTpXS', label: '03', views: 71000, thumbnail: '/images/reels/manipal-fest.png' },
 ]
 
 function FeaturedReelsSection() {
   const [activeReel, setActiveReel] = useState(null)
-  useEffect(() => {
-    if (!activeReel) return undefined
-    const onKeyDown = (event) => { if (event.key === 'Escape') setActiveReel(null) }
-    const previousOverflow = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
-    window.addEventListener('keydown', onKeyDown)
-    return () => {
-      document.body.style.overflow = previousOverflow
-      window.removeEventListener('keydown', onKeyDown)
-    }
-  }, [activeReel])
 
   return <section className="featured-reels-section page-shell" id="instagram-reels">
     <SectionLabel number="05" title="THE REELS THAT TRAVELED" />
@@ -421,28 +410,24 @@ function FeaturedReelsSection() {
       <p data-reveal>Three standout edits. Pick a frame to watch the full reel.</p>
     </div>
     <div className="featured-reels-grid">
-      {featuredReels.map(({ code, label, views }) => {
+      {featuredReels.map(({ code, label, views, thumbnail }) => {
         const reelUrl = `https://www.instagram.com/reel/${code}/`
         const formattedViews = new Intl.NumberFormat('en', { notation: 'compact', maximumFractionDigits: 1 }).format(views)
         return <article className="featured-reel-card" data-reveal key={code}>
-          <button type="button" className="featured-reel-poster" onClick={() => setActiveReel({ code, label, reelUrl })} aria-label={`Play featured Instagram reel ${label}; ${formattedViews} views`}>
-            <span className="reel-poster-index">{label}<i> / 03</i></span>
-            <span className="reel-poster-mark" aria-hidden="true"><svg viewBox="0 0 24 24" role="presentation"><defs><linearGradient id={`instagram-reel-gradient-${label}`} x1="0" y1="1" x2="1" y2="0"><stop stopColor="#feda75" /><stop offset=".48" stopColor="#fa7e1e" /><stop offset="1" stopColor="#d62976" /></linearGradient></defs><rect x="3" y="3" width="18" height="18" rx="5.25" fill="none" stroke={`url(#instagram-reel-gradient-${label})`} strokeWidth="1.6" /><circle cx="12" cy="12" r="4.15" fill="none" stroke={`url(#instagram-reel-gradient-${label})`} strokeWidth="1.6" /><circle cx="17.65" cy="6.45" r="1.05" fill="#d62976" /></svg></span>
-            <span className="reel-poster-meta"><i>INSTAGRAM</i><b>FEATURED REEL</b></span>
-            <span className="reel-play-mark" aria-hidden="true"><i /></span>
-            <span className="reel-poster-bottom"><span><b><Eye size={13} /> {formattedViews} VIEWS</b><i>COUNT · NOV ’26</i></span><ArrowUpRight size={15} /></span>
-          </button>
+          {activeReel === code
+            ? <div className="featured-reel-live">
+              <div className="featured-reel-live-head"><span><Instagram size={14} /> INSTAGRAM / {label}</span><button type="button" onClick={() => setActiveReel(null)} aria-label={`Close Instagram reel ${label}`}><X size={16} /></button></div>
+              <div className="featured-reel-live-frame"><iframe src={`${reelUrl}embed/?theme=dark`} title={`Krrish Sharma Instagram reel ${label}`} allow="encrypted-media; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" /></div>
+            </div>
+            : <button type="button" className="featured-reel-poster" onClick={() => setActiveReel(code)} aria-label={`Play featured Instagram reel ${label}; ${formattedViews} views`}>
+              <img className="reel-thumbnail" src={thumbnail} alt="" loading="lazy" decoding="async" />
+              <span className="reel-poster-index">{label}<i> / 03</i></span>
+              <span className="reel-play-mark" aria-hidden="true"><i /></span>
+            </button>}
           <a className="featured-reel-link" href={reelUrl} target="_blank" rel="noreferrer"><span>OPEN ON INSTAGRAM</span><ArrowUpRight size={13} /></a>
         </article>
       })}
     </div>
-    {activeReel && <div className="reel-modal-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setActiveReel(null) }}>
-      <section className="reel-modal" role="dialog" aria-modal="true" aria-label={`Featured Instagram reel ${activeReel.label}`}>
-        <div className="reel-modal-heading"><span>INSTAGRAM REEL <i>/ {activeReel.label}</i></span><button type="button" onClick={() => setActiveReel(null)} aria-label="Close reel"><span aria-hidden="true">×</span></button></div>
-        <div className="reel-modal-frame"><iframe src={`${activeReel.reelUrl}embed/?theme=dark`} title={`Krrish Sharma Instagram reel ${activeReel.label}`} allow="encrypted-media; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" /></div>
-        <a href={activeReel.reelUrl} target="_blank" rel="noreferrer">OPEN IN INSTAGRAM <ArrowUpRight size={13} /></a>
-      </section>
-    </div>}
   </section>
 }
 
