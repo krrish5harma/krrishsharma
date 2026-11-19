@@ -562,6 +562,21 @@
   .footer-social-links .social-icon{width:17px;height:17px}
 }
 
+@media(max-width:700px){
+  .site-header{display:flex;gap:8px;padding-inline:12px}
+  .site-header-nav{flex:1 1 0%;width:0;min-width:0}
+  .site-header .portfolio-pill-nav{width:100%;max-width:100%;min-width:0;--pn-font:12px}
+  .site-header .portfolio-pill-nav .pill-nav__item{padding-inline:7px}
+  .site-header .header-book-call,.site-header>.theme-switch{flex:0 0 42px;width:42px;height:42px;min-width:42px;min-height:42px!important;margin:0!important;padding:0!important;justify-content:center}
+  .site-header .header-book-call .book-call-label,.site-header .header-book-call>svg:last-child,.site-header>.theme-switch .theme-switch-label{display:none!important}
+  .footer-feature-head{flex-wrap:wrap;align-items:center}
+  .footer-feature-head>span{max-width:min(58%,250px);line-height:1.5}
+  .footer-feature-cta{flex:0 0 auto}
+  .footer-feature-bottom,.footer-social-links{max-width:100%;flex-wrap:wrap}
+  .hero-actions{max-width:100%}
+  .hero-actions>*{max-width:100%}
+}
+
 /* Let the footer meet the page background without a black notch or spacer. */
 .site-footer:before{clip-path:none;background:#5a191d}
 .footer-shell{padding-top:48px}
