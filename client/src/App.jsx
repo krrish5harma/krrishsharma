@@ -5,6 +5,7 @@ import { capabilities, profile } from './data/profile.js'
 import PillNav from './components/PillNav.jsx'
 import ShinyText from './components/ShinyText.jsx'
 import CurvedLoop from './components/CurvedLoop.jsx'
+import { LiquidGlassLogo } from './components/liquid-glass-logo'
 
 const HERO_CAROUSEL_INTERVAL_MS = 3500
 
@@ -499,12 +500,12 @@ function IntroLoader({ onFinish }) {
   const [exiting, setExiting] = useState(false)
   useEffect(() => {
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    const exitTimer = window.setTimeout(() => setExiting(true), reducedMotion ? 250 : 2050)
-    const finishTimer = window.setTimeout(onFinish, reducedMotion ? 700 : 2600)
+    const exitTimer = window.setTimeout(() => setExiting(true), reducedMotion ? 250 : 2400)
+    const finishTimer = window.setTimeout(onFinish, reducedMotion ? 700 : 2950)
     return () => { window.clearTimeout(exitTimer); window.clearTimeout(finishTimer) }
   }, [onFinish])
   return <div className={`intro-loader ${exiting ? 'is-exiting' : ''}`} aria-label="Krrish Sharma portfolio loading" aria-live="polite">
-    <img className="intro-loader-fallback" src="/krrish-silhouette.png" alt="Krrish Sharma" />
+    <LiquidGlassLogo logo="/krrish-silhouette.png" ending="logo" depth={2.9} style={{ height: 480 }} aria-label="Krrish Sharma" />
   </div>
 }
 

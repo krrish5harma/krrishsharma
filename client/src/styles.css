@@ -55,7 +55,6 @@
 
 .intro-loader{position:fixed;inset:0;z-index:1000;display:grid;place-items:center;overflow:hidden;background:#000;opacity:1;transition:opacity .55s ease;}
 .intro-loader.is-exiting{opacity:0;pointer-events:none;}
-.intro-loader-fallback{width:clamp(112px,24vw,184px);height:auto;}
 .hero-video-carousel{height:clamp(410px,43vw,590px);position:relative;overflow:hidden;background:#11100f;border:1px solid rgba(255,255,255,.13);}
 @media(max-width:1000px){.hero-video-carousel{height:460px;}}
 @media(prefers-reduced-motion:reduce){.intro-loader{transition:none;}}
