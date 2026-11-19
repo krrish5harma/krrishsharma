@@ -567,8 +567,8 @@
   .site-header-nav{flex:1 1 0%;width:0;min-width:0}
   .site-header .portfolio-pill-nav{width:100%;max-width:100%;min-width:0;--pn-font:12px}
   .site-header .portfolio-pill-nav .pill-nav__item{padding-inline:7px}
-  .site-header .header-book-call,.site-header>.theme-switch{flex:0 0 42px;width:42px;height:42px;min-width:42px;min-height:42px!important;margin:0!important;padding:0!important;justify-content:center}
-  .site-header .header-book-call .book-call-label,.site-header .header-book-call>svg:last-child,.site-header>.theme-switch .theme-switch-label{display:none!important}
+  .site-header .header-book-call,.site-header>.theme-switch{box-sizing:border-box;flex:0 0 42px;width:42px;height:42px;min-width:42px;min-height:42px!important;margin:0!important;padding:0!important;gap:0!important;justify-content:center;overflow:hidden}
+  .site-header .site-button.header-book-call>.book-call-label,.site-header .site-button.header-book-call>svg:last-child,.site-header .site-button.theme-switch>span:not(.theme-switch-icon){display:none!important}
   .footer-feature-head{flex-wrap:wrap;align-items:center}
   .footer-feature-head>span{max-width:min(58%,250px);line-height:1.5}
   .footer-feature-cta{flex:0 0 auto}
